@@ -6,13 +6,13 @@
       </div>
       <div class="col-12">
         <q-select
-          v-model="$root.user.theme"
+          v-model="$root.$children[0].user.theme"
           float-label="Theme"
           :options="themeOptions"
           @input="themeChange"
         />
       </div>
-      <div class="col-12" v-if="$root.user.name">
+      <div class="col-12" v-if="$root.$children[0].user.name">
         <q-card>
           <q-card-title>
             <q-btn color="secondary" class="float-right" style="margin-left: 10px;" @click.native="authenticate = true">Password</q-btn>
@@ -20,25 +20,25 @@
             User Info
           </q-card-title>
           <q-card-main>
-            <p><b>Name:</b> <span>{{ $root.user.name.first }} {{ $root.user.name.last }}</span></p>
-            <p><b>Email:</b> <span>{{ $root.user.email }}</span></p>
+            <p><b>Name:</b> <span>{{ $root.$children[0].user.name.first }} {{ $root.$children[0].user.name.last }}</span></p>
+            <p><b>Email:</b> <span>{{ $root.$children[0].user.email }}</span></p>
           </q-card-main>
         </q-card>
       </div>
-      <div class="col-12" v-if="$root.user">
+      <div class="col-12" v-if="$root.$children[0].user">
         <q-card>
           <q-card-title>Notes and Quotes</q-card-title>
           <q-card-main>
-            <q-btn color="primary" v-if="!$root.user.nqUser">Connect</q-btn>
-            <div v-if="$root.user.nqUser">
-              <p>User: {{ $root.user.nqUser.email }}</p>
-              <p>ID: {{ $root.user.nqUser.uid }}</p>
-              <q-btn color="primary" v-if="!$root.user.nqUser">Disconnect</q-btn>
+            <q-btn color="primary" v-if="!$root.$children[0].user.nqUser">Connect</q-btn>
+            <div v-if="$root.$children[0].user.nqUser">
+              <p>User: {{ $root.$children[0].user.nqUser.email }}</p>
+              <p>ID: {{ $root.$children[0].user.nqUser.uid }}</p>
+              <q-btn color="primary" v-if="!$root.$children[0].user.nqUser">Disconnect</q-btn>
             </div>
           </q-card-main>
         </q-card>
       </div>
-      <div class="col-12" v-if="$root.user.realUser">
+      <div class="col-12" v-if="$root.$children[0].user.realUser">
         <q-card>
           <q-card-title>REAL Curriculum Author</q-card-title>
           <q-card-main>
@@ -46,42 +46,42 @@
           </q-card-main>
         </q-card>
       </div>
-      <div class="col-12" v-if="$root.user.prefs">
+      <div class="col-12" v-if="$root.$children[0].user.prefs">
         <q-card>
           <q-card-title>Other Settings</q-card-title>
           <q-card-main>
             <q-select
-              v-model="$root.user.prefs.bibleTranslation"
+              v-model="$root.$children[0].user.prefs.bibleTranslation"
               float-label="Default Translation"
               :options="translationOptions"
               @input="prefChange"
             />
-            <div class="row" v-if="!$root.user.nqUser">
+            <div class="row" v-if="!$root.$children[0].user.nqUser">
               <div class="col-xs-12 col-md-6">
                 <h6>Sermon Structure</h6>
-                <q-checkbox v-model="$root.user.prefs.osermonStructure.hook" label="Hook" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.osermonStructure.application" label="Application" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.osermonStructure.prayer" label="Prayer" @input="prefChange" />
+                <q-checkbox v-model="$root.$children[0].user.prefs.osermonStructure.hook" label="Hook" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.osermonStructure.application" label="Application" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.osermonStructure.prayer" label="Prayer" @input="prefChange" />
               </div>
               <div class="col-xs-12 col-md-6">
                 <h6>Lesson Structure</h6>
-                <q-checkbox v-model="$root.user.prefs.olessonStructure.hook" label="Hook" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.olessonStructure.application" label="Application" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.olessonStructure.prayer" label="Prayer" @input="prefChange" />
+                <q-checkbox v-model="$root.$children[0].user.prefs.olessonStructure.hook" label="Hook" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.olessonStructure.application" label="Application" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.olessonStructure.prayer" label="Prayer" @input="prefChange" />
               </div>
               <div class="col-xs-12 col-md-6">
                 <h6>Content Types</h6>
-                <q-checkbox v-model="$root.user.prefs.contentType.sermon" label="Sermons" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.contentType.lesson" label="Lessons" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.contentType.scratch" label="Scratch Pads" @input="prefChange" />
+                <q-checkbox v-model="$root.$children[0].user.prefs.contentType.sermon" label="Sermons" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.contentType.lesson" label="Lessons" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.contentType.scratch" label="Scratch Pads" @input="prefChange" />
               </div>
               <div class="col-xs-12 col-md-6">
                 <h6>Media Types</h6>
-                <q-checkbox v-model="$root.user.prefs.mediaType.quote" label="Quotes" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.mediaType.image" label="Images" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.mediaType.illustration" label="Illustrations" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.mediaType.lyric" label="Lyrics" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.user.prefs.mediaType.video" label="Videos" @input="prefChange" />
+                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.quote" label="Quotes" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.image" label="Images" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.illustration" label="Illustrations" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.lyric" label="Lyrics" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.video" label="Videos" @input="prefChange" />
               </div>
             </div>
           </q-card-main>
@@ -256,9 +256,9 @@ export default {
       )
       this.$firebase.auth.currentUser.reauthenticateWithCredential(credential).then(() => {
         if (this.emailEdited) {
-          this.$firebase.auth.currentUser.updateEmail(this.$root.user.email)
+          this.$firebase.auth.currentUser.updateEmail(this.$root.$children[0].user.email)
           this.$firebase.user().update({
-            email: this.$root.user.email
+            email: this.$root.$children[0].user.email
           })
           this.emailEdited = false
           Notify.create({
@@ -285,10 +285,10 @@ export default {
       })
     },
     openEditUser () {
-      this.email = this.$root.user.email
+      this.email = this.$root.$children[0].user.email
       this.name = {
-        first: this.$root.user.name.first,
-        last: this.$root.user.name.last
+        first: this.$root.$children[0].user.name.first,
+        last: this.$root.$children[0].user.name.last
       }
       this.editUser = true
     },
@@ -303,22 +303,22 @@ export default {
         this.authenticate = true
       }
       this.$firebase.user().update({
-        name: this.$root.user.name
+        name: this.$root.$children[0].user.name
       }).then(() => {
         this.editUser = false
       })
     },
     themeChange (val) {
       // GA - Theme change event
-      this.$ga.event('user', 'theme-change', this.$root.user.theme)
+      this.$ga.event('user', 'theme-change', this.$root.$children[0].user.theme)
       console.log('change...', val)
       this.$firebase.user().update({
-        theme: this.$root.user.theme
+        theme: this.$root.$children[0].user.theme
       })
     },
     prefChange (val) {
       this.$firebase.user().update({
-        prefs: this.$root.user.prefs
+        prefs: this.$root.$children[0].user.prefs
       })
     }
   }

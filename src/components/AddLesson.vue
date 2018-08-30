@@ -1,6 +1,6 @@
 <template>
   <div class="col-12 relative-position" style="height: 70px">
-    <q-btn round color="primary" icon="fa-plus" class="absolute-center" @click.native="addModule" />
+    <q-btn round color="primary" icon="fas fa-plus" class="absolute-center" @click.native="addModule" />
   </div>
 </template>
 

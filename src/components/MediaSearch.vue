@@ -75,7 +75,7 @@ export default {
       cardStyle: {
         width: this.width
       },
-      selectedTypes: Object.keys(this.$root.user.prefs.mediaType)
+      selectedTypes: Object.keys(this.$root.$children[0].user.prefs.mediaType)
       // types: [
       //   // {
       //   //   label: 'All',
@@ -115,11 +115,11 @@ export default {
   computed: {
     types: function () {
       var typesList = []
-      if (this.$root.user.prefs) {
-        for (let key in this.$root.user.prefs.mediaType) {
+      if (this.$root.$children[0].user.prefs) {
+        for (let key in this.$root.$children[0].user.prefs.mediaType) {
           console.log('key', key)
-          console.log('value', this.$root.user.prefs.mediaType[key])
-          if (this.$root.user.prefs.mediaType[key]) {
+          console.log('value', this.$root.$children[0].user.prefs.mediaType[key])
+          if (this.$root.$children[0].user.prefs.mediaType[key]) {
             typesList.push({
               label: capitalize(key),
               value: key

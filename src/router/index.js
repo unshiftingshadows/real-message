@@ -33,23 +33,9 @@ Router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     firebase.auth().onAuthStateChanged(function (user) {
       if (!user) {
-        console.log('no user')
-        next('login')
-      } else {
-        // console.log(user)
-        // Check if REAL page
-        if (to.matched.some(record => record.meta.requiresREAL)) {
-          firebase.database().ref('/users/' + firebase.auth().currentUser.uid + '/realUser').once('value', (realUser) => {
-            console.log('realuser', realUser.val())
-            if (realUser.val()) {
-              next()
-            } else {
-              console.log('not real user')
-              next('dashboard')
-            }
-          })
-        } else next()
-      }
+        console.log('no user', user)
+        next('/login')
+      } else next()
     })
   } else next()
 })

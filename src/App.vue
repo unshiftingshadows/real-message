@@ -115,7 +115,7 @@ export default {
   },
   watch: {
     'user': function (val) {
-      console.log('user changed!', val)
+      console.log('user changed!', val, this.$firebase.auth.currentUser)
     },
     'user.theme': function (val) {
       if (val === undefined) return
@@ -146,8 +146,8 @@ export default {
     },
     '$route': function (val) {
       if (this.$firebase.user()) {
-        this.$firebase.user().child('stats').update({
-          lastPagePath: val.path
+        this.$firebase.user().update({
+          'stats.lastPagePath': val.path
         })
       }
     }
@@ -168,17 +168,19 @@ export default {
             tags: ['builder']
           })
         } else {
-          this.$bindAsObject('user', this.$firebase.user() || initUser, null, () => {
+          console.log('currentuser', user)
+          this.$binding('user', this.$firebase.user()).then((userSnap) => {
+            console.log('logged user', userSnap)
             window.fcWidget.init({
               token: '55c46336-2b5d-490b-b528-54f45f5b97b5',
               host: 'https://wchat.freshchat.com',
               tags: ['builder'],
-              externalId: user.uid,
+              externalId: userSnap.uid,
               restoreId: this.user.supportRestore,
               firstName: this.user.name.first,
               lastName: this.user.name.last,
-              email: user.email,
-              phone: user.phone
+              email: userSnap.email,
+              phone: userSnap.phone
             })
             window.fcWidget.on('user:created', (resp) => {
               console.log('user created', resp)

@@ -22,8 +22,8 @@
         <bible-passage-list :passages="bibleRefs" />
       </div> -->
       <div class="col-12">
-        <!-- <module-list type="osermon" :id="id" @modules-init="modulesInit" /> -->
-        <content-editor :key="id" :id="id" type="osermon" @modules-init="modulesInit" />
+        <!-- <module-list type="sermon" :id="id" @modules-init="modulesInit" /> -->
+        <content-editor :key="id" :id="id" type="sermon" @modules-init="modulesInit" />
       </div>
     </div>
     <q-modal v-model="editTitle" ref="editTitleModal" content-classes="edit-title-modal">
@@ -63,7 +63,7 @@
           <h6>{{ sermon.mainIdea }}</h6>
         </div>
         <div class="col-xs-12 col-md-8">
-          <content-preview :id="id" type="osermon" />
+          <content-preview :id="id" type="sermon" />
         </div>
       </div>
     </q-modal>
@@ -163,18 +163,18 @@ export default {
   },
   watch: {
     'structure.before.hook': function (newHook) {
-      this.$firebase.ref('osermon', 'structure/before', this.id).child('hook').update({ show: newHook })
+      this.$firebase.ref('sermon', 'structure/before', this.id).child('hook').update({ show: newHook })
     },
     'structure.after.application': function (newApplication) {
-      this.$firebase.ref('osermon', 'structure/after', this.id).child('application').update({ show: newApplication })
+      this.$firebase.ref('sermon', 'structure/after', this.id).child('application').update({ show: newApplication })
     },
     'structure.after.prayer': function (newPrayer) {
-      this.$firebase.ref('osermon', 'structure/after', this.id).child('prayer').update({ show: newPrayer })
+      this.$firebase.ref('sermon', 'structure/after', this.id).child('prayer').update({ show: newPrayer })
     }
   },
   methods: {
     init () {
-      this.$database.view('osermon', this.id, (data) => {
+      this.$database.view('sermon', this.id, (data) => {
         this.sermon = data
         this.readableRefs = data.bibleRefs.map(e => { return this.$bible.readable(e) })
       })
@@ -216,7 +216,7 @@ export default {
         tags: this.sermon.tags,
         seriesID: this.sermon.seriesID
       }
-      this.$database.update('osermon', this.id, obj, (res) => {
+      this.$database.update('sermon', this.id, obj, (res) => {
         console.log(res)
         Notify.create({
           type: 'positive',
@@ -228,7 +228,7 @@ export default {
     archive () {
       console.log('archive!')
       this.archiveConfirmation = false
-      this.$database.archive('osermon', this.id, (res) => {
+      this.$database.archive('sermon', this.id, (res) => {
         console.log(res)
         this.$router.push({ name: 'olist', params: { type: 'sermon' } })
       })

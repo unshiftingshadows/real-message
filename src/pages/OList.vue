@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <h3>{{ capitalizeTitle(type) + (type === 'lesson' || type === 'sermon' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fa-plus" color="primary" @click.native="openAdd()" /></h3>
+    <h3>{{ capitalizeTitle(type) + (type === 'lesson' || type === 'sermon' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="openAdd()" /></h3>
     <div v-if="loading">
       <q-spinner color="primary" class="absolute-center" size="3rem" />
     </div>
@@ -15,7 +15,7 @@
         </q-card-main>
       </q-card>
     </div>
-    <add-content :type="'o' + type" ref="addContent" v-if="contentTypes.includes(type)" />
+    <add-content :type="type" ref="addContent" v-if="contentTypes.includes(type)" />
   </q-page>
 </template>
 
@@ -50,7 +50,7 @@ export default {
     init (type) {
       this.loading = true
       this.items = []
-      this.$database.list('o' + type, (data) => {
+      this.$database.list(type, (data) => {
         console.log('data', data, this)
         this.items = data
         this.loading = false
@@ -60,7 +60,7 @@ export default {
       console.log(id)
       console.log(this.type)
       if (this.contentTypes.includes(this.type)) {
-        this.$router.push({ name: 'o' + this.type, params: { id: id } })
+        this.$router.push({ name: this.type, params: { id: id } })
       }
     },
     openAdd () {

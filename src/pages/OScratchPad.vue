@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     init () {
-      this.$database.view('oscratch', this.id, (data) => {
+      this.$database.view('scratch', this.id, (data) => {
         this.scratch = data
         this.readableRefs = data.bibleRefs.map(e => { return this.$bible.readable(e) })
       })
@@ -102,7 +102,7 @@ export default {
         tags: this.scratch.tags,
         bibleRefs: this.scratch.bibleRefs
       }
-      this.$database.update('oscratch', this.id, obj, (res) => {
+      this.$database.update('scratch', this.id, obj, (res) => {
         console.log(res)
         Notify.create({
           type: 'positive',

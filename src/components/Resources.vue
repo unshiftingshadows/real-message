@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- <q-btn color="primary" label="Refresh" @click.native="init" /> -->
-    <div v-if="$root.user && $root.user.nqUser">
+    <div v-if="$root.$children[0].user && $root.$children[0].user.nqUser">
       <add-research :currentResearch="research" :id="id" :type="type" :reinit="init" v-if="add === ''" />
       <n-q-list :items="resources" :addModule="addModule" />
     </div>
-    <div v-if="$root.user && !$root.user.nqUser">
-      <media-search :width="size.width/2" :addModule="addModule" v-if="$root.user && !$root.user.nqUser && $root.user.prefs" />
+    <div v-if="$root.$children[0].user && !$root.$children[0].user.nqUser">
+      <media-search :width="size.width/2" :addModule="addModule" v-if="$root.$children[0].user && !$root.$children[0].user.nqUser && $root.$children[0].user.prefs" />
     </div>
   </div>
 </template>
@@ -49,7 +49,7 @@ export default {
       // Check if NQ user to determine what resources to get ---
       //    NQ user --> get from $database.resources
       //    Non-NQ user --> get from $database.list?
-      if (!this.$root.user.nqUser) {
+      if (!this.$root.$children[0].user.nqUser) {
       } else {
         this.resources = []
         this.$database.resources(this.type, this.id, 'list', {}, (res) => {

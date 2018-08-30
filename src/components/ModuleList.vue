@@ -174,7 +174,7 @@ export default {
       modules: {
         source: this.$firebase.ref(this.type, 'modules', this.id, this.$route.params.seriesid, this.$route.params.lessonid).orderByChild('order'),
         readyCallback: function (val) {
-          // this.$root.dim = false
+          // this.$root.$children[0].user.dim = false
           // var check = this.modules.find((element) => {
           //   return element.editing === this.$firebase.auth.currentUser.uid
           // })
@@ -196,7 +196,7 @@ export default {
   //       is closed before changing pages...not necessarily saved though
   beforeDestroy () {
     if (this.editingId !== '') {
-      this.$root.dim = false
+      this.$root.$children[0].user.dim = false
       if (this.editingId === 'hook' || this.editingId === 'application' || this.editingId === 'prayer') {
         this.$firebase.ref(this.type, 'structure', this.id).child(this.editingId).update({ editing: false })
       } else {
@@ -231,7 +231,7 @@ export default {
   //       // Save changes
   //       this.$firebase.ref(this.type, 'modules', this.this.editingId).child(this.editingId).set(updatedMod)
   //     }
-  //     this.$root.dim = false
+  //     this.$root.$children[0].user.dim = false
   //   }
   // },
   data () {
@@ -267,10 +267,10 @@ export default {
       }
       if (newid !== '') {
         console.log(this.$refs)
-        this.$root.dim = true
+        this.$root.$children[0].user.dim = true
         this.startEdit(newid)
       } else {
-        this.$root.dim = false
+        this.$root.$children[0].user.dim = false
       }
     },
     nextModOrder: function (newOrder, oldOrder) {

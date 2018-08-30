@@ -1,6 +1,6 @@
 <template>
   <div class="col-12 relative-position" style="height: 30px; margin-bottom: 20px;">
-    <q-btn round :color="color" icon="fa-plus" class="absolute-center" @click.native="showAdd" />
+    <q-btn round :color="color" icon="fas fa-plus" class="absolute-center" @click.native="showAdd" />
     <add-media :type="type" ref="addMedia" :add-new="addNewMedia" />
     <!-- TODO: Add a new component here like add-media but that uses the NQ database -->
   </div>
@@ -95,9 +95,9 @@ export default {
           }
         })
       }
-      if (this.contentType.charAt(0) !== 'r' && !this.$root.user.nqUser) {
+      if (this.contentType.charAt(0) !== 'r' && !this.$root.$children[0].user.nqUser) {
         console.log('running', this.contentType.charAt(0))
-        if (this.$root.user.prefs.mediaType.quote) {
+        if (this.$root.$children[0].user.prefs.mediaType.quote) {
           actions.push({
             label: 'Quote',
             color: 'primary',
@@ -109,7 +109,7 @@ export default {
             }
           })
         }
-        if (this.$root.user.prefs.mediaType.image) {
+        if (this.$root.$children[0].user.prefs.mediaType.image) {
           actions.push({
             label: 'Image',
             color: 'primary',
@@ -121,7 +121,7 @@ export default {
             }
           })
         }
-        if (this.$root.user.prefs.mediaType.illustration) {
+        if (this.$root.$children[0].user.prefs.mediaType.illustration) {
           actions.push({
             label: 'Illustration',
             color: 'primary',
@@ -133,7 +133,7 @@ export default {
             }
           })
         }
-        if (this.$root.user.prefs.mediaType.lyric) {
+        if (this.$root.$children[0].user.prefs.mediaType.lyric) {
           actions.push({
             label: 'Lyric',
             color: 'primary',
@@ -145,7 +145,7 @@ export default {
             }
           })
         }
-        if (this.$root.user.prefs.mediaType.video) {
+        if (this.$root.$children[0].user.prefs.mediaType.video) {
           actions.push({
             label: 'Video',
             color: 'primary',
@@ -191,14 +191,14 @@ export default {
         if (type === 'bible') {
           obj.text = ''
           obj.bibleRef = ''
-          obj.translation = this.$root.user.prefs.bibleTranslation
+          obj.translation = this.$root.$children[0].user.prefs.bibleTranslation
         }
         // if (this.omediaTypes.includes(type) || this.nqmediaTypes.includes(type)) {
         //   this.edit('')
         // } else {
         //   this.edit(newRef.key, this.sectionid)
         // }
-        this.$root.$emit('add-module', obj, this.sectionid)
+        this.$root.$children[0].user.$emit('add-module', obj, this.sectionid)
       } else {
         console.error('Invalid new module type')
       }

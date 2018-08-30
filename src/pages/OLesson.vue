@@ -19,7 +19,7 @@
         <q-chips-input v-model="lesson.tags" float-label="Tags" @blur="update" />
       </div>
       <div class="col-12">
-        <content-editor :key="id" :id="id" type="olesson" @modules-init="modulesInit" />
+        <content-editor :key="id" :id="id" type="lesson" @modules-init="modulesInit" />
       </div>
     </div>
     <q-modal v-model="editTitle" ref="editTitleModal" content-classes="edit-title-modal">
@@ -59,7 +59,7 @@
           <h6>{{ lesson.mainIdea }}</h6>
         </div>
         <div class="col-xs-12 col-md-8">
-          <content-preview :id="id" type="olesson" />
+          <content-preview :id="id" type="lesson" />
         </div>
       </div>
     </q-modal>
@@ -155,18 +155,18 @@ export default {
   },
   watch: {
     'structure.before.hook': function (newHook) {
-      this.$firebase.ref('olesson', 'structure/before', this.id).child('hook').update({ show: newHook })
+      this.$firebase.ref('lesson', 'structure/before', this.id).child('hook').update({ show: newHook })
     },
     'structure.after.application': function (newApplication) {
-      this.$firebase.ref('olesson', 'structure/after', this.id).child('application').update({ show: newApplication })
+      this.$firebase.ref('lesson', 'structure/after', this.id).child('application').update({ show: newApplication })
     },
     'structure.after.prayer': function (newPrayer) {
-      this.$firebase.ref('olesson', 'structure/after', this.id).child('prayer').update({ show: newPrayer })
+      this.$firebase.ref('lesson', 'structure/after', this.id).child('prayer').update({ show: newPrayer })
     }
   },
   methods: {
     init () {
-      this.$database.view('olesson', this.id, (data) => {
+      this.$database.view('lesson', this.id, (data) => {
         this.lesson = data
         this.readableRefs = data.bibleRefs.map(e => { return this.$bible.readable(e) })
       })
@@ -208,7 +208,7 @@ export default {
         tags: this.lesson.tags,
         seriesID: this.lesson.seriesID
       }
-      this.$database.update('olesson', this.id, obj, (res) => {
+      this.$database.update('lesson', this.id, obj, (res) => {
         console.log(res)
         Notify.create({
           type: 'positive',
@@ -220,7 +220,7 @@ export default {
     archive () {
       console.log('archive!')
       this.archiveConfirmation = false
-      this.$database.archive('olesson', this.id, (res) => {
+      this.$database.archive('lesson', this.id, (res) => {
         console.log(res)
         this.$router.push({ name: 'olist', params: { type: 'lesson' } })
       })

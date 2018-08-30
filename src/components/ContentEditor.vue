@@ -161,17 +161,15 @@ export default {
         asObject: true,
         readyCallback: function (val) {
           console.log('structure loaded')
-          if (this.type.charAt(0) === 'o') {
-            this.$emit('modules-init', {
-              before: {
-                hook: this.structure.before.hook.show
-              },
-              after: {
-                application: this.structure.after.application.show,
-                prayer: this.structure.after.prayer.show
-              }
-            })
-          }
+          this.$emit('modules-init', {
+            before: {
+              hook: this.structure.before.hook.show
+            },
+            after: {
+              application: this.structure.after.application.show,
+              prayer: this.structure.after.prayer.show
+            }
+          })
         }
       },
       sections: {
@@ -195,23 +193,23 @@ export default {
     }
   },
   mounted () {
-    this.$root.$on('add-module', (data, sectionid) => {
+    this.$root.$children[0].user.$on('add-module', (data, sectionid) => {
       console.log('section', sectionid)
       this.tempModule = {
         data: data,
         sectionid: sectionid
       }
     })
-    // this.$root.$on('edit-module', (moduleid, sectionid) => {
+    // this.$root.$children[0].user.$on('edit-module', (moduleid, sectionid) => {
     //   this.startEdit(moduleid, sectionid)
     // })
-    // this.$root.$on('save-module', (moduleid, sectionid, data) => {
+    // this.$root.$children[0].user.$on('save-module', (moduleid, sectionid, data) => {
     //   this.saveModule(moduleid, sectionid, data)
     // })
-    // this.$root.$on('close-module', (moduleid, sectionid) => {
+    // this.$root.$children[0].user.$on('close-module', (moduleid, sectionid) => {
     //   this.closeModule(moduleid, sectionid)
     // })
-    // this.$root.$on('remove-module', (moduleid, sectionid) => {
+    // this.$root.$children[0].user.$on('remove-module', (moduleid, sectionid) => {
     //   this.removeModule(moduleid, sectionid)
     // })
     this.init()
@@ -394,7 +392,7 @@ export default {
       return string.split(' ').length
     },
     getEstTime (wordcount) {
-      return Math.ceil(wordcount / this.$root.user.prefs.speakingSpeed)
+      return Math.ceil(wordcount / this.$root.$children[0].user.prefs.speakingSpeed)
     },
     onSectionDrag (val) {
       this.drag = false

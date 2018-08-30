@@ -1,7 +1,7 @@
 import axios from 'axios'
 import firebase from 'firebase'
 
-axios.defaults.baseURL = 'https://database.unshiftingshadows.com/builder'
+axios.defaults.baseURL = 'https://database.unshiftingshadows.com/message'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 function add (type, data, callback) {
@@ -185,28 +185,28 @@ function poll (action, data, callback) {
   })
 }
 
-function addUser (email, first, last, group, callback) {
-  firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function (idToken) {
-    axios.get('/user', {
-      params: {
-        action: 'add',
-        email: email,
-        first: first,
-        last: last,
-        group: group,
-        token: idToken
-      }
-    })
-      .then((res) => {
-        console.log(res.data)
-        callback(res.data)
-      })
-      .catch((err) => {
-        console.log(err)
-        callback()
-      })
-  })
-}
+// function addUser (email, first, last, group, callback) {
+//   firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function (idToken) {
+//     axios.get('/user', {
+//       params: {
+//         action: 'add',
+//         email: email,
+//         first: first,
+//         last: last,
+//         group: group,
+//         token: idToken
+//       }
+//     })
+//       .then((res) => {
+//         console.log(res.data)
+//         callback(res.data)
+//       })
+//       .catch((err) => {
+//         console.log(err)
+//         callback()
+//       })
+//   })
+// }
 
 // leave the export, even if you don't use it
 export default ({ app, router, Vue }) => {
@@ -220,7 +220,6 @@ export default ({ app, router, Vue }) => {
     bible: bible,
     resources: resources,
     research: research,
-    poll: poll,
-    addUser: addUser
+    poll: poll
   }
 }

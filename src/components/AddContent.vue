@@ -97,7 +97,7 @@ export default {
         var obj = {
           title: this.title,
           template: template,
-          prefs: this.$root.user.prefs[this.type + 'Structure']
+          prefs: this.$root.$children[0].user.prefs[this.type + 'Structure']
         }
         this.$database.add(this.type, obj, (res) => {
           // GA - Add content event
