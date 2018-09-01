@@ -1,6 +1,16 @@
 # Changelog
 All notable changes for this project will be documented in this file.
 
+## 0.0.38 - 2018-08-31
+SPLIT!!!
+Major split between Builder and Message
+### Added
+- fiery vue package to manage firebase connections
+
+### Changed
+- removed all references to Builder
+- dropped realtime database for firestore
+
 ## 0.0.37 - 2018-08-27
 ### Fixed
 - section preview now has a dashed border rather than a solid fill

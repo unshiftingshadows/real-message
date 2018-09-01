@@ -75,7 +75,7 @@ export default {
           }
         }
       ]
-      if (this.contentType === 'olesson' || this.contentType === 'rdevo' || this.contentType === 'rguide') {
+      if (this.contentType === 'olesson') {
         actions.push({
           label: 'Activity',
           color: 'primary',
@@ -95,7 +95,7 @@ export default {
           }
         })
       }
-      if (this.contentType.charAt(0) !== 'r' && !this.$root.$children[0].user.nqUser) {
+      if (!this.$root.$children[0].user.nqUser) {
         console.log('running', this.contentType.charAt(0))
         if (this.$root.$children[0].user.prefs.mediaType.quote) {
           actions.push({

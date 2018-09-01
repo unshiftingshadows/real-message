@@ -18,8 +18,7 @@ export default [
       { path: 'support', name: 'osupport', component: () => import('pages/Support') }
     ],
     meta: {
-      requiresAuth: true,
-      requiresREAL: false
+      requiresAuth: true
     }
   },
 
