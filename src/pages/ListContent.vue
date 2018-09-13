@@ -28,7 +28,8 @@ export default {
   components: {
     AddContent
   },
-  // name: 'PageName',
+  name: 'ListContent',
+  fiery: true,
   data () {
     return {
       contentTypes: ['series', 'lesson', 'sermon', 'scratch', 'archive'],
@@ -43,17 +44,17 @@ export default {
   watch: {
     '$route.params.type' (newType, oldType) {
       this.type = newType
+      this.$fiery.free(this.items)
       this.init(newType)
     }
   },
   methods: {
     init (type) {
       this.loading = true
-      this.items = []
-      this.$database.list(type, (data) => {
-        console.log('data', data, this)
-        this.items = data
-        this.loading = false
+      this.items = this.$fiery(this.$firebase.list(type), {
+        key: '_id',
+        exclude: ['_id'],
+        onSuccess: () => { this.loading = false }
       })
     },
     openItem (id, item) {

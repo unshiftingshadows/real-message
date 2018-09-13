@@ -100,11 +100,10 @@ export default {
   },
   methods: {
     login () {
-      // GA - Login event
-      this.$ga.event('user', 'login')
       console.log('login')
       this.$v.form.$touch()
       if (this.$v.form.$error) {
+        this.$ga.event('auth', 'login', 'validation-fail')
         Notify.create('Please review fields again.')
         window.fcWidget.init({
           token: '55c46336-2b5d-490b-b528-54f45f5b97b5',
@@ -116,15 +115,16 @@ export default {
       window.fcWidget.destroy()
       this.$firebase.auth.signInWithEmailAndPassword(this.form.email, this.form.pswd)
         .then((user) => {
+          // GA - Login event
+          this.$ga.event('auth', 'login', 'success')
           this.$router.replace('/')
         })
         .catch((err) => {
+          this.$ga.event('auth', 'login', 'error', err.message || err)
           Notify.create(err.message)
         })
     },
     forgot () {
-      // GA - Forgot password event
-      this.$ga.event('user', 'forgot-password')
       this.$v.form.email.$touch()
       if (this.$v.form.email.$error) {
         this.forgotPassword = true
@@ -136,6 +136,8 @@ export default {
       this.$firebase.auth.sendPasswordResetEmail(this.form.email, {
         url: 'https://builder.real-curriculum.com/login'
       }).then(() => {
+        // GA - Forgot password event
+        this.$ga.event('auth', 'reset-password', 'success')
         this.forgotPassword = false
         Notify.create({
           type: 'positive',
@@ -143,6 +145,8 @@ export default {
           position: 'bottom-left'
         })
       }).catch((err) => {
+        // GA - Forgot password event
+        this.$ga.event('auth', 'reset-password', 'error', err.message || err)
         Notify.create(err.message)
       })
     }

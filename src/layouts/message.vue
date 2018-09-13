@@ -12,7 +12,7 @@
           v-if="!$q.platform.is.desktop"
         />
         <q-toolbar-title>
-          <img src="statics/logo.png" style="max-height: 40px; display: block; margin-left: auto; margin-right: auto;" />
+          <img src="statics/logo_message_app@2x.png" style="max-height: 40px;" />
         </q-toolbar-title>
         <q-btn
           flat
@@ -50,58 +50,58 @@
       mini
     >
       <!-- QScrollArea is optional -->
-      <q-scroll-area class="fit q-pa-sm" v-if="$root.$children[0].user && $root.$children[0].user.prefs">
+      <q-scroll-area class="fit q-pa-sm" v-if="$root.$children[0].user && $root.$children[0].user.app.message.prefs">
         <q-item to="/dashboard" class="menu-item">
           <q-item-tile icon="fas fa-home" />
           <q-item-main label="Dashboard" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Dashboard</q-tooltip>
         </q-item>
         <q-item-separator />
-        <q-item :to="{ name: 'olist', params: { type: 'sermon' }}" class="menu-item" v-if="$root.$children[0].user.prefs.contentType.sermon">
+        <q-item :to="{ name: 'list', params: { type: 'sermon' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.contentType.sermon">
           <q-item-tile icon="fas fa-comment" />
           <q-item-main label="Sermons" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Sermons</q-tooltip>
         </q-item>
-        <q-item :to="{ name: 'olist', params: { type: 'lesson' }}" class="menu-item" v-if="$root.$children[0].user.prefs.contentType.lesson">
+        <q-item :to="{ name: 'list', params: { type: 'lesson' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.contentType.lesson">
           <q-item-tile icon="fas fa-file" />
           <q-item-main label="Lessons" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Lessons</q-tooltip>
         </q-item>
-        <q-item :to="{ name: 'olist', params: { type: 'scratch' }}" class="menu-item" v-if="$root.$children[0].user.prefs.contentType.scratch">
+        <q-item :to="{ name: 'list', params: { type: 'scratch' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.contentType.scratch">
           <q-item-tile icon="fas fa-lightbulb" />
           <q-item-main label="Scratch Pads" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Scratch Pad</q-tooltip>
         </q-item>
         <q-item-separator />
         <div v-if="$root.$children[0].user.nqUser === false">
-          <q-item :to="{ name: 'omedia', params: { type: 'quote' }}" class="menu-item" v-if="$root.$children[0].user.prefs.mediaType.quote">
+          <q-item :to="{ name: 'media', params: { type: 'quote' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.mediaType.quote">
             <q-item-tile icon="fas fa-quote-left" />
             <q-item-main label="Quotes" class="on-right" />
             <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Quotes</q-tooltip>
           </q-item>
-          <q-item :to="{ name: 'omedia', params: { type: 'image' }}" class="menu-item" v-if="$root.$children[0].user.prefs.mediaType.image">
+          <q-item :to="{ name: 'media', params: { type: 'image' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.mediaType.image">
             <q-item-tile icon="fas fa-image" />
             <q-item-main label="Images" class="on-right" />
             <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Images</q-tooltip>
           </q-item>
-          <q-item :to="{ name: 'omedia', params: { type: 'illustration' }}" class="menu-item" v-if="$root.$children[0].user.prefs.mediaType.illustration">
+          <q-item :to="{ name: 'media', params: { type: 'illustration' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.mediaType.illustration">
             <q-item-tile icon="fas fa-paint-brush" />
             <q-item-main label="Illustrations" class="on-right" />
             <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Illustrations</q-tooltip>
           </q-item>
-          <q-item :to="{ name: 'omedia', params: { type: 'lyric' }}" class="menu-item" v-if="$root.$children[0].user.prefs.mediaType.lyric">
+          <q-item :to="{ name: 'media', params: { type: 'lyric' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.mediaType.lyric">
             <q-item-tile icon="fas fa-music" />
             <q-item-main label="Lyrics" class="on-right" />
             <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Lyrics</q-tooltip>
           </q-item>
-          <q-item :to="{ name: 'omedia', params: { type: 'video' }}" class="menu-item" v-if="$root.$children[0].user.prefs.mediaType.video">
+          <q-item :to="{ name: 'media', params: { type: 'video' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.mediaType.video">
             <q-item-tile icon="fas fa-play" />
             <q-item-main label="Videos" class="on-right" />
             <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Videos</q-tooltip>
           </q-item>
         </div>
         <q-item-separator v-if="$root.$children[0].user.nqUser === false" />
-        <q-item :to="{ name: 'olist', params: { type: 'archive' }}" class="menu-item" v-if="$root.$children[0].user.prefs.contentType.scratch">
+        <q-item :to="{ name: 'list', params: { type: 'archive' }}" class="menu-item">
           <q-item-tile icon="fas fa-archive" />
           <q-item-main label="Archive" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Archive</q-tooltip>
@@ -124,7 +124,7 @@
       </q-scroll-area>
     </q-layout-drawer>
 
-    <q-layout-drawer
+    <!-- <q-layout-drawer
       side="right"
       v-model="rightDrawer"
       content-class="lg-drawer"
@@ -133,12 +133,12 @@
       <q-scroll-area class="fit q-pa-sm">
         <resources v-if="$route.name === 'lesson' || $route.name === 'sermon'" add />
       </q-scroll-area>
-    </q-layout-drawer>
+    </q-layout-drawer> -->
 
     <q-page-container>
       <!-- This is where pages get injected -->
       <router-view />
-      <polls />
+      <!-- <polls /> -->
     </q-page-container>
 
   </q-layout>
@@ -153,7 +153,7 @@ export default {
     Resources,
     Polls
   },
-  name: 'LayoutBuilder',
+  name: 'LayoutMessage',
   data () {
     return {
       leftDrawer: true,
@@ -170,12 +170,13 @@ export default {
       this.rightDrawer = false
       this.showRightDrawer = val === 'lesson' || val === 'sermon'
     }
+    // TODO: This will need to be edited for NQ users
     // '$root.$children[0].user.nqUser': function (val) {
     //   this.rightDrawer = this.$route.name === 'lesson' && this.$q.platform.is.desktop && val
     // }
   },
   mounted () {
-    console.log('builder $root', this.$root.$children[0].user)
+    // console.log('builder $root', this.$root.$children[0].user)
     window.fcWidget.setConfig({
       headerProperty: {
         hideChatButton: false
@@ -208,6 +209,10 @@ export default {
 
 .menu-item:hover > i, .router-link-active > i {
   color: $primary !important
+}
+
+.drawer {
+  padding: 10px
 }
 
 </style>

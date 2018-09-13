@@ -7,7 +7,7 @@ module.exports = function (ctx) {
       'analytics',
       // 'axios',
       'bible',
-      'database',
+      // 'database',
       'firebase',
       'masonry',
       // 'vuefire',

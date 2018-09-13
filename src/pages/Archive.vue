@@ -8,7 +8,7 @@
       <h6>{{ archive.mainIdea }}</h6>
     </div>
     <div class="col-xs-12 col-md-8">
-      <content-preview :id="id" type="oarchive" />
+      <content-preview :id="id" type="archive" />
     </div>
   </q-page>
 </template>
@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     init () {
-      this.$database.view('oarchive', this.id, (data) => {
+      this.$database.view('archive', this.id, (data) => {
         this.archive = data
         this.readableRefs = data.bibleRefs.map(e => { return this.$bible.readable(e) })
       })

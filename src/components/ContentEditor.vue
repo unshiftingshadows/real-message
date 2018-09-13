@@ -1,28 +1,31 @@
 <template>
   <div>
-    <div class="row gutter-sm">
+    <div v-if="loading">
+      <q-spinner color="primary" class="absolute-center" size="3rem" />
+    </div>
+    <div v-if="!loading" class="row gutter-sm">
       <!-- Before -->
-      <div class="col-12" v-if="structure.before && structure.before.hook.show">
-        <module-section id="hook" :data="structure.before.hook" :content-type="type" :contentid="id" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
+      <div class="col-12" v-if="structure.hook && structure.hook.show">
+        <module-section id="hook" :data="structure.hook" :modules="modules" :onChange="onChangeMod" :content-type="type" :contentid="id" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
       </div>
       <!-- Sections -->
-      <div class="col-12" v-if="sections.length > 0">
-        <draggable :list="sections" @start="drag=true" @change="onSectionDrag" ref="sectionDrag" :options="{ group: 'sections', disabled: $q.platform.is.mobile }">
-          <module-section v-for="section in sections" :key="section['.key']" :id="section['.key']" :data="section" :content-type="type" :contentid="id" :edit="editSection" :remove="removeSection" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
+      <div class="col-12" v-if="document && document.sectionOrder && document.sectionOrder.length > 0 && Object.keys(sections).length > 0">
+        <draggable :list="document.sectionOrder" @start="drag=true" @change="onSectionDrag" ref="sectionDrag" :options="{ group: 'sections', disabled: $q.platform.is.mobile }">
+          <module-section v-for="orderIndex in document.sectionOrder" :key="orderIndex" :id="orderIndex" :data="sections[orderIndex]" :modules="modules" :onChange="onChangeMod" :content-type="type" :contentid="id" :edit="editSection" :remove="removeSection" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
         </draggable>
       </div>
       <add-section :add-section="addSection" :close="closeModule" />
       <!-- Modules -->
-      <div class="col-12" v-if="modules.length > 0">
-        <draggable :list="modules" @start="drag=true" @change="onChangeMod" @add="onAddMod" @remove="onRemoveMod" ref="indModuleDrag" :options="{ group: { name: 'modules', pull: 'clone' }, handle: '.drag-handle', disabled: editingid !== '' || ($q.platform.is.mobile && !$q.platform.is.ipad) }">
+      <!-- <div class="col-12" v-if="modules.length > 0">
+        <draggable :list="modules" @start="drag=true" ref="indModuleDrag" :options="{ group: { name: 'modules', pull: 'clone' }, handle: '.drag-handle', disabled: editingid !== '' || ($q.platform.is.mobile && !$q.platform.is.ipad) }">
           <component v-for="mod in modules" :key="mod['.key']" v-bind:is="'mod-' + mod.type" :id="mod['.key']" :data="mod" class="module-card" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" v-bind:class="{ 'active-card': mod.editing === $firebase.auth.currentUser.uid }" />
         </draggable>
-      </div>
+      </div> -->
       <!-- After -->
       <div class="col-12">
-        <mod-repeated-thought v-if="type === 'rguide'" :seriesid="$route.params.seriesid" :lessonid="$route.params.lessonid" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" />
-        <mod-application v-if="structure.after && structure.after.application.show" id="application" :data="structure.after.application" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.after.application.editing === $firebase.auth.currentUser.uid }" />
-        <mod-prayer v-if="structure.after && structure.after.prayer.show" id="prayer" :data="structure.after.prayer" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.after.prayer.editing === $firebase.auth.currentUser.uid }" />
+        <mod-repeated-thought v-if="type === 'guide'" :seriesid="$route.params.seriesid" :lessonid="$route.params.lessonid" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" />
+        <mod-application v-if="structure.application && structure.application.show" id="application" :data="structure.application" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.application.editing === $firebase.auth.currentUser.uid }" />
+        <mod-prayer v-if="structure.prayer && structure.prayer.show" id="prayer" :data="structure.prayer" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.prayer.editing === $firebase.auth.currentUser.uid }" />
       </div>
     </div>
     <q-modal ref="addNewModule" content-classes="add-module-modal">
@@ -41,7 +44,7 @@
           <q-select
             v-model="sectionChoice"
             float-label="Choose Section to Add Module"
-            :options="sections.map(e => { return { label: e.title, value: e['.key'] } })"
+            :options="Object.keys(sections).map(e => { return { label: sections[e].title, value: sections[e]['.key'] } })"
           />
         </div>
         <div class="col-12">
@@ -56,20 +59,18 @@
 import Draggable from 'vuedraggable'
 import AddModule from 'components/AddModule.vue'
 import AddSection from 'components/AddSection.vue'
-import ModSection from 'components/modules/Section.vue'
-import ModQuote from 'components/modules/Quote.vue'
-import ModText from 'components/modules/Text.vue'
-import ModBible from 'components/modules/Bible.vue'
-import ModActivity from 'components/modules/Activity.vue'
-import ModQuestion from 'components/modules/Question.vue'
-import ModVideo from 'components/modules/Video.vue'
-import ModImage from 'components/modules/Image.vue'
-import ModComposition from 'components/modules/Composition.vue'
-import ModLyric from 'components/modules/Lyric.vue'
-import ModIllustration from 'components/modules/Illustration.vue'
+// import ModQuote from 'components/modules/Quote.vue'
+// import ModText from 'components/modules/Text.vue'
+// import ModBible from 'components/modules/Bible.vue'
+// import ModActivity from 'components/modules/Activity.vue'
+// import ModQuestion from 'components/modules/Question.vue'
+// import ModVideo from 'components/modules/Video.vue'
+// import ModImage from 'components/modules/Image.vue'
+// import ModComposition from 'components/modules/Composition.vue'
+// import ModLyric from 'components/modules/Lyric.vue'
+// import ModIllustration from 'components/modules/Illustration.vue'
 import ModApplication from 'components/modules/Application.vue'
 import ModPrayer from 'components/modules/Prayer.vue'
-import ModRepeatedThought from 'components/modules/RepeatedThought.vue'
 import ModuleSection from 'components/ModuleSection.vue'
 
 export default {
@@ -77,58 +78,51 @@ export default {
     Draggable,
     AddModule,
     AddSection,
-    ModSection,
-    ModQuote,
-    ModText,
-    ModBible,
-    ModActivity,
-    ModQuestion,
-    ModVideo,
-    ModImage,
-    ModComposition,
-    ModLyric,
-    ModIllustration,
+    // ModQuote,
+    // ModText,
+    // ModBible,
+    // ModActivity,
+    // ModQuestion,
+    // ModVideo,
+    // ModImage,
+    // ModComposition,
+    // ModLyric,
+    // ModIllustration,
     ModApplication,
     ModPrayer,
-    ModRepeatedThought,
     ModuleSection
   },
-  // name: 'ComponentName',
+  name: 'ContentEditor',
   props: ['type', 'id'],
+  fiery: true,
   data () {
     return {
+      loading: true,
+      initRun: true,
       drag: false,
       editingid: '',
       editingSection: undefined,
       sectionChoice: '',
       tempModule: false,
-      structure: {
-        before: {
-          hook: {
-            show: false
-          }
-        },
-        after: {
-          application: {
-            show: false
-          },
-          prayer: {
-            show: false
-          }
+      document: this.$fiery(this.$firebase.ref(this.type, '', this.id), {
+        include: ['sectionOrder']
+      }),
+      structure: this.$fiery(this.$firebase.ref(this.type, 'structure', this.id), {
+        map: true
+      }),
+      sections: this.$fiery(this.$firebase.ref(this.type, 'sections', this.id), {
+        map: true
+      }),
+      modules: this.$fiery(this.$firebase.ref(this.type, 'modules', this.id), {
+        map: true,
+        onSuccess: () => {
+          this.loading = false
         }
-      }
+      }),
+      versions: this.$fiery(this.$firebase.ref(this.type, 'versions', this.id, this.$route.params.seriesid, this.$route.params.lessonid))
     }
   },
   watch: {
-    // 'editingid': function (newid, oldid) {
-    //   console.log('old mod', oldid)
-    //   console.log('new mod', newid)
-    //   if (!oldid) {
-    //     console.log('no old id...')
-    //   } else if (!this.deleting) {
-
-    //   }
-    // },
     'tempModule': function (val) {
       console.log('tempModule watch')
       if (val !== false) {
@@ -146,77 +140,18 @@ export default {
       }
     }
   },
-  computed: {
-    nextModOrder: function () {
-      return this.modules.length
-    },
-    nextSectionOrder: function () {
-      return this.sections.length
-    }
-  },
-  firebase () {
-    return {
-      structure: {
-        source: this.$firebase.ref(this.type, 'structure', this.id, this.$route.params.seriesid, this.$route.params.lessonid),
-        asObject: true,
-        readyCallback: function (val) {
-          console.log('structure loaded')
-          this.$emit('modules-init', {
-            before: {
-              hook: this.structure.before.hook.show
-            },
-            after: {
-              application: this.structure.after.application.show,
-              prayer: this.structure.after.prayer.show
-            }
-          })
-        }
-      },
-      sections: {
-        source: this.$firebase.ref(this.type, 'sections', this.id, this.$route.params.seriesid, this.$route.params.lessonid).orderByChild('order'),
-        readyCallback: function (val) {
-          console.log('sections loaded')
-        }
-      },
-      modules: {
-        source: this.$firebase.ref(this.type, 'modules', this.id, this.$route.params.seriesid, this.$route.params.lessonid).orderByChild('order'),
-        readyCallback: function (val) {
-          console.log('modules loaded')
-        }
-      },
-      versions: {
-        source: this.$firebase.ref(this.type, 'versions', this.id, this.$route.params.seriesid, this.$route.params.lessonid),
-        readyCallback: function (val) {
-          console.log('versions loaded')
-        }
-      }
-    }
-  },
   mounted () {
-    this.$root.$children[0].user.$on('add-module', (data, sectionid) => {
+    this.$root.$on('add-module', (data, sectionid) => {
       console.log('section', sectionid)
       this.tempModule = {
         data: data,
         sectionid: sectionid
       }
     })
-    // this.$root.$children[0].user.$on('edit-module', (moduleid, sectionid) => {
-    //   this.startEdit(moduleid, sectionid)
-    // })
-    // this.$root.$children[0].user.$on('save-module', (moduleid, sectionid, data) => {
-    //   this.saveModule(moduleid, sectionid, data)
-    // })
-    // this.$root.$children[0].user.$on('close-module', (moduleid, sectionid) => {
-    //   this.closeModule(moduleid, sectionid)
-    // })
-    // this.$root.$children[0].user.$on('remove-module', (moduleid, sectionid) => {
-    //   this.removeModule(moduleid, sectionid)
-    // })
     this.init()
   },
   methods: {
     init () {
-      console.log('contentEditor mounted')
     },
     editModule (moduleid, sectionid) {
       console.log('edit module', moduleid, sectionid)
@@ -228,59 +163,50 @@ export default {
       this.editingSection = sectionid
       if (sectionid) {
         if (sectionid === 'hook') {
-          this.$firebaseRefs.structure.child('before').child('hook').update({
-            editing: this.$firebase.auth.currentUser.uid
-          })
+          this.structure.hook.editing = this.$firebase.auth.currentUser.uid
+          this.$fiery.update(this.structure.hook, ['editing'])
         } else {
-          this.$firebaseRefs.sections.child(sectionid).update({
-            editing: this.$firebase.auth.currentUser.uid
-          })
+          this.sections[sectionid].editing = this.$firebase.auth.currentUser.uid
+          this.$fiery.update(this.sections[sectionid], ['editing'])
         }
-        this.$firebase.sectionModules(this.type, this.id, sectionid, this.$route.params.seriesid, this.$route.params.lessonid).child(moduleid).update({
-          editing: this.$firebase.auth.currentUser.uid
-        })
+        this.modules[moduleid].editing = this.$firebase.auth.currentUser.uid
+        this.$fiery.update(this.modules[moduleid], ['editing'])
       } else if (moduleid === 'application' || moduleid === 'prayer') {
-        this.$firebaseRefs.structure.child('after').child(moduleid).update({
-          editing: this.$firebase.auth.currentUser.uid
-        })
+        this.structure[moduleid].editing = this.$firebase.auth.currentUser.uid
+        this.$fiery.update(this.structure[moduleid], ['editing'])
       } else {
-        this.$firebaseRefs.modules.child(moduleid).update({
-          editing: this.$firebase.auth.currentUser.uid
-        })
+        this.modules[moduleid].editing = this.$firebase.auth.currentUser.uid
+        this.$fiery.update(this.modules[moduleid], ['editing'])
       }
     },
-    autoSaveModule (moduleid, sectionid, text) {
-      console.log('autosave module', moduleid, sectionid, text)
-      if (sectionid) {
-        this.$firebase.sectionModules(this.type, this.id, sectionid, this.$route.params.seriesid, this.$route.params.lessonid).child(moduleid).update({
-          text: text
-        })
-      } else if (moduleid === 'application' || moduleid === 'prayer') {
-        this.$firebaseRefs.structure.child('after').child(moduleid).update({
-          text: text
-        })
+    autoSaveModule (moduleid, sectionid, text, title) {
+      console.log('autosave module', moduleid, sectionid, text, title)
+      if (moduleid === 'application' || moduleid === 'prayer') {
+        this.structure[moduleid].text = text
+        if (title !== undefined) {
+          this.structure[moduleid].title = title
+        }
+        this.$fiery.update(this.structure[moduleid], ['title', 'text'])
       } else {
-        this.$firebaseRefs.modules.child(moduleid).update({
-          text: text
-        })
+        if (title !== undefined) {
+          this.modules[moduleid].title = title
+        }
+        this.modules[moduleid].text = text
+        this.$fiery.update(this.modules[moduleid], ['title', 'text'])
       }
     },
     saveModule (moduleid, sectionid, data) {
       console.log('save module', moduleid, sectionid, data)
-      var saveData = {...data}
-      saveData.editing = false
-      delete saveData['.key']
-      if (saveData.type === 'text' || saveData.type === 'bible') {
-        saveData.wordcount = this.getWordCount(saveData.text)
-        saveData.time = this.getEstTime(saveData.wordcount)
+      data.editing = false
+      if (data.type === 'text' || data.type === 'bible') {
+        data.wordcount = this.getWordCount(data.text)
+        data.time = this.getEstTime(data.wordcount)
       }
-      console.log('save data', saveData)
-      if (sectionid) {
-        this.$firebase.sectionModules(this.type, this.id, sectionid, this.$route.params.seriesid, this.$route.params.lessonid).child(moduleid).update(saveData)
-      } else if (moduleid === 'application' || moduleid === 'prayer') {
-        this.$firebaseRefs.structure.child('after').child(moduleid).update(saveData)
+      console.log('save data', data)
+      if (moduleid === 'application' || moduleid === 'prayer') {
+        this.$fiery.update(data)
       } else {
-        this.$firebaseRefs.modules.child(moduleid).update(saveData)
+        this.$fiery.update(data)
       }
       this.editingid = ''
     },
@@ -288,41 +214,24 @@ export default {
       console.log('closing', moduleid, sectionid)
       console.log('current', this.editingid, this.editingSection)
       if (moduleid !== undefined && typeof moduleid === 'string') {
-        if (sectionid !== undefined) {
-          this.$firebase.sectionModules(this.type, this.id, sectionid, this.$route.params.seriesid, this.$route.params.lessonid).child(moduleid).update({
-            editing: false
-          })
-        } else if (moduleid === 'application' || moduleid === 'prayer') {
-          this.$firebaseRefs.structure.child('after').child(moduleid).update({
-            editing: false
-          })
+        if (moduleid === 'application' || moduleid === 'prayer') {
+          this.structure[moduleid].editing = false
+          this.$fiery.update(this.structure[moduleid], ['editing'])
         } else {
-          this.$firebaseRefs.modules.child(moduleid).update({
-            editing: false
-          })
+          this.modules[moduleid].editing = false
+          this.$fiery.update(this.modules[moduleid], ['editing'])
         }
       } else if (this.editingid !== '') {
-        if (this.editingSection !== undefined) {
-          this.$firebase.sectionModules(this.type, this.id, this.editingSection, this.$route.params.seriesid, this.$route.params.lessonid).child(this.editingid).update({
-            editing: false
-          }).then(() => {
-            this.editingid = ''
-            this.editingSection = undefined
-          })
-        } else if (this.editingid === 'application' || this.editingid === 'prayer') {
-          this.$firebaseRefs.structure.child('after').child(this.editingid).update({
-            editing: false
-          }).then(() => {
-            this.editingid = ''
-            this.editingSection = undefined
-          })
+        if (this.editingid === 'application' || this.editingid === 'prayer') {
+          this.structure[this.editingid].editing = false
+          this.$fiery.update(this.structure[this.editingid], ['editing'])
+          this.editingid = ''
+          this.editingSection = undefined
         } else {
-          this.$firebaseRefs.modules.child(this.editingid).update({
-            editing: false
-          }).then(() => {
-            this.editingid = ''
-            this.editingSection = undefined
-          })
+          this.modules[this.editingid].editing = false
+          this.$fiery.update(this.modules[this.editingid], ['editing'])
+          this.editingid = ''
+          this.editingSection = undefined
         }
       } else {
         console.log('no current module to close')
@@ -330,121 +239,100 @@ export default {
     },
     removeModule (moduleid, sectionid) {
       console.log('remove module', moduleid, sectionid)
-      if (sectionid) {
-        this.$firebase.sectionModules(this.type, this.id, sectionid, this.$route.params.seriesid, this.$route.params.lessonid).child(moduleid).remove()
-      } else if (moduleid === 'application' || moduleid === 'prayer') {
-        this.$firebaseRefs.structure.child('after').child(moduleid).remove()
-      } else {
-        this.$firebaseRefs.modules.child(moduleid).remove()
+      if (sectionid !== '') {
+        if (sectionid === 'hook') {
+          this.structure.hook.moduleOrder.splice(this.structure.hook.moduleOrder.indexOf(moduleid), 1)
+          this.$fiery.update(this.structure.hook, ['moduleOrder'])
+        } else {
+          this.sections[sectionid].moduleOrder.splice(this.sections[sectionid].moduleOrder.indexOf(moduleid), 1)
+          this.$fiery.update(this.sections[sectionid], ['moduleOrder'])
+        }
       }
+      this.$fiery.remove(this.modules[moduleid])
       this.editingid = ''
     },
     addModule (sectionid) {
+      console.log('adding module', sectionid, this.tempModule.data)
       this.tempModule.data.editing = this.$firebase.auth.currentUser.uid
       if (sectionid) {
-        this.$firebase.sectionModules(this.type, this.id, sectionid, this.$route.params.seriesid, this.$route.params.lessonid).push(this.tempModule.data).then((newMod) => {
+        this.$fires.modules.add(this.tempModule.data).then((newMod) => {
+          console.log('saved')
           this.tempModule = false
-          this.editingid = newMod.key
+          this.editingid = newMod.id
           this.editingSection = sectionid
+          if (sectionid === 'hook') {
+            this.structure.hook.moduleOrder.push(newMod.id)
+            this.$fiery.update(this.structure.hook, ['moduleOrder'])
+          } else {
+            this.sections[sectionid].moduleOrder.push(newMod.id)
+            this.$fiery.update(this.sections[sectionid], ['moduleOrder'])
+          }
         })
       } else {
-        this.tempModule.data.order = this.nextModOrder
-        this.$firebaseRefs.modules.push(this.tempModule.data).then((newMod) => {
-          this.tempModule = false
-          this.editingid = newMod.key
-          this.editingSection = undefined
-        })
+        console.error('cannot add module to unknown section')
       }
     },
     cancelModule () {
       this.tempModule = false
     },
     addSection (title) {
+      console.log('adding section', title)
       var obj = {
         title: title,
         static: false,
-        order: this.nextSectionOrder,
-        editing: false
+        editing: false,
+        moduleOrder: []
       }
-      this.$firebaseRefs.sections.push(obj)
+      this.$fires.sections.add(obj).then((newRef) => {
+        this.document.sectionOrder.push(newRef.id)
+        this.$fiery.update(this.document)
+      })
     },
     editSection (sectionid, updates) {
-      this.$firebaseRefs.sections.child(sectionid).update(updates)
+      console.log('editing section', sectionid, updates, this.sections)
+      for (var update in updates) {
+        this.sections[sectionid][update] = updates[update]
+      }
+      this.$fiery.update(this.sections[sectionid])
     },
     removeSection (sectionid) {
-      this.$firebase.sectionModules(this.type, this.id, sectionid, this.$route.params.seriesid, this.$route.params.lessonid).remove()
-      this.$firebaseRefs.sections.child(sectionid).remove()
-    },
-    getModuleById (moduleid, sectionid) {
-      if (sectionid) {
-        return this.sections.find((element) => {
-          return element['.key'] === sectionid
-        }).modules.find((element) => {
-          return element['.key'] === moduleid
-        })
-      } else {
-        return this.modules.find((element) => {
-          return element['.key'] === moduleid
-        })
-      }
+      // * NOTE: This does not remove all subcollections for some reason...modules still exist, even though structure is gone
+      console.log('remove section', sectionid)
+      // this.$fiery.remove(this.getSectionById(sectionid))
+      this.document.sectionOrder.splice(this.document.sectionOrder.indexOf(sectionid), 1)
+      this.$fiery.update(this.document)
+      this.$fiery.remove(this.sections[sectionid])
     },
     getWordCount (string) {
-      return string.split(' ').length
-    },
-    getEstTime (wordcount) {
-      return Math.ceil(wordcount / this.$root.$children[0].user.prefs.speakingSpeed)
-    },
-    onSectionDrag (val) {
-      this.drag = false
-      if (val.moved) {
-        var updatedMods = {}
-        this.sections.forEach((item, index) => {
-          updatedMods[item['.key']] = {...item}
-          updatedMods[item['.key']].order = index
-          delete updatedMods[item['.key']]['.key']
-        })
-        this.$firebaseRefs.sections.set(updatedMods)
+      if (string !== undefined) {
+        return string.split(' ').length
+      } else {
+        return 0
       }
     },
-    onAddMod (val) {
-      console.log('module added', this.id, val)
-      var newItem = {...this.modules[val.newIndex]}
-      newItem.order = val.newIndex
-      delete newItem['.key']
-      console.log('new item', newItem)
-      this.modules.splice(val.newIndex, 1)
-      console.log('new item', newItem)
-      var updatedMods = {}
-      this.modules.slice(val.newIndex).forEach((item, index) => {
-        console.log('add cycle item')
-        updatedMods[item['.key']] = {...item}
-        updatedMods[item['.key']].order = index + val.newIndex + 1
-        delete updatedMods[item['.key']]['.key']
-      })
-      this.$firebaseRefs.modules.update(updatedMods)
-      this.$firebaseRefs.modules.push(newItem)
+    getEstTime (wordcount) {
+      return Math.ceil(wordcount / 120)
     },
-    onRemoveMod (val) {
-      console.log('module removed', this.id, val)
-      var updatedMods = {}
-      this.modules.forEach((item, index) => {
-        if (index !== val.oldIndex) {
-          updatedMods[item['.key']] = {...item}
-          updatedMods[item['.key']].order = index
-          delete updatedMods[item['.key']]['.key']
-        }
-      })
-      this.$firebaseRefs.modules.set(updatedMods)
-    },
-    onChangeMod (val) {
+    onSectionDrag (val) {
+      console.log('section drag', val)
+      this.drag = false
       if (val.moved) {
-        var updatedMods = {}
-        this.modules.forEach((item, index) => {
-          updatedMods[item['.key']] = {...item}
-          updatedMods[item['.key']].order = index
-          delete updatedMods[item['.key']]['.key']
+        console.log('moved')
+        this.$fiery.update(this.document, ['sectionOrder']).then(() => {
+          console.log('saved')
         })
-        this.$firebaseRefs.modules.set(updatedMods)
+      }
+    },
+    onChangeMod (val, sectionid) {
+      console.log('module changed', val)
+      if (sectionid === 'hook') {
+        this.$fiery.update(this.structure.hook, ['moduleOrder']).then(() => {
+          console.log('saved')
+        })
+      } else {
+        this.$fiery.update(this.sections[sectionid], ['moduleOrder']).then(() => {
+          console.log('saved')
+        })
       }
     }
   }
@@ -457,9 +345,9 @@ export default {
   margin-bottom: 20px;
 }
 
-/* .section-card {
-  margin-bottom: 20px;
-} */
+.section-card {
+  margin-bottom: 10px;
+}
 
 .add-module-modal {
   padding: 20px;

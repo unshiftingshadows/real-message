@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import PreviewSection from 'components/preview/Section.vue'
 import PreviewQuote from 'components/preview/Quote.vue'
 import PreviewText from 'components/preview/Text.vue'
 import PreviewBible from 'components/preview/Bible.vue'
@@ -37,11 +36,9 @@ import PreviewLyric from 'components/preview/Lyric.vue'
 import PreviewIllustration from 'components/preview/Illustration.vue'
 import PreviewApplication from 'components/preview/Application.vue'
 import PreviewPrayer from 'components/preview/Prayer.vue'
-import PreviewRepeatedThought from 'components/preview/RepeatedThought.vue'
 
 export default {
   components: {
-    PreviewSection,
     PreviewQuote,
     PreviewText,
     PreviewBible,
@@ -53,8 +50,7 @@ export default {
     PreviewLyric,
     PreviewIllustration,
     PreviewApplication,
-    PreviewPrayer,
-    PreviewRepeatedThought
+    PreviewPrayer
   },
   // name: 'ComponentName',
   props: ['type', 'id'],

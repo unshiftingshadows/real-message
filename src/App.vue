@@ -41,59 +41,78 @@ FastClick.notNeeded = true
 import { required, minLength, sameAs } from 'vuelidate/lib/validators'
 
 var initUser = {
-  newUser: true,
-  nqUser: false,
-  realUser: false,
-  supportRestore: '',
-  theme: '',
   name: {
     first: '',
     last: ''
   },
   email: '',
-  prefs: {
-    bibleTranslation: 'esv',
-    osermonStructure: {
-      hook: true,
-      application: true,
-      prayer: true
+  churchid: false,
+  churchRoles: {},
+  newUser: true,
+  nqUser: false,
+  app: {
+    prefs: {
+      theme: 'light'
     },
-    olessonStructure: {
-      hook: true,
-      application: true,
-      prayer: true
+    lastPage: {
+      host: '',
+      path: ''
     },
-    contentType: {
-      sermon: true,
-      lesson: true,
-      scratch: true
-    },
-    mediaType: {
-      quote: true,
-      image: true,
-      illustration: true,
-      lyric: true,
-      video: true
+    message: {
+      prefs: {
+        contentType: {
+          lesson: true,
+          scratch: true,
+          sermon: true
+        },
+        mediaType: {
+          illustration: true,
+          image: true,
+          lyric: false,
+          quote: true,
+          video: true
+        },
+        osermonStructure: {
+          hook: true,
+          application: true,
+          prayer: true
+        },
+        olessonStructure: {
+          hook: true,
+          application: true,
+          prayer: true
+        },
+        structureNames: {
+          application: 'Application',
+          hook: 'Hook',
+          prayer: 'Prayer'
+        },
+        speakingSpeed: 120
+      },
+      stats: {
+        numsermon: 0,
+        numlesson: 0,
+        numscratch: 0,
+        numarchive: 0,
+        numquote: 0,
+        numimage: 0,
+        numvideo: 0,
+        numlyric: 0,
+        numillustration: 0
+      }
     }
   },
-  stats: {
-    lastPagePath: '',
-    numSermon: 0,
-    numLesson: 0,
-    numScratch: 0,
-    numArchive: 0,
-    numQuote: 0,
-    numImage: 0,
-    numVideo: 0,
-    numLyric: 0,
-    numIllustration: 0
-  }
+  supportRestore: '',
+  realUser: false,
+  realRoles: {}
 }
 
 export default {
   name: 'App',
+  fiery: true,
   data () {
     return {
+      loading: true,
       user: initUser,
       dim: false,
       showNewUser: false,
@@ -117,7 +136,7 @@ export default {
     'user': function (val) {
       console.log('user changed!', val, this.$firebase.auth.currentUser)
     },
-    'user.theme': function (val) {
+    'user.app.prefs.theme': function (val) {
       if (val === undefined) return
       switch (val) {
         case 'dark':
@@ -147,7 +166,10 @@ export default {
     '$route': function (val) {
       if (this.$firebase.user()) {
         this.$firebase.user().update({
-          'stats.lastPagePath': val.path
+          'app.lastPage': {
+            path: val.path,
+            host: 'message'
+          }
         })
       }
     }
@@ -163,33 +185,41 @@ export default {
           console.log('no user')
           this.user.theme = 'light'
           window.fcWidget.init({
-            token: '55c46336-2b5d-490b-b528-54f45f5b97b5',
+            token: '2f1c0fee-afb7-41e3-afd3-132b4330cd55',
             host: 'https://wchat.freshchat.com',
-            tags: ['builder']
+            tags: ['message'],
+            siteId: 'message'
           })
         } else {
           console.log('currentuser', user)
-          this.$binding('user', this.$firebase.user()).then((userSnap) => {
-            console.log('logged user', userSnap)
-            window.fcWidget.init({
-              token: '55c46336-2b5d-490b-b528-54f45f5b97b5',
-              host: 'https://wchat.freshchat.com',
-              tags: ['builder'],
-              externalId: userSnap.uid,
-              restoreId: this.user.supportRestore,
-              firstName: this.user.name.first,
-              lastName: this.user.name.last,
-              email: userSnap.email,
-              phone: userSnap.phone
-            })
-            window.fcWidget.on('user:created', (resp) => {
-              console.log('user created', resp)
-              if (resp.status === 200) {
-                this.$firebase.user().update({
-                  supportRestore: resp.data.restoreId
+          this.$ga.set('userId', user.uid)
+          this.user = this.$fiery(this.$firebase.user(), {
+            onSuccess: (userSnap) => {
+              if (this.loading) {
+                console.log('logged user', userSnap)
+                window.fcWidget.init({
+                  token: '2f1c0fee-afb7-41e3-afd3-132b4330cd55',
+                  host: 'https://wchat.freshchat.com',
+                  tags: ['message'],
+                  siteId: 'message',
+                  externalId: userSnap.uid,
+                  restoreId: userSnap.supportRestore.message,
+                  firstName: userSnap.name.first,
+                  lastName: userSnap.name.last,
+                  email: userSnap.email,
+                  phone: userSnap.phone
                 })
+                window.fcWidget.on('user:created', (resp) => {
+                  console.log('user created', resp)
+                  if (resp.status === 200) {
+                    this.$firebase.user().update({
+                      'supportRestore.message': resp.data.restoreId
+                    })
+                  }
+                })
+                this.loading = false
               }
-            })
+            }
           })
         }
       })

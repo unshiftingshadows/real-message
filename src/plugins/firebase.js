@@ -1,19 +1,31 @@
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import 'firebase/database'
+// import 'firebase/database'
 import 'firebase/firestore'
+import 'firebase/storage'
 // import VueFire from 'vuefire'
 // import VueFirestore from 'vue-firestore'
 import FieryVue from 'fiery-vue'
 
-const fbapp = firebase.initializeApp({
+const devSettings = {
+  apiKey: 'AIzaSyAjXGlux1zLL4QfEi4an2-KkIT4F6HxtMc',
+  authDomain: 'real-dev-7b60c.firebaseapp.com',
+  databaseURL: 'https://real-dev-7b60c.firebaseio.com',
+  projectId: 'real-dev-7b60c',
+  storageBucket: 'real-dev-7b60c.appspot.com',
+  messagingSenderId: '945338183181'
+}
+
+const prodSettings = {
   apiKey: 'AIzaSyCAsGVxjcBRsSNlQsymRnzWQAAYqphmmVU',
   authDomain: 'real-45953.firebaseapp.com',
   databaseURL: 'https://real-45953.firebaseio.com',
   projectId: 'real-45953',
   storageBucket: 'real-45953.appspot.com',
   messagingSenderId: '231971009763'
-})
+}
+
+const fbapp = firebase.initializeApp(process.env.DEV ? devSettings : prodSettings)
 
 const firestore = fbapp.firestore()
 const settings = {
@@ -21,30 +33,27 @@ const settings = {
 }
 firestore.settings(settings)
 
-function dbref (type, selection, id, seriesid, lessonid) {
+function dbref (type, selection, id) {
   console.log('run dbref')
-  if (type !== 'series') {
-    return fbapp.database().ref('message/' + type + 's/' + id + '/' + selection)
+  if (selection !== '') {
+    console.log('ref collection')
+    return firestore.collection(`message${type.charAt(0).toUpperCase()}${type.substr(1)}/${id}/${selection}`)
   } else {
-    return fbapp.database().ref('message/' + type + '/' + id + '/' + selection)
+    return firestore.doc(`message${type.charAt(0).toUpperCase()}${type.substr(1)}/${id}`)
   }
 }
 
-function sectionModules (type, id, sectionid, seriesid, lessonid) {
-  if (type !== 'series') {
-    return fbapp.database().ref('message/' + type + 's/' + id + '/sectionModules/' + sectionid)
-  } else {
-    return fbapp.database().ref('message/' + type + '/' + id + '/sectionModules/' + sectionid)
-  }
+function listRef (type) {
+  return firestore.collection(`message${type.charAt(0).toUpperCase()}${type.substr(1)}`)
 }
 
 function user (uid) {
   if (uid) {
     console.log('valid uid', uid)
-    return fbapp.firestore().collection('users').doc(uid)
+    return fbapp.firestore().collection('user').doc(uid)
   } else {
     if (fbapp.auth().currentUser) {
-      return fbapp.firestore().collection('users').doc(fbapp.auth().currentUser.uid)
+      return fbapp.firestore().collection('user').doc(fbapp.auth().currentUser.uid)
     } else {
       return false
     }
@@ -59,11 +68,13 @@ export default ({ app, router, Vue }) => {
   Vue.prototype.$firebase = {
     emailCred: firebase.auth.EmailAuthProvider.credential,
     auth: fbapp.auth(),
-    db: fbapp.database(),
+    // db: fbapp.database(),
     store: firestore,
     ref: dbref,
+    list: listRef,
     user: user,
-    imagesRef: fbapp.storage().ref('images'),
-    sectionModules: sectionModules
+    imagesRef: fbapp.storage().ref('images')
+    // modules: modules,
+    // sections: sections
   }
 }

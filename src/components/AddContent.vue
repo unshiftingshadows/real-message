@@ -17,10 +17,10 @@
           <q-input type="text" float-label="Title" v-model="title" @blur="$v.title.$touch" />
         </q-field>
       </div>
-      <div class="col-12" v-if="type === 'osermon' || type === 'olesson'">
+      <div class="col-12" v-if="type === 'sermon' || type === 'lesson'">
         <h5>Choose a template...</h5>
       </div>
-      <div class="col-xs-12 col-md-6" v-if="type === 'osermon' || type === 'olesson'">
+      <div class="col-xs-12 col-md-6" v-if="type === 'sermon' || type === 'lesson'">
         <q-card>
           <q-card-title>Expositional</q-card-title>
           <q-card-main>
@@ -32,7 +32,7 @@
           </q-card-main>
         </q-card>
       </div>
-      <div class="col-xs-12 col-md-6" v-if="type === 'osermon' || type === 'olesson'">
+      <div class="col-xs-12 col-md-6" v-if="type === 'sermon' || type === 'lesson'">
         <q-card>
           <q-card-title>3-Point</q-card-title>
           <q-card-main>
@@ -42,7 +42,7 @@
         </q-card>
       </div>
       <div class="col-12">
-        <h5 v-if="type === 'osermon' || type === 'olesson'">...Or start from scratch</h5>
+        <h5 v-if="type === 'sermon' || type === 'lesson'">...Or start from scratch</h5>
         <q-btn color="primary" class="float-right" @click.native="add('blank')">Add Blank {{ readableType }}</q-btn>
       </div>
     </div>
@@ -61,7 +61,7 @@ export default {
     return {
       showAddContent: false,
       title: '',
-      types: ['rseries', 'oseries', 'olesson', 'osermon', 'oscratch'],
+      types: ['series', 'lesson', 'sermon', 'scratch'],
       bibleRef: ''
     }
   },
@@ -77,7 +77,7 @@ export default {
   },
   computed: {
     readableType: function () {
-      return capitalize(this.type.slice(1))
+      return capitalize(this.type)
     }
   },
   mounted () {
@@ -86,6 +86,7 @@ export default {
   methods: {
     init () {
       this.title = ''
+      console.log(this.$root.$children[0].user.app.message.prefs[this.type + 'Structure'])
     },
     add (template) {
       this.$v.title.$touch()
@@ -96,10 +97,12 @@ export default {
       if (this.types.includes(this.type)) {
         var obj = {
           title: this.title,
-          template: template,
-          prefs: this.$root.$children[0].user.prefs[this.type + 'Structure']
+          createdBy: this.$firebase.auth.currentUser.uid,
+          prefs: this.$root.$children[0].user.app.message.prefs[this.type + 'Structure'],
+          template: template || ''
         }
-        this.$database.add(this.type, obj, (res) => {
+        console.log(obj)
+        this.$firebase.list(this.type).add(obj).then((res) => {
           // GA - Add content event
           this.$ga.event('content', 'add', this.type)
           this.showAddContent = false
@@ -109,12 +112,24 @@ export default {
             position: 'bottom-left'
           })
           console.log('add content', res, this.type)
-          if (this.type === 'rseries') {
-            this.$router.push({ name: this.type, params: { seriesid: res._id } })
-          } else {
-            this.$router.push({ name: this.type, params: { id: res._id } })
-          }
+          this.$router.push({ name: this.type, params: { id: res.id } })
         })
+        // this.$database.add(this.type, obj, (res) => {
+        //   // GA - Add content event
+        //   this.$ga.event('content', 'add', this.type)
+        //   this.showAddContent = false
+        //   Notify.create({
+        //     message: this.readableType + ' created!',
+        //     type: 'positive',
+        //     position: 'bottom-left'
+        //   })
+        //   console.log('add content', res, this.type)
+        //   if (this.type === 'rseries') {
+        //     this.$router.push({ name: this.type, params: { seriesid: res._id } })
+        //   } else {
+        //     this.$router.push({ name: this.type, params: { id: res._id } })
+        //   }
+        // })
       }
     },
     show () {

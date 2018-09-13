@@ -18,11 +18,10 @@
       <div class="col-xs-12 col-md-6">
         <q-chips-input v-model="sermon.tags" float-label="Tags" @blur="update" />
       </div>
-      <!-- <div class="col-12">
-        <bible-passage-list :passages="bibleRefs" />
-      </div> -->
-      <div class="col-12">
-        <!-- <module-list type="sermon" :id="id" @modules-init="modulesInit" /> -->
+      <div v-if="!sermon.sectionOrder">
+        <q-spinner color="primary" class="absolute-center" size="3rem" />
+      </div>
+      <div class="col-12" v-if="sermon.sectionOrder">
         <content-editor :key="id" :id="id" type="sermon" @modules-init="modulesInit" />
       </div>
     </div>
@@ -110,7 +109,7 @@
           </q-popover>
         </q-btn>
       </q-toolbar>
-      <div class="bg-faded main-idea-tab float-right" v-bind:class="{ 'main-idea-show': showMainIdea }">
+      <div class="main-idea-tab float-right" v-bind:class="{ 'main-idea-show': showMainIdea }">
         {{ sermon.mainIdea }}
       </div>
     </q-page-sticky>
@@ -120,26 +119,24 @@
 
 <script>
 import { Notify } from 'quasar'
-// import BiblePassageList from 'components/BiblePassageList.vue'
-// import ModuleList from 'components/ModuleList.vue'
 import ContentEditor from 'components/ContentEditor.vue'
 import ContentPreview from 'components/ContentPreview.vue'
 
 export default {
   components: {
-    // BiblePassageList,
-    // ModuleList,
     ContentEditor,
     ContentPreview
   },
-  // name: 'PageName',
+  name: 'Sermon',
+  fiery: true,
   data () {
     return {
       id: this.$route.params.id,
-      sermon: {
-        tags: [],
-        bibleRefs: []
-      },
+      sermon: this.$fiery(this.$firebase.ref('sermon', '', this.$route.params.id), {
+        onSuccess: (sermon) => {
+          this.readableRefs = sermon.bibleRefs.map(e => { return this.$bible.readable(e) })
+        }
+      }),
       seriesName: '',
       readableRefs: [],
       editTitle: false,
@@ -174,10 +171,6 @@ export default {
   },
   methods: {
     init () {
-      this.$database.view('sermon', this.id, (data) => {
-        this.sermon = data
-        this.readableRefs = data.bibleRefs.map(e => { return this.$bible.readable(e) })
-      })
     },
     modulesInit (structure) {
       this.updating = true
@@ -188,18 +181,6 @@ export default {
       this.sermon.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
-    search (terms, done) {
-      var obj = {
-        title: terms
-      }
-      var options = {
-        autocomplete: true,
-        data: false
-      }
-      this.$database.search('oseries', obj, options, (res) => {
-        done(res)
-      })
-    },
     selected (item) {
       this.seriesName = item.label
       this.sermon.seriesID = item.value
@@ -209,15 +190,7 @@ export default {
       // Call update function from database
       console.log('update!')
       this.editTitle = false
-      var obj = {
-        title: this.sermon.title,
-        mainIdea: this.sermon.mainIdea,
-        bibleRefs: this.sermon.bibleRefs,
-        tags: this.sermon.tags,
-        seriesID: this.sermon.seriesID
-      }
-      this.$database.update('sermon', this.id, obj, (res) => {
-        console.log(res)
+      this.$fiery.update(this.sermon).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Sermon Updated!',
@@ -230,7 +203,7 @@ export default {
       this.archiveConfirmation = false
       this.$database.archive('sermon', this.id, (res) => {
         console.log(res)
-        this.$router.push({ name: 'olist', params: { type: 'sermon' } })
+        this.$router.push({ name: 'list', params: { type: 'sermon' } })
       })
     },
     userHasScrolled (scroll) {

@@ -75,7 +75,7 @@ export default {
           }
         }
       ]
-      if (this.contentType === 'olesson') {
+      if (this.contentType === 'lesson') {
         actions.push({
           label: 'Activity',
           color: 'primary',
@@ -198,7 +198,7 @@ export default {
         // } else {
         //   this.edit(newRef.key, this.sectionid)
         // }
-        this.$root.$children[0].user.$emit('add-module', obj, this.sectionid)
+        this.$root.$emit('add-module', obj, this.sectionid)
       } else {
         console.error('Invalid new module type')
       }

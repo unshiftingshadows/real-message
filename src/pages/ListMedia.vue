@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <h3>{{ capitalizeTitle(type) }} <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="$refs.addMedia.show()" /></h3>
+    <h3>{{ capitalizeTitle(type) }}s <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="$refs.addMedia.show()" /></h3>
     <div v-if="loading">
       <q-spinner color="primary" class="absolute-center" size="3rem" />
     </div>
@@ -8,7 +8,7 @@
       <div v-masonry transition-duration="0.3s" item-selectior=".media-item">
         <q-card inline v-masonry-tile v-for="item in items" :key="item._id" class="media-card media-item" @click.native="openItem(item._id, item)">
           <q-card-media v-if="type === 'image' || type === 'video'">
-            <img :src="item.thumbURL" />
+            <img v-if="item.thumbURL" :src="item.thumbURL" />
             <q-card-title slot="overlay" v-if="type === 'video'">{{ item.title }}</q-card-title>
           </q-card-media>
           <q-card-title v-if="type === 'lyric' || type === 'illustration'">{{ item.title }}</q-card-title>
@@ -44,7 +44,8 @@ export default {
     MediaLyric,
     MediaVideo
   },
-  // name: 'PageName',
+  name: 'ListMedia',
+  fiery: true,
   data () {
     return {
       mediaTypes: ['quote', 'image', 'illustration', 'lyric', 'video'],
@@ -62,32 +63,32 @@ export default {
   watch: {
     '$route.params.type' (newType, oldType) {
       this.type = newType
+      this.$fiery.free(this.items)
       this.init(newType)
     }
   },
   methods: {
     init (type) {
+      console.log('init list', type)
       this.loading = true
-      this.items = []
-      this.$database.list(type, (data) => {
-        console.log('data', data, this)
-        if (this.type === 'image') {
-          data.forEach((image) => {
-            if (image.service === 'upload') {
-              this.$firebase.imagesRef.child(image._id).getDownloadURL().then((url) => {
-                image.thumbURL = url
-                image.imageURL = url
-                image.pageURL = url
-                this.items.push(image)
-              })
-            } else {
-              this.items.push(image)
-            }
-          })
-        } else {
-          this.items = data
+      this.items = this.$fiery(this.$firebase.list(type), {
+        query: (list) => list.where('users', 'array-contains', this.$firebase.auth.currentUser.uid),
+        key: '_id',
+        exclude: ['_id'],
+        onSuccess: (list) => {
+          if (type === 'image') {
+            list.forEach((image) => {
+              if (image.service === 'upload') {
+                this.$firebase.imagesRef.child(image._id).getDownloadURL().then((url) => {
+                  image.thumbURL = url
+                  image.imageURL = url
+                  image.pageURL = url
+                })
+              }
+            })
+          }
+          this.loading = false
         }
-        this.loading = false
       })
     },
     openItem (id, item) {

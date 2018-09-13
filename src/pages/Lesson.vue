@@ -18,7 +18,10 @@
       <div class="col-xs-12 col-md-6">
         <q-chips-input v-model="lesson.tags" float-label="Tags" @blur="update" />
       </div>
-      <div class="col-12">
+      <div v-if="!lesson.sectionOrder">
+        <q-spinner color="primary" class="absolute-center" size="3rem" />
+      </div>
+      <div class="col-12" v-if="lesson.sectionOrder">
         <content-editor :key="id" :id="id" type="lesson" @modules-init="modulesInit" />
       </div>
     </div>
@@ -106,7 +109,7 @@
           </q-popover>
         </q-btn>
       </q-toolbar>
-      <div class="bg-faded main-idea-tab float-right" v-bind:class="{ 'main-idea-show': showMainIdea }">
+      <div class="main-idea-tab float-right" v-bind:class="{ 'main-idea-show': showMainIdea }">
         {{ lesson.mainIdea }}
       </div>
     </q-page-sticky>
@@ -124,14 +127,16 @@ export default {
     ContentEditor,
     ContentPreview
   },
-  name: 'OLesson',
+  name: 'Lesson',
+  fiery: true,
   data () {
     return {
       id: this.$route.params.id,
-      lesson: {
-        tags: [],
-        bibleRefs: []
-      },
+      lesson: this.$fiery(this.$firebase.ref('lesson', '', this.$route.params.id), {
+        onSuccess: (lesson) => {
+          this.readableRefs = lesson.bibleRefs.map(e => { return this.$bible.readable(e) })
+        }
+      }),
       seriesName: '',
       readableRefs: [],
       editTitle: false,
@@ -166,10 +171,6 @@ export default {
   },
   methods: {
     init () {
-      this.$database.view('lesson', this.id, (data) => {
-        this.lesson = data
-        this.readableRefs = data.bibleRefs.map(e => { return this.$bible.readable(e) })
-      })
     },
     modulesInit (structure) {
       this.updating = true
@@ -180,18 +181,6 @@ export default {
       this.lesson.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
-    search (terms, done) {
-      var obj = {
-        title: terms
-      }
-      var options = {
-        autocomplete: true,
-        data: false
-      }
-      this.$database.search('oseries', obj, options, (res) => {
-        done(res)
-      })
-    },
     selected (item) {
       this.seriesName = item.label
       this.lesson.seriesID = item.value
@@ -201,15 +190,7 @@ export default {
       // Call update function from database
       console.log('update!')
       this.editTitle = false
-      var obj = {
-        title: this.lesson.title,
-        mainIdea: this.lesson.mainIdea,
-        bibleRefs: this.lesson.bibleRefs,
-        tags: this.lesson.tags,
-        seriesID: this.lesson.seriesID
-      }
-      this.$database.update('lesson', this.id, obj, (res) => {
-        console.log(res)
+      this.$fiery.update(this.lesson).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Lesson Updated!',
@@ -222,7 +203,7 @@ export default {
       this.archiveConfirmation = false
       this.$database.archive('lesson', this.id, (res) => {
         console.log(res)
-        this.$router.push({ name: 'olist', params: { type: 'lesson' } })
+        this.$router.push({ name: 'list', params: { type: 'lesson' } })
       })
     },
     userHasScrolled (scroll) {

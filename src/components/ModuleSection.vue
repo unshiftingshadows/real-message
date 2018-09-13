@@ -16,9 +16,9 @@
         {{ id === 'hook' ? 'Hook' : data.title }}
       </h5>
     </q-card-title>
-    <div class="row gutter-sm" style="padding-left: 10px; padding-right: 10px;" v-if="open">
-      <div class="col-12">
-        <draggable style="min-height: 20px;" :list="modules" @start="drag=true" @change="onChange" @add="onAdd" @remove="onRemove" ref="secModuleDrag" :options="{ group: { name: 'modules', pull: 'clone' }, ghostClass: 'sortable-ghost', handle: '.drag-handle', disabled: disabled || ($q.platform.is.mobile && !$q.platform.is.ipad) }">
+    <div class="row gutter-sm" style="padding-left: 10px; padding-right: 10px;" v-if="open && data.moduleOrder">
+      <div class="col-12" v-if="modules && data.moduleOrder">
+        <draggable style="min-height: 20px;" :list="data.moduleOrder" @change="changeMod" ref="secModuleDrag" :options="{ group: { name: 'modules', pull: true, put: true }, ghostClass: 'sortable-ghost', handle: '.drag-handle', disabled: disabled || ($q.platform.is.mobile && !$q.platform.is.ipad) }">
           <component v-for="mod in modules" :key="mod['.key']" v-bind:is="'mod-' + mod.type" :id="mod['.key']" :data="mod" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': mod.editing === $firebase.auth.currentUser.uid }" />
         </draggable>
       </div>
@@ -80,30 +80,25 @@ export default {
     ModLyric,
     ModIllustration
   },
-  // name: 'ComponentName',
-  props: ['id', 'data', 'edit', 'remove', 'disabled', 'contentType', 'contentid'],
+  name: 'ModuleSection',
+  props: ['id', 'data', 'modules', 'edit', 'remove', 'disabled', 'contentType', 'contentid', 'onChange'],
+  fiery: true,
   data () {
     return {
       drag: false,
       editTitle: false,
       newTitle: '',
-      open: true
-    }
-  },
-  firebase () {
-    return {
-      'modules': {
-        source: this.$firebase.sectionModules(this.contentType, this.contentid, this.id, this.$route.params.seriesid, this.$route.params.lessonid).orderByChild('order'),
-        readyCallback: function (val) {
-          console.log('section modules loaded')
-          this.modules.forEach((mod) => {
-            if (mod.editing === this.$firebase.auth.currentUser.uid) {
-              console.log('closed previously open module', mod['.key'])
-              this.closeModule(mod['.key'])
-            }
-          })
-        }
-      }
+      open: true,
+      contentTypes: [ 'text', 'bible', 'activity', 'question' ],
+      mediaTypes: [ 'quote', 'video', 'image', 'illustration', 'composition', 'outline', 'idea' ],
+      methods: {
+        edit: (moduleid) => { this.$emit('edit', moduleid, this.id) },
+        save: (moduleid, data) => { this.$emit('save', moduleid, this.id, data) },
+        autosave: (moduleid, text) => { this.$emit('autosave', moduleid, this.id, text) },
+        close: (moduleid) => { this.$emit('close', moduleid, this.id) },
+        remove: (moduleid) => { this.$emit('remove', moduleid, this.id) }
+      },
+      options: {}
     }
   },
   computed: {
@@ -139,49 +134,14 @@ export default {
     removeModule (moduleid) {
       this.$emit('remove', moduleid, this.id)
     },
-    onAdd (val) {
-      console.log('module added', this.id, val)
-      var newItem = {...this.modules[val.newIndex]}
-      newItem.order = val.newIndex
-      delete newItem['.key']
-      console.log('new item', newItem)
-      this.modules.splice(val.newIndex, 1)
-      console.log('new item', newItem)
-      var updatedMods = {}
-      this.modules.slice(val.newIndex).forEach((item, index) => {
-        console.log('add cycle item')
-        updatedMods[item['.key']] = {...item}
-        updatedMods[item['.key']].order = index + val.newIndex + 1
-        delete updatedMods[item['.key']]['.key']
-      })
-      this.$firebaseRefs.modules.update(updatedMods)
-      this.$firebaseRefs.modules.push(newItem)
+    changeMod (val) {
+      this.onChange(val, this.id)
     },
-    onRemove (val) {
-      console.log('module removed', this.id, val)
-      var updatedMods = {}
-      this.modules.forEach((item, index) => {
-        if (index !== val.oldIndex) {
-          updatedMods[item['.key']] = {...item}
-          updatedMods[item['.key']].order = index
-          delete updatedMods[item['.key']]['.key']
-        }
-      })
-      this.$firebaseRefs.modules.set(updatedMods)
-    },
-    onChange (val) {
-      if (val.moved) {
-        var updatedMods = {}
-        this.modules.forEach((item, index) => {
-          updatedMods[item['.key']] = {...item}
-          updatedMods[item['.key']].order = index
-          delete updatedMods[item['.key']]['.key']
-        })
-        this.$firebaseRefs.modules.set(updatedMods)
-      }
+    addMod (type) {
+      console.log('add mod', type)
     },
     reorder () {
-      console.log('module list', this.modules)
+      console.log('module list', this.data.modules)
     }
   }
 }
