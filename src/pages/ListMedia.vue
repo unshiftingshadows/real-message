@@ -6,7 +6,7 @@
     </div>
     <div v-if="!loading && mediaTypes.includes(type)">
       <div v-masonry transition-duration="0.3s" item-selectior=".media-item">
-        <q-card inline v-masonry-tile v-for="item in items" :key="item._id" class="media-card media-item" @click.native="openItem(item._id, item)">
+        <q-card inline v-masonry-tile v-for="item in items" :key="item.id" class="media-card media-item" @click.native="openItem(item.id, item)">
           <q-card-media v-if="type === 'image' || type === 'video'">
             <img v-if="item.thumbURL" :src="item.thumbURL" />
             <q-card-title slot="overlay" v-if="type === 'video'">{{ item.title }}</q-card-title>
@@ -18,7 +18,7 @@
         </q-card>
       </div>
     </div>
-    <add-media :type="type" ref="addMedia" v-if="mediaTypes.includes(type)" :add-new="addNewMedia" />
+    <add-media :type="type" ref="addMedia" v-if="mediaTypes.includes(type)" :refresh="init" />
     <q-modal ref="showMediaModal" v-model="showMedia" content-classes="add-media-modal" v-if="mediaTypes.includes(type)">
       <component v-bind:is="'media-' + type" :data="openMedia" :open="showMedia" :close="closeMedia" @hide="closeMedia" v-if="showMedia" />
     </q-modal>
@@ -72,14 +72,17 @@ export default {
       console.log('init list', type)
       this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
-        query: (list) => list.where('users', 'array-contains', this.$firebase.auth.currentUser.uid),
-        key: '_id',
-        exclude: ['_id'],
+        // once: true,
+        query: (list) => list.where('user', '==', this.$firebase.auth.currentUser.uid).orderBy('dateAdded', 'desc'),
+        key: 'id',
+        exclude: ['id'],
         onSuccess: (list) => {
+          console.log('success', list, this.$fires)
+          // this.items.sort((a, b) => { return b.dateAdded.seconds - a.dateAdded.seconds })
           if (type === 'image') {
             list.forEach((image) => {
               if (image.service === 'upload') {
-                this.$firebase.imagesRef.child(image._id).getDownloadURL().then((url) => {
+                this.$firebase.imagesRef.child(image.id).getDownloadURL().then((url) => {
                   image.thumbURL = url
                   image.imageURL = url
                   image.pageURL = url
@@ -99,9 +102,6 @@ export default {
         this.openMedia = item
         this.showMedia = true
       }
-    },
-    addNewMedia (newItem) {
-      this.items.push(newItem)
     },
     closeMedia () {
       console.log('close media')

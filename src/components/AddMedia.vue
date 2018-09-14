@@ -2,7 +2,7 @@
   <q-modal ref="addMediaModal" v-model="showAddMedia" content-classes="add-media-modal">
     <q-btn
       color="primary"
-      @click.native="showAddMedia = false"
+      @click.native="showAddMedia = false; init();"
       icon="fas fa-times"
       class="float-right"
       size="sm"
@@ -69,8 +69,18 @@ export default {
   components: {
     FilePond
   },
-  props: ['type', 'addNew'],
-  // name: 'ComponentName',
+  props: {
+    type: {
+      type: String,
+      required: true
+    },
+    refresh: {
+      type: Function,
+      required: true
+    }
+  },
+  fiery: true,
+  name: 'AddMedia',
   data () {
     return {
       loading: false,
@@ -100,10 +110,11 @@ export default {
         process: (fieldName, file, metadata, load, error, progress, abort) => {
           // Should do custom file upload or local storing here
           this.loading = true
-          this.$database.add('image', { service: 'upload' }, (res) => {
+          this.$firebase.list(this.type).add({ service: 'upload', user: this.$firebase.auth.currentUser.uid }).then((res) => {
+          // this.$database.add('image', { service: 'upload' }, (res) => {
             // GA - Add image media event
             this.$ga.event('media', 'add', 'image-upload')
-            var uploadProcess = this.$firebase.imagesRef.child(res._id).put(file)
+            var uploadProcess = this.$firebase.imagesRef.child(res.id).put(file)
             uploadProcess.on('state_changed', (snapshot) => {
               progress(true, snapshot.bytesTransferred, snapshot.totalBytes)
             }, (err) => {
@@ -111,12 +122,9 @@ export default {
             }, () => {
               load(uploadProcess.snapshot.ref.name)
               uploadProcess.snapshot.ref.getDownloadURL().then((url) => {
-                res.thumbURL = url
-                res.imageURL = url
-                res.pageURL = url
+                this.refresh(this.type)
                 this.showAddMedia = false
-                this.loading = false
-                this.addNew(res)
+                this.init()
               })
             })
           })
@@ -156,19 +164,29 @@ export default {
   },
   methods: {
     init () {
-      this.text = ''
+      this.loading = false
+      this.quoteText = ''
+      this.illustrationTitle = ''
+      this.lyricTitle = ''
+      this.videoURL = ''
+      this.imageType = ''
+      this.imageTitle = ''
+      this.images = []
+      this.imageURL = ''
     },
     add () {
       console.log('add')
       if (this.types.includes(this.type)) {
-        var obj = {}
+        var obj = {
+          user: this.$firebase.auth.currentUser.uid
+        }
         switch (this.type) {
           case 'quote':
             if (this.quoteText === '') {
               this.$q.notify('Please review fields again')
               return
             }
-            obj.data = this.quoteText
+            obj.text = this.quoteText
             break
           case 'image':
             switch (this.imageType) {
@@ -177,7 +195,7 @@ export default {
                   this.$q.notify('Please review fields again')
                   return
                 }
-                obj.data = this.imageTitle
+                obj.title = this.imageTitle
                 obj.service = 'wiki'
                 break
               case 'upload':
@@ -187,7 +205,7 @@ export default {
                   this.$q.notify('Please review fields again')
                   return
                 }
-                obj.data = this.imageURL
+                obj.imageURL = this.imageURL
                 obj.service = 'link'
                 break
               default:
@@ -199,33 +217,47 @@ export default {
               this.$q.notify('Please review fields again')
               return
             }
-            obj.data = this.illustrationTitle
+            obj.title = this.illustrationTitle
             break
           case 'lyric':
             if (this.lyricTitle === '') {
               this.$q.notify('Please review fields again')
               return
             }
-            obj.data = this.lyricTitle
+            obj.title = this.lyricTitle
             break
           case 'video':
             if (this.videoURL === '') {
               this.$q.notify('Please review fields again')
               return
             }
-            obj.data = this.videoURL
+            obj.pageURL = this.videoURL
             break
           default:
             console.error('Invalid media type')
             this.$q.notify('Invalid media type')
         }
+        console.log(obj)
         this.loading = true
-        this.$database.add(this.type, obj, (res) => {
+        // this.$database.add(this.type, obj, (res) => {
+        //   // GA - Add media event
+        //   this.$ga.event('media', 'add', this.type)
+        //   this.showAddMedia = false
+        //   this.loading = false
+        //   this.addNew(res)
+        //   Notify.create({
+        //     message: this.type + ' created!',
+        //     type: 'positive',
+        //     position: 'bottom-left'
+        //   })
+        // })
+        this.$firebase.list(this.type).add(obj).then((res) => {
+          this.refresh(this.type)
+          console.log('added', res)
           // GA - Add media event
           this.$ga.event('media', 'add', this.type)
           this.showAddMedia = false
-          this.loading = false
-          this.addNew(res)
+          this.init()
           Notify.create({
             message: this.type + ' created!',
             type: 'positive',
