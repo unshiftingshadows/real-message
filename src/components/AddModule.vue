@@ -1,7 +1,7 @@
 <template>
   <div class="col-12 relative-position" style="height: 30px; margin-bottom: 20px;">
     <q-btn round :color="color" icon="fas fa-plus" class="absolute-center" @click.native="showAdd" />
-    <add-media :type="type" ref="addMedia" :add-new="addNewMedia" />
+    <add-media :type="type" ref="addMedia" :add-new="addNewMedia" :refresh="init" />
     <!-- TODO: Add a new component here like add-media but that uses the NQ database -->
   </div>
 </template>
@@ -59,7 +59,7 @@ export default {
         {
           label: 'Text',
           color: 'primary',
-          icon: 'fa-align-left',
+          icon: 'fas fa-align-left',
           handler: () => {
             console.log('text!')
             this.addModule('text')
@@ -68,7 +68,7 @@ export default {
         {
           label: 'Bible',
           color: 'primary',
-          icon: 'fa-book',
+          icon: 'fas fa-book',
           handler: () => {
             console.log('bible!')
             this.addModule('bible')
@@ -79,7 +79,7 @@ export default {
         actions.push({
           label: 'Activity',
           color: 'primary',
-          icon: 'fa-trophy',
+          icon: 'fas fa-trophy',
           handler: () => {
             console.log('activity!')
             this.addModule('activity')
@@ -88,7 +88,7 @@ export default {
         actions.push({
           label: 'Question',
           color: 'primary',
-          icon: 'fa-question',
+          icon: 'fas fa-question',
           handler: () => {
             console.log('question!')
             this.addModule('question')
@@ -96,12 +96,12 @@ export default {
         })
       }
       if (!this.$root.$children[0].user.nqUser) {
-        console.log('running', this.contentType.charAt(0))
-        if (this.$root.$children[0].user.prefs.mediaType.quote) {
+        console.log('running')
+        if (this.$root.$children[0].user.app.message.prefs.mediaType.quote) {
           actions.push({
             label: 'Quote',
             color: 'primary',
-            icon: 'fa-quote-left',
+            icon: 'fas fa-quote-left',
             handler: () => {
               console.log('quote!')
               this.type = 'quote'
@@ -109,11 +109,11 @@ export default {
             }
           })
         }
-        if (this.$root.$children[0].user.prefs.mediaType.image) {
+        if (this.$root.$children[0].user.app.message.prefs.mediaType.image) {
           actions.push({
             label: 'Image',
             color: 'primary',
-            icon: 'fa-image',
+            icon: 'fas fa-image',
             handler: () => {
               console.log('image!')
               this.type = 'image'
@@ -121,11 +121,11 @@ export default {
             }
           })
         }
-        if (this.$root.$children[0].user.prefs.mediaType.illustration) {
+        if (this.$root.$children[0].user.app.message.prefs.mediaType.illustration) {
           actions.push({
             label: 'Illustration',
             color: 'primary',
-            icon: 'fa-paint-brush',
+            icon: 'fas fa-paint-brush',
             handler: () => {
               console.log('illustration!')
               this.type = 'illustration'
@@ -133,11 +133,11 @@ export default {
             }
           })
         }
-        if (this.$root.$children[0].user.prefs.mediaType.lyric) {
+        if (this.$root.$children[0].user.app.message.prefs.mediaType.lyric) {
           actions.push({
             label: 'Lyric',
             color: 'primary',
-            icon: 'fa-music',
+            icon: 'fas fa-music',
             handler: () => {
               console.log('lyric!')
               this.type = 'lyric'
@@ -145,11 +145,11 @@ export default {
             }
           })
         }
-        if (this.$root.$children[0].user.prefs.mediaType.video) {
+        if (this.$root.$children[0].user.app.message.prefs.mediaType.video) {
           actions.push({
             label: 'Video',
             color: 'primary',
-            icon: 'fa-play',
+            icon: 'fas fa-play',
             handler: () => {
               console.log('video!')
               this.type = 'video'
@@ -191,21 +191,22 @@ export default {
         if (type === 'bible') {
           obj.text = ''
           obj.bibleRef = ''
-          obj.translation = this.$root.$children[0].user.prefs.bibleTranslation
+          obj.translation = this.$root.$children[0].user.app.prefs.bibleTranslation
         }
-        // if (this.omediaTypes.includes(type) || this.nqmediaTypes.includes(type)) {
-        //   this.edit('')
-        // } else {
-        //   this.edit(newRef.key, this.sectionid)
-        // }
+        if (this.omediaTypes.includes(type) || this.nqmediaTypes.includes(type)) {
+          obj.mediaid = id
+          this.edit('')
+        } else {
+          this.edit(id)
+        }
         this.$root.$emit('add-module', obj, this.sectionid)
       } else {
         console.error('Invalid new module type')
       }
     },
-    addNewMedia (media) {
+    addNewMedia (mediaid) {
       this.showAddMedia = false
-      this.addModule(this.type, media._id)
+      this.addModule(this.type, mediaid)
       this.type = ''
     }
   }

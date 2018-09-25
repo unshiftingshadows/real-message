@@ -61,20 +61,22 @@
 
 <script>
 import { Notify } from 'quasar'
-import Editor from 'components/Editor.vue'
+import Editor from 'components/TextEditor.vue'
 
 export default {
   components: {
     Editor
   },
-  // name: 'PageName',
+  name: 'Scratch',
+  fiery: true,
   data () {
     return {
       id: this.$route.params.id,
-      scratch: {
-        tags: [],
-        bibleRefs: []
-      },
+      scratch: this.$fiery(this.$firebase.ref('scratch', '', this.$route.params.id), {
+        onSuccess: (scratch) => {
+          this.readableRefs = scratch.bibleRefs.map(e => { return this.$bible.readable(e) })
+        }
+      }),
       readableRefs: [],
       editTitle: false
     }

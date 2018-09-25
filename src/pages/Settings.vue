@@ -6,10 +6,10 @@
       </div>
       <div class="col-12">
         <q-select
-          v-model="$root.$children[0].user.theme"
+          v-model="$root.$children[0].user.app.prefs.theme"
           float-label="Theme"
           :options="themeOptions"
-          @input="themeChange"
+          @input="prefChange"
         />
       </div>
       <div class="col-12" v-if="$root.$children[0].user.name">
@@ -46,42 +46,46 @@
           </q-card-main>
         </q-card>
       </div>
-      <div class="col-12" v-if="$root.$children[0].user.prefs">
+      <div class="col-12">
         <q-card>
           <q-card-title>Other Settings</q-card-title>
           <q-card-main>
             <q-select
-              v-model="$root.$children[0].user.prefs.bibleTranslation"
+              v-model="$root.$children[0].user.app.prefs.bibleTranslation"
               float-label="Default Translation"
               :options="translationOptions"
               @input="prefChange"
             />
+            <q-input type="number" float-label="Speaking Speed" placeholder="120" v-model="$root.$children[0].user.app.message.prefs.speakingSpeed" @blur="prefChange" />
+            <q-input type="text" float-label="Hook Name" placeholder="Hook" v-model="$root.$children[0].user.app.message.prefs.structureNames.hook" @blur="prefChange" />
+            <q-input type="text" float-label="Application Name" placeholder="Application" v-model="$root.$children[0].user.app.message.prefs.structureNames.application" @blur="prefChange" />
+            <q-input type="text" float-label="Prayer Name" placeholder="Prayer" v-model="$root.$children[0].user.app.message.prefs.structureNames.prayer" @blur="prefChange" />
             <div class="row" v-if="!$root.$children[0].user.nqUser">
               <div class="col-xs-12 col-md-6">
                 <h6>Sermon Structure</h6>
-                <q-checkbox v-model="$root.$children[0].user.prefs.osermonStructure.hook" label="Hook" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.osermonStructure.application" label="Application" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.osermonStructure.prayer" label="Prayer" @input="prefChange" />
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.sermonStructure.hook" label="Hook" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.sermonStructure.application" label="Application" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.sermonStructure.prayer" label="Prayer" @input="prefChange" />
               </div>
               <div class="col-xs-12 col-md-6">
                 <h6>Lesson Structure</h6>
-                <q-checkbox v-model="$root.$children[0].user.prefs.olessonStructure.hook" label="Hook" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.olessonStructure.application" label="Application" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.olessonStructure.prayer" label="Prayer" @input="prefChange" />
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.lessonStructure.hook" label="Hook" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.lessonStructure.application" label="Application" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.lessonStructure.prayer" label="Prayer" @input="prefChange" />
               </div>
               <div class="col-xs-12 col-md-6">
                 <h6>Content Types</h6>
-                <q-checkbox v-model="$root.$children[0].user.prefs.contentType.sermon" label="Sermons" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.contentType.lesson" label="Lessons" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.contentType.scratch" label="Scratch Pads" @input="prefChange" />
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.contentType.sermon" label="Sermons" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.contentType.lesson" label="Lessons" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.contentType.scratch" label="Scratch Pads" @input="prefChange" />
               </div>
               <div class="col-xs-12 col-md-6">
                 <h6>Media Types</h6>
-                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.quote" label="Quotes" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.image" label="Images" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.illustration" label="Illustrations" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.lyric" label="Lyrics" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.prefs.mediaType.video" label="Videos" @input="prefChange" />
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.mediaType.quote" label="Quotes" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.mediaType.image" label="Images" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.mediaType.illustration" label="Illustrations" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.mediaType.lyric" label="Lyrics" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.mediaType.video" label="Videos" @input="prefChange" />
               </div>
             </div>
           </q-card-main>
@@ -308,17 +312,9 @@ export default {
         this.editUser = false
       })
     },
-    themeChange (val) {
-      // GA - Theme change event
-      this.$ga.event('user', 'theme-change', this.$root.$children[0].user.theme)
-      console.log('change...', val)
-      this.$firebase.user().update({
-        theme: this.$root.$children[0].user.theme
-      })
-    },
     prefChange (val) {
       this.$firebase.user().update({
-        prefs: this.$root.$children[0].user.prefs
+        app: this.$root.$children[0].user.app
       })
     }
   }

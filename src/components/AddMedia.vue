@@ -11,6 +11,8 @@
     <div class="row gutter-sm">
       <div class="col-12" v-if="type === 'quote'">
         <q-input v-model="quoteText" float-label="Quote Text" type="textarea" :max-height="100" :min-rows="1" />
+        <q-input type="text" float-label="Author (optional)" v-model="quoteAuthor" />
+        <q-input type="text" float-label="Book Title (optional)" v-model="quoteTitle" />
       </div>
       <div class="col-12" v-if="type === 'illustration'">
         <q-input type="text" float-label="Illustatration Title" v-model="illustrationTitle" />
@@ -59,6 +61,8 @@
 import { Notify } from 'quasar'
 import FilePond, { registerPlugin } from 'vue-filepond'
 import FilePondImagePreview from 'filepond-plugin-image-preview'
+import getVideoId from 'get-video-id'
+import axios from 'axios'
 
 registerPlugin(FilePondImagePreview)
 
@@ -77,6 +81,9 @@ export default {
     refresh: {
       type: Function,
       required: true
+    },
+    addNew: {
+      type: Function
     }
   },
   fiery: true,
@@ -85,6 +92,8 @@ export default {
     return {
       loading: false,
       quoteText: '',
+      quoteAuthor: '',
+      quoteTitle: '',
       illustrationTitle: '',
       lyricTitle: '',
       videoURL: '',
@@ -93,10 +102,10 @@ export default {
       images: [],
       imageURL: '',
       imageOptions: [
-        {
-          label: 'Wiki',
-          value: 'wiki'
-        },
+        // {
+        //   label: 'Wiki',
+        //   value: 'wiki'
+        // },
         {
           label: 'Upload',
           value: 'upload'
@@ -174,7 +183,7 @@ export default {
       this.images = []
       this.imageURL = ''
     },
-    add () {
+    add: async function () {
       console.log('add')
       if (this.types.includes(this.type)) {
         var obj = {
@@ -187,6 +196,8 @@ export default {
               return
             }
             obj.text = this.quoteText
+            obj.author = this.quoteAuthor
+            obj.title = this.quoteTitle
             break
           case 'image':
             switch (this.imageType) {
@@ -232,6 +243,23 @@ export default {
               return
             }
             obj.pageURL = this.videoURL
+            var videoinfo = getVideoId(this.videoURL)
+            console.log('videoinfo', videoinfo)
+            obj.videoid = videoinfo.id
+            obj.service = videoinfo.service
+            if (videoinfo.service === 'youtube') {
+              var youtubeinfo = await axios.get(`https://noembed.com/embed?url=http://www.youtube.com/watch?v=${videoinfo.id}`)
+              console.log('youtube info', youtubeinfo)
+              obj.thumbURL = youtubeinfo.data.thumbnail_url
+              obj.title = youtubeinfo.data.title
+              obj.author = youtubeinfo.data.author_name
+            } else if (videoinfo.service === 'vimeo') {
+              var vimeoinfo = await axios.get(`https://vimeo.com/api/v2/video/${videoinfo.id}.json`)
+              console.log('vimeo info', vimeoinfo)
+              obj.thumbURL = vimeoinfo.data[0].thumbnail_large
+              obj.title = vimeoinfo.data[0].title
+              obj.author = vimeoinfo.data[0].user_name
+            }
             break
           default:
             console.error('Invalid media type')
@@ -263,6 +291,9 @@ export default {
             type: 'positive',
             position: 'bottom-left'
           })
+          if (this.addNew) {
+            this.addNew(res.id)
+          }
         })
       }
     },

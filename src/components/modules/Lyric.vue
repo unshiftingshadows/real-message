@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import Editor from 'components/Editor.vue'
+import Editor from 'components/TextEditor.vue'
 
 export default {
   components: {

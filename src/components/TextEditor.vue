@@ -1,8 +1,9 @@
 <template>
   <div>
     <vue-editor
-      ref="editor"
-      :editorToolbar="toolbarContent"
+      ref="vueeditor"
+      :editorToolbar="toolbar"
+      :editorOptions="options"
       :value="text"
       @input="$emit('update:text', $event)"
     />
@@ -17,31 +18,47 @@ export default {
   components: {
     VueEditor
   },
-  // name: 'ComponentName',
-  props: [ 'text', 'autoSave' ],
+  name: 'TextEditor',
+  props: [ 'text', 'autoSave', 'saveClose' ],
   data () {
     return {
       content: this.text,
-      toolbarContent: [
+      toolbar: [
         [{ 'header': [] }],
         ['bold', 'italic', 'underline', 'strike'],
         ['blockquote'],
         [{ 'list': 'ordered' }, { 'list': 'bullet' }],
         ['clean']
       ],
+      options: {
+        modules: {
+          keyboard: {
+            bindings: [{
+              key: 13,
+              shortKey: true,
+              shiftKey: true,
+              handler: () => { console.log('shift meta enter') }
+            }, {
+              key: 13,
+              shortKey: true,
+              shiftKey: false,
+              handler: this.saveClose ? () => { this.saveClose() } : () => {}
+            }]
+          }
+        }
+      },
       editCount: 0,
       saveInterval: null
     }
   },
   mounted () {
-    console.log('editor', this.$refs.editor)
-    this.$refs.editor.quill.on('selection-change', (range, oldRange, source) => {
+    this.$refs.vueeditor.quill.on('selection-change', (range, oldRange, source) => {
       if (range === null && oldRange !== null) {
         this.editCount = 0
         this.save()
       }
     })
-    this.$refs.editor.quill.on('text-change', (delta, oldDelta, source) => {
+    this.$refs.vueeditor.quill.on('text-change', (delta, oldDelta, source) => {
       if (this.editCount >= 100) {
         this.editCount = 0
         this.save()
@@ -60,6 +77,9 @@ export default {
         message: 'Auto saving...',
         position: 'bottom-left'
       })
+    },
+    focus () {
+      this.$refs.vueeditor.quill.setSelection(this.$refs.vueeditor.quill.getLength(), 0)
     }
   }
 }

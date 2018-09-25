@@ -19,7 +19,40 @@
     <div class="row gutter-sm" style="padding-left: 10px; padding-right: 10px;" v-if="open && data.moduleOrder">
       <div class="col-12" v-if="modules && data.moduleOrder">
         <draggable style="min-height: 20px;" :list="data.moduleOrder" @change="changeMod" ref="secModuleDrag" :options="{ group: { name: 'modules', pull: true, put: true }, ghostClass: 'sortable-ghost', handle: '.drag-handle', disabled: disabled || ($q.platform.is.mobile && !$q.platform.is.ipad) }">
-          <component v-for="mod in modules" :key="mod['.key']" v-bind:is="'mod-' + mod.type" :id="mod['.key']" :data="mod" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': mod.editing === $firebase.auth.currentUser.uid }" />
+          <!-- <component
+            v-if="data.moduleOrder.length > 0 && Object.keys(modules).length > 0"
+            v-for="modIndex in data.moduleOrder"
+            :key="modIndex"
+            v-bind:is="'mod-' + modules[modIndex].type"
+            :id="modIndex"
+            :data="modules[modIndex]"
+            :edit="editModule"
+            :save="saveModule"
+            :autosave="autoSaveModule"
+            :close="closeModule"
+            :remove="removeModule"
+            :mod-methods="methods"
+            :mod-options="options"
+            class="module-card"
+            v-bind:class="{ 'active-card': modules[modIndex].editing === $firebase.auth.currentUser.uid }"
+          /> -->
+          <component
+            v-if="data.moduleOrder.length > 0 && Object.keys(modules).length > 0"
+            v-for="modIndex in data.moduleOrder"
+            :key="modIndex"
+            v-bind:is="contentTypes.includes(modules[modIndex].type) ? 'mod-content' : 'mod-media'"
+            :id="modIndex"
+            :data="modules[modIndex]"
+            :edit="editModule"
+            :save="saveModule"
+            :autosave="autoSaveModule"
+            :close="closeModule"
+            :remove="removeModule"
+            :mod-methods="methods"
+            :mod-options="options"
+            class="module-card"
+            v-bind:class="{ 'active-card': modules[modIndex].editing === $firebase.auth.currentUser.uid }"
+          />
         </draggable>
       </div>
       <div class="col-12" style="padding-top: 0;">
@@ -52,33 +85,33 @@
 <script>
 import Draggable from 'vuedraggable'
 import AddModule from 'components/AddModule.vue'
-import ModSection from 'components/modules/Section.vue'
-import ModQuote from 'components/modules/Quote.vue'
-import ModText from 'components/modules/Text.vue'
-import ModBible from 'components/modules/Bible.vue'
-import ModActivity from 'components/modules/Activity.vue'
-import ModQuestion from 'components/modules/Question.vue'
-import ModVideo from 'components/modules/Video.vue'
-import ModImage from 'components/modules/Image.vue'
-import ModComposition from 'components/modules/Composition.vue'
-import ModLyric from 'components/modules/Lyric.vue'
-import ModIllustration from 'components/modules/Illustration.vue'
+// import ModText from 'components/modules/Text.vue'
+// import ModBible from 'components/modules/Bible.vue'
+// import ModActivity from 'components/modules/Activity.vue'
+// import ModQuestion from 'components/modules/Question.vue'
+import ModContent from 'components/modules/Content.vue'
+// import ModQuote from 'components/modules/Quote.vue'
+// import ModVideo from 'components/modules/Video.vue'
+// import ModImage from 'components/modules/Image.vue'
+// import ModComposition from 'components/modules/Composition.vue'
+// import ModIllustration from 'components/modules/Illustration.vue'
+import ModMedia from 'components/modules/Media.vue'
 
 export default {
   components: {
     Draggable,
     AddModule,
-    ModSection,
-    ModQuote,
-    ModText,
-    ModBible,
-    ModActivity,
-    ModQuestion,
-    ModVideo,
-    ModImage,
-    ModComposition,
-    ModLyric,
-    ModIllustration
+    // ModText,
+    // ModBible,
+    // ModActivity,
+    // ModQuestion,
+    ModContent,
+    // ModQuote,
+    // ModVideo,
+    // ModImage,
+    // ModComposition,
+    // ModIllustration
+    ModMedia
   },
   name: 'ModuleSection',
   props: ['id', 'data', 'modules', 'edit', 'remove', 'disabled', 'contentType', 'contentid', 'onChange'],
@@ -103,8 +136,8 @@ export default {
   },
   computed: {
     nextModOrder: function () {
-      if (this.modules) {
-        return this.modules.length
+      if (this.data.modules) {
+        return this.data.modules.length
       } else {
         return 0
       }

@@ -98,8 +98,10 @@ export default {
         var obj = {
           title: this.title,
           createdBy: this.$firebase.auth.currentUser.uid,
-          prefs: this.$root.$children[0].user.app.message.prefs[this.type + 'Structure'],
-          template: template || ''
+          prefs: this.$root.$children[0].user.app.message.prefs[this.type + 'Structure'] || {},
+          template: template || '',
+          tags: [],
+          bibleRefs: []
         }
         console.log(obj)
         this.$firebase.list(this.type).add(obj).then((res) => {
