@@ -134,7 +134,7 @@ export default {
     },
     resetPassword () {
       this.$firebase.auth.sendPasswordResetEmail(this.form.email, {
-        url: 'https://builder.real-curriculum.com/login'
+        url: 'https://message.realchurch.app/login'
       }).then(() => {
         // GA - Forgot password event
         this.$ga.event('auth', 'reset-password', 'success')
