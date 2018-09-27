@@ -50,7 +50,7 @@
       mini
     >
       <!-- QScrollArea is optional -->
-      <q-scroll-area class="fit q-pa-sm" v-if="$root.$children[0].user && $root.$children[0].user.app.message.prefs">
+      <q-scroll-area class="fit q-pa-sm" v-if="$root.$children[0].user && $root.$children[0].user.app && $root.$children[0].user.app.message.prefs">
         <q-item to="/dashboard" class="menu-item">
           <q-item-tile icon="fas fa-home" />
           <q-item-main label="Dashboard" class="on-right" />
