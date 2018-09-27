@@ -86,7 +86,6 @@ export default {
   methods: {
     init () {
       this.title = ''
-      console.log(this.$root.$children[0].user.app.message.prefs[this.type + 'Structure'])
     },
     add (template) {
       this.$v.title.$touch()
