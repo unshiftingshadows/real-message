@@ -4,7 +4,10 @@
     <div v-if="loading">
       <q-spinner color="primary" class="absolute-center" size="3rem" />
     </div>
-    <div v-if="!loading && contentTypes.includes(type)">
+    <div v-if="!loading && items.length === 0">
+      <p>No {{ capitalizeTitle(type) }}s...yet! Click the '+' button above to get started</p>
+    </div>
+    <div v-if="!loading && contentTypes.includes(type) && items.size !== 0">
       <q-card inline v-for="item in items" :key="item._id" class="content-card" @click.native="openItem(item._id)">
         <q-card-title>{{ item.title }} <span v-if="type === 'archive'" class="text-weight-light uppercase q-caption">{{ capitalizeTitle(item.type) }}</span></q-card-title>
         <q-card-main>
@@ -52,6 +55,7 @@ export default {
     init (type) {
       this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
+        query: (items) => items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid),
         key: '_id',
         exclude: ['_id'],
         onSuccess: () => { this.loading = false }

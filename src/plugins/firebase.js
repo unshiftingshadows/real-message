@@ -26,6 +26,8 @@ const prodSettings = {
 }
 
 const fbapp = firebase.initializeApp(process.env.DEV ? devSettings : prodSettings)
+// Swap for production database when developing
+// const fbapp = firebase.initializeApp(prodSettings)
 
 const firestore = fbapp.firestore()
 const settings = {
