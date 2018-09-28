@@ -52,13 +52,7 @@ export default {
   data () {
     return {
       editing: false,
-      lyric: {
-        tags: [],
-        bibleRefs: [],
-        author: '',
-        text: '',
-        mediaTitle: ''
-      },
+      lyric: {},
       readableRefs: []
     }
   },
@@ -77,20 +71,25 @@ export default {
   },
   methods: {
     init () {
-      this.lyric = this.data
+      this.lyric = {...this.data}
+      delete this.lyric.id
+      this.id = this.data.id
     },
     addRef (newRef) {
       this.lyric.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$database.update('lyric', this.lyric._id, this.lyric, (res) => {
+      this.$firebase.list('lyric').doc(this.data.id).update(this.lyric).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Lyric saved!',
           position: 'bottom-left'
         })
         this.editing = false
+        for (var prop in this.lyric) {
+          this.data[prop] = this.lyric[prop]
+        }
       })
     },
     add () {

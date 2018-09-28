@@ -52,13 +52,7 @@ export default {
   data () {
     return {
       editing: false,
-      illustration: {
-        tags: [],
-        bibleRefs: [],
-        author: '',
-        text: '',
-        mediaTitle: ''
-      },
+      illustration: {},
       readableRefs: []
     }
   },
@@ -77,20 +71,25 @@ export default {
   },
   methods: {
     init () {
-      this.illustration = this.data
+      this.illustration = {...this.data}
+      delete this.illustration.id
+      delete this.illustration.type
     },
     addRef (newRef) {
       this.illustration.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$database.update('illustration', this.illustration._id, this.illustration, (res) => {
+      this.$firebase.list('illustration').doc(this.data.id).update(this.illustration).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Illustration saved!',
           position: 'bottom-left'
         })
         this.editing = false
+        for (var prop in this.illustration) {
+          this.data[prop] = this.illustration[prop]
+        }
       })
     },
     add () {

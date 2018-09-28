@@ -49,10 +49,7 @@ export default {
   data () {
     return {
       editing: false,
-      image: {
-        tags: [],
-        bibleRefs: []
-      },
+      image: {},
       readableRefs: []
     }
   },
@@ -71,20 +68,25 @@ export default {
   },
   methods: {
     init () {
-      this.image = this.data
+      this.image = {...this.data}
+      delete this.image.id
+      delete this.image.type
     },
     addRef (newRef) {
       this.image.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$database.update('image', this.image._id, this.image, (res) => {
+      this.$firebase.list('image').doc(this.data.id).update(this.image).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Image saved!',
           position: 'bottom-left'
         })
         this.editing = false
+        for (var prop in this.image) {
+          this.data[prop] = this.image[prop]
+        }
       })
     },
     add () {

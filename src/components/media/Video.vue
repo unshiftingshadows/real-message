@@ -52,11 +52,7 @@ export default {
   data () {
     return {
       editing: false,
-      video: {
-        embedURL: '',
-        tags: [],
-        bibleRefs: []
-      },
+      video: {},
       readableRefs: []
     }
   },
@@ -71,28 +67,33 @@ export default {
     }
   },
   mounted () {
-    this.video = this.data
+    this.init()
   },
   methods: {
     init () {
-      this.video = this.data
+      this.video = {...this.data}
+      delete this.video.id
+      delete this.video.type
     },
     addRef (newRef) {
       this.video.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$database.update('video', this.video._id, this.video, (res) => {
+      this.$firebase.list('video').doc(this.data.id).update(this.video).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Video saved!',
           position: 'bottom-left'
         })
         this.editing = false
+        for (var prop in this.video) {
+          this.data[prop] = this.video[prop]
+        }
       })
     },
     add () {
-      this.addModule(this.video._id, 'video', this.video)
+      this.addModule(this.video._id, 'video')
       this.close()
     }
   }

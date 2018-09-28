@@ -129,10 +129,12 @@ export default {
         console.log('tempModule not empty', val)
         if (val.sectionid) {
           this.addModule(val.sectionid)
-        } else if (this.sections.length > 0) {
+        } else if (Object.keys(this.sections).size > 0) {
+          console.log('pick section')
           this.$refs.addNewModule.show()
         } else {
-          this.addModule()
+          console.log('else add...')
+          this.addModule('hook')
         }
       } else {
         console.log('tempModule empty', val)

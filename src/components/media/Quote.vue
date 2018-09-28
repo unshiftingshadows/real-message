@@ -55,8 +55,6 @@ export default {
   data () {
     return {
       editing: false,
-      id: '',
-      type: '',
       quote: {},
       readableRefs: []
     }
@@ -79,15 +77,13 @@ export default {
       this.quote = {...this.data}
       delete this.quote.id
       delete this.quote.type
-      this.id = this.data.id
-      this.type = this.data.type
     },
     addRef (newRef) {
       this.quote.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$firebase.list(this.data.type).doc(this.data.id).update(this.quote).then(() => {
+      this.$firebase.list('quote').doc(this.data.id).update(this.quote).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Quote saved!',
@@ -98,17 +94,9 @@ export default {
           this.data[prop] = this.quote[prop]
         }
       })
-      // this.$database.update('quote', this.quote._id, this.quote, (res) => {
-      //   Notify.create({
-      //     type: 'positive',
-      //     message: 'Quote saved!',
-      //     position: 'bottom-left'
-      //   })
-      //   this.editing = false
-      // })
     },
     add () {
-      this.addModule(this.quote._id, 'quote', this.quote)
+      this.addModule(this.data.id, 'quote')
       this.close()
     }
   }
