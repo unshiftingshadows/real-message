@@ -1,12 +1,13 @@
 <template>
   <q-page padding>
     <div class="row gutter-md items-center">
-      <div class="col-12">
+      <div class="col-12" v-if="loading">
+        <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
-      <div class="col-12">
+      <div class="col-12" v-if="!loading">
         <q-input v-model="sermon.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update" />
       </div>
-      <div class="col-xs-12 col-md-6">
+      <div class="col-xs-12 col-md-6" v-if="!loading">
         <q-chips-input
           color="secondary"
           v-model="readableRefs"
@@ -15,7 +16,7 @@
           @input="addRef"
         />
       </div>
-      <div class="col-xs-12 col-md-6">
+      <div class="col-xs-12 col-md-6" v-if="!loading">
         <q-chips-input v-model="sermon.tags" float-label="Tags" @blur="update" />
       </div>
       <div v-if="!sermon.sectionOrder">
@@ -131,10 +132,12 @@ export default {
   fiery: true,
   data () {
     return {
+      loading: true,
       id: this.$route.params.id,
       sermon: this.$fiery(this.$firebase.ref('sermon', '', this.$route.params.id), {
         onSuccess: (sermon) => {
           this.readableRefs = sermon.bibleRefs.map(e => { return this.$bible.readable(e) })
+          this.loading = false
         }
       }),
       seriesName: '',
