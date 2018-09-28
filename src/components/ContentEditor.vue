@@ -115,8 +115,16 @@ export default {
       }),
       modules: this.$fiery(this.$firebase.ref(this.type, 'modules', this.id), {
         map: true,
-        onSuccess: () => {
+        onSuccess: (modules) => {
           this.loading = false
+          if (this.initRun) {
+            this.initRun = false
+            for (var mod in modules) {
+              if (modules[mod].editing === this.$firebase.auth.currentUser.uid) {
+                this.closeModule(mod)
+              }
+            }
+          }
         }
       }),
       versions: this.$fiery(this.$firebase.ref(this.type, 'versions', this.id, this.$route.params.seriesid, this.$route.params.lessonid))
@@ -129,7 +137,7 @@ export default {
         console.log('tempModule not empty', val)
         if (val.sectionid) {
           this.addModule(val.sectionid)
-        } else if (Object.keys(this.sections).size > 0) {
+        } else if (Object.keys(this.sections).length > 0) {
           console.log('pick section')
           this.$refs.addNewModule.show()
         } else {
