@@ -36,7 +36,8 @@
           <!-- Title Field w/ Close Button -->
           <div class="col-12">
             <q-btn class="float-right cursor-pointer" icon="fas fa-times" size="sm" @click.native="modMethods.close" :disabled="loading" />
-            <p>Please edit all media from the appropriate media tab. Or click here to edit this {{ data.type }} media now.</p>
+            <!-- <q-btn color="primary" @click.native="mediaOpen = true">Edit Media</q-btn> -->
+            <p>Please edit all media from the appropriate media tab</p>
             <!-- <q-input
               v-model="data[typeInfo[data.type].ref]"
               :float-label="typeInfo[data.type].label"
@@ -64,22 +65,34 @@
         </div>
       </q-card-main>
     </div>
+    <!-- <q-modal v-model="mediaOpen" content-classes="media-modal" v-if="types.map(e => { return e.value }).includes(media.type)">
+      <component v-if="types.map(e => { return e.value }).includes(media.type)" v-bind:is="'media-' + data.type" :data="media" :open="mediaOpen" :close="mediaOpen = false" />
+    </q-modal> -->
   </q-card>
 </template>
 
 <script>
-// import TextEditor from 'components/TextEditor.vue'
+import MediaQuote from 'components/media/Quote.vue'
+import MediaImage from 'components/media/Image.vue'
+import MediaIllustration from 'components/media/Illustration.vue'
+import MediaLyric from 'components/media/Lyric.vue'
+import MediaVideo from 'components/media/Video.vue'
 
 export default {
-  // components: {
-  //   TextEditor
-  // },
+  components: {
+    MediaQuote,
+    MediaImage,
+    MediaIllustration,
+    MediaLyric,
+    MediaVideo
+  },
   name: 'mod-media',
   props: [ 'id', 'data', 'modMethods', 'modOptions' ],
   fiery: true,
   data () {
     return {
       loading: false,
+      mediaOpen: true,
       media: {
         text: '',
         title: '',
@@ -186,4 +199,15 @@ export default {
 </script>
 
 <style>
+
+.media-modal {
+  width: 100%;
+  padding: 30px;
+}
+@media screen and (min-width: 800px) {
+  .media-modal {
+    width: 500px;
+  }
+}
+
 </style>
