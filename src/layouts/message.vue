@@ -124,7 +124,7 @@
       </q-scroll-area>
     </q-layout-drawer>
 
-    <!-- <q-layout-drawer
+    <q-layout-drawer
       side="right"
       v-model="rightDrawer"
       content-class="lg-drawer"
@@ -133,7 +133,7 @@
       <q-scroll-area class="fit q-pa-sm">
         <resources v-if="$route.name === 'lesson' || $route.name === 'sermon'" add />
       </q-scroll-area>
-    </q-layout-drawer> -->
+    </q-layout-drawer>
 
     <q-page-container>
       <!-- This is where pages get injected -->

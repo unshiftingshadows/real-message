@@ -6,7 +6,7 @@
       <n-q-list :items="resources" :addModule="addModule" />
     </div>
     <div v-if="$root.$children[0].user && !$root.$children[0].user.nqUser">
-      <media-search :width="size.width/2" :addModule="addModule" v-if="$root.$children[0].user && !$root.$children[0].user.nqUser && $root.$children[0].user.prefs" />
+      <media-search :addModule="addModule" v-if="$root.$children[0].user && !$root.$children[0].user.nqUser" />
     </div>
   </div>
 </template>
@@ -49,9 +49,14 @@ export default {
       // Check if NQ user to determine what resources to get ---
       //    NQ user --> get from $database.resources
       //    Non-NQ user --> get from $database.list?
+      this.resources = []
       if (!this.$root.$children[0].user.nqUser) {
+        // mediaTypes.forEach((type) => {
+        //   this.$firebase.list(type).get().then((query) => {
+        //     this.resources.concat(query.docs)
+        //   })
+        // })
       } else {
-        this.resources = []
         this.$database.resources(this.type, this.id, 'list', {}, (res) => {
           console.log('resources response', res)
           this.research = res.research
@@ -74,17 +79,18 @@ export default {
     },
     addModule (id, type) {
       if (mediaTypes.includes(type)) {
-        var newRef = this.$firebase.ref(this.type, 'modules', this.id).push()
+        // var newRef = this.$firebase.ref(this.type, 'modules', this.id).push()
         var obj = {
           mediaid: id,
           editing: false,
           slide: false,
           order: 'new',
           time: 0,
-          wordcount: 0
+          wordcount: 0,
+          type: type
         }
-        obj.type = type
-        newRef.set(obj)
+        // newRef.set(obj)
+        this.$root.$emit('add-module', obj)
       } else {
         console.error('Incorrect media type for module add')
       }

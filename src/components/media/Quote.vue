@@ -5,8 +5,8 @@
         <q-btn icon="fas fa-times" size="xs" color="primary" @click.native="close" class="float-right" />
         <p>{{ quote.text }}</p>
       </div>
-      <div class="col-12" v-if="quote.mediaid.title || quote.mediaid.author">
-        <p>{{ quote.mediaid.title }} | {{ quote.mediaid.author }}</p>
+      <div class="col-12" v-if="quote.title || quote.author">
+        <p>{{ quote.title }} | {{ quote.author }}</p>
       </div>
       <div class="col-12" v-if="quote.tags.length > 0 || quote.bibleRefs.length > 0">
         <q-chip v-if="quote.tags.length > 0" v-for="tag in quote.tags" :key="tag" color="primary">{{ tag }}</q-chip>
@@ -23,10 +23,10 @@
         <q-input v-model="quote.text" float-label="Quote" type="textarea" :max-height="100" :min-rows="1" />
       </div>
       <div class="col-xs-12 col-md-6">
-        <q-input v-model="quote.mediaid.title" float-label="Title" type="text" />
+        <q-input v-model="quote.title" float-label="Title" type="text" />
       </div>
       <div class="col-xs-12 col-md-6">
-        <q-input v-model="quote.mediaid.author" float-label="Author" type="text" />
+        <q-input v-model="quote.author" float-label="Author" type="text" />
       </div>
       <div class="col-12">
         <q-chips-input v-model="quote.tags" float-label="Tags" />
@@ -55,14 +55,9 @@ export default {
   data () {
     return {
       editing: false,
-      quote: {
-        tags: [],
-        bibleRefs: [],
-        mediaid: {
-          title: '',
-          author: ''
-        }
-      },
+      id: '',
+      type: '',
+      quote: {},
       readableRefs: []
     }
   },
@@ -81,21 +76,36 @@ export default {
   },
   methods: {
     init () {
-      this.quote = this.data
+      this.quote = {...this.data}
+      delete this.quote.id
+      delete this.quote.type
+      this.id = this.data.id
+      this.type = this.data.type
     },
     addRef (newRef) {
       this.quote.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$database.update('quote', this.quote._id, this.quote, (res) => {
+      this.$firebase.list(this.data.type).doc(this.data.id).update(this.quote).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Quote saved!',
           position: 'bottom-left'
         })
         this.editing = false
+        for (var prop in this.quote) {
+          this.data[prop] = this.quote[prop]
+        }
       })
+      // this.$database.update('quote', this.quote._id, this.quote, (res) => {
+      //   Notify.create({
+      //     type: 'positive',
+      //     message: 'Quote saved!',
+      //     position: 'bottom-left'
+      //   })
+      //   this.editing = false
+      // })
     },
     add () {
       this.addModule(this.quote._id, 'quote', this.quote)

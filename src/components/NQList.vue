@@ -188,15 +188,7 @@ export default {
 .image-cardl:hover {
   opacity: 1;
 }
-@media screen and (min-width: 800px) {
-  .media-cardl {
-    width: 31%;
-  }
-}
 @media screen and (min-width: 1200px) {
-  .media-cardl {
-    width: 45%;
-  }
   .resource-modal {
     min-width: 650px;
     width: 650px;

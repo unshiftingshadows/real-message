@@ -12,9 +12,12 @@
           :options="types"
         />
       </div>
-      <div class="col-12">
+      <div class="col-12" v-if="loading">
+        <q-spinner color="primary" class="absolute-center" size="3rem" />
+      </div>
+      <div class="col-12" v-if="!loading">
         <div v-masonry transition-duration="0.3" item-selection=".media-cardl">
-          <q-card v-for="item in showItems" :key="item._id" color="primary" inline v-bind:class="[item.type] + 'l'" class="media-cardl" @click.native="openItem(item, item.type)">
+          <q-card v-for="item in showItems" :key="item.id" color="primary" inline v-bind:class="[item.type] + 'l'" class="media-cardl" @click.native="openItem(item, item.type)">
             <!-- <q-icon name="fas fa-plus" color="positive" class="float-right cursor-pointer" style="margin-top: 5px; margin-right: 5px;" /> -->
             <q-card-media v-if="item.type == 'video' || item.type == 'image'">
               <img :src="item.thumbURL" />
@@ -32,8 +35,8 @@
         </div>
       </div>
     </div>
-    <q-modal v-model="mediaOpen" content-classes="media-modal" v-if="types.map(e => { return e.value }).includes(mediaType)">
-      <component v-if="types.map(e => { return e.value }).includes(mediaType)" v-bind:is="'media-' + mediaType" :data="media" :addModule="addModule" :open="mediaOpen" :close="closeMedia" />
+    <q-modal v-model="mediaOpen" content-classes="media-modal" v-if="types.map(e => { return e.value }).includes(media.type)">
+      <component v-if="types.map(e => { return e.value }).includes(media.type)" v-bind:is="'media-' + media.type" :data="media" :addModule="addModule" :open="mediaOpen" :close="closeMedia" />
     </q-modal>
   </div>
 </template>
@@ -56,26 +59,21 @@ export default {
     MediaLyric,
     MediaVideo
   },
-  // name: 'ComponentName',
-  props: ['width', 'addModule'],
+  name: 'MediaSearch',
+  props: ['addModule'],
   data () {
     return {
+      loading: false,
       searchTerms: '',
       items: [],
       showItems: [],
       mediaOpen: false,
       mediaType: '',
       media: '',
-      sizes: [
-        { columns: 1, gutter: 20 },
-        { mq: '800px', columns: 2, gutter: 20 },
-        { mq: '1000px', columns: 3, gutter: 20 },
-        { mq: '1200px', columns: 2, gutter: 20 }
-      ],
-      cardStyle: {
-        width: this.width
-      },
-      selectedTypes: Object.keys(this.$root.$children[0].user.prefs.mediaType)
+      // cardStyle: {
+      //   width: this.width
+      // },
+      selectedTypes: Object.keys(this.$root.$children[0].user.app.message.prefs.mediaType)
       // types: [
       //   // {
       //   //   label: 'All',
@@ -115,11 +113,11 @@ export default {
   computed: {
     types: function () {
       var typesList = []
-      if (this.$root.$children[0].user.prefs) {
-        for (let key in this.$root.$children[0].user.prefs.mediaType) {
+      if (this.$root.$children[0].user.app.message.prefs) {
+        for (let key in this.$root.$children[0].user.app.message.prefs.mediaType) {
           console.log('key', key)
-          console.log('value', this.$root.$children[0].user.prefs.mediaType[key])
-          if (this.$root.$children[0].user.prefs.mediaType[key]) {
+          console.log('value', this.$root.$children[0].user.app.message.prefs.mediaType[key])
+          if (this.$root.$children[0].user.app.message.prefs.mediaType[key]) {
             typesList.push({
               label: capitalize(key),
               value: key
@@ -150,9 +148,23 @@ export default {
       return this.selectedTypes.includes(item.type)
     },
     search () {
-      this.$database.search('media', this.searchTerms, {}, (res) => {
-        this.items = res
+      console.log('search')
+      const startTime = new Date()
+      this.loading = true
+      this.$firebase.searchMedia({ searchTerms: this.searchTerms, searchTypes: this.types.map((e) => { return e.value }) }).then((res) => {
+        const elapsedTime = new Date() - startTime
+        this.$ga.time({
+          timingCategory: 'query',
+          timingVar: 'media',
+          timingValue: elapsedTime,
+          timingLabel: 'search'
+        })
+        this.loading = false
+        this.items = res.data.results
       })
+      // this.$database.search('media', this.searchTerms, {}, (res) => {
+      //   this.items = res
+      // })
     }
   }
 }
@@ -179,14 +191,6 @@ export default {
 @media screen and (min-width: 800px) {
   .media-modal {
     width: 500px;
-  }
-  .imagel, .videol, .lyricl, .illustrationl, .quotel {
-    width: 31%;
-  }
-}
-@media screen and (min-width: 1200px) {
-  .imagel, .videol, .lyricl, .illustrationl, .quotel {
-    width: 45%;
   }
 }
 </style>

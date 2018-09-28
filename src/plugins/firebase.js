@@ -3,6 +3,7 @@ import 'firebase/auth'
 // import 'firebase/database'
 import 'firebase/firestore'
 import 'firebase/storage'
+import 'firebase/functions'
 // import VueFire from 'vuefire'
 // import VueFirestore from 'vue-firestore'
 import FieryVue from 'fiery-vue'
@@ -72,6 +73,8 @@ export default ({ app, router, Vue }) => {
     auth: fbapp.auth(),
     // db: fbapp.database(),
     store: firestore,
+    functions: fbapp.functions(),
+    searchMedia: fbapp.functions().httpsCallable('message-searchMedia'),
     ref: dbref,
     list: listRef,
     user: user,
