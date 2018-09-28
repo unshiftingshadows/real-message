@@ -53,12 +53,22 @@ export default {
   },
   methods: {
     init (type) {
+      const startTime = new Date()
       this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
         query: (items) => items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid),
         key: '_id',
         exclude: ['_id'],
-        onSuccess: () => { this.loading = false }
+        onSuccess: () => {
+          const timeElapsed = new Date() - startTime
+          this.$ga.time({
+            timingCategory: 'query',
+            timingVar: 'content',
+            timingValue: timeElapsed,
+            timingLabel: type
+          })
+          this.loading = false
+        }
       })
     },
     openItem (id, item) {

@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     init (type) {
-      console.log('init list', type)
+      const startTime = new Date()
       this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
         // once: true,
@@ -77,8 +77,13 @@ export default {
         key: 'id',
         exclude: ['id'],
         onSuccess: (list) => {
-          console.log('success', list, this.$fires)
-          // this.items.sort((a, b) => { return b.dateAdded.seconds - a.dateAdded.seconds })
+          const timeElapsed = new Date() - startTime
+          this.$ga.time({
+            timingCategory: 'query',
+            timingVar: 'media',
+            timingValue: timeElapsed,
+            timingLabel: type
+          })
           if (type === 'image') {
             list.forEach((image) => {
               if (image.service === 'upload') {
