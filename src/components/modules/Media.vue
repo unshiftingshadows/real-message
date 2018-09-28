@@ -38,12 +38,6 @@
             <q-btn class="float-right cursor-pointer" icon="fas fa-times" size="sm" @click.native="modMethods.close" :disabled="loading" />
             <!-- <q-btn color="primary" @click.native="mediaOpen = true">Edit Media</q-btn> -->
             <p>Please edit all media from the appropriate media tab</p>
-            <!-- <q-input
-              v-model="data[typeInfo[data.type].ref]"
-              :float-label="typeInfo[data.type].label"
-              autofocus
-              @keydown="keydown"
-            /> -->
           </div>
           <!-- Time Estimation -->
           <div class="col-12">
@@ -53,10 +47,6 @@
           <div class="col-12">
             <q-input v-model="data.notes" float-label="Notes" type="textarea" :max-height="100" :min-rows="1" />
           </div>
-          <!-- Long Form Text Editor -->
-          <!-- <div class="col-12" v-if="data.type === 'text' || data.type === 'activity'">
-            <text-editor ref="editor" :text.sync="data.text" :auto-save="textSave" :save-close="saveClose" />
-          </div> -->
           <!-- Save/Delete Buttons -->
           <div class="col-12">
             <q-btn color="primary" @click.native="preSave" :disabled="loading">Save</q-btn>
