@@ -12,7 +12,7 @@
           v-if="!$q.platform.is.desktop"
         />
         <q-toolbar-title>
-          <img src="statics/logo_message_app@2x.png" style="max-height: 40px;" />
+          <img src="https://real-45953.firebaseapp.com/logos/logo_message_app%402x.png" style="max-height: 40px;" />
         </q-toolbar-title>
         <q-btn
           flat
