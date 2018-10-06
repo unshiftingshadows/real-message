@@ -1,6 +1,20 @@
 # Changelog
 All notable changes for this project will be documented in this file.
 
+## 0.0.39 - 2018-10-05
+### Added
+- analytics for query timing and specific actions
+- search for media in right drawer
+- right drawer media addable to ContentEditor
+
+### Changed
+- all content and media are served from Firestore (unless NQ)
+- moved logo files to Firebase hosting
+
+### Fixed
+- major cleanup from builder
+- problematic modules stuck open are closed on refresh
+
 ## 0.0.38 - 2018-08-31
 SPLIT!!!
 Major split between Builder and Message
