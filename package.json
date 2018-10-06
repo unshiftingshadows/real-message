@@ -1,7 +1,7 @@
 {
   "name": "real-message",
-  "version": "1.0.0",
-  "description": "A Quasar Framework app",
+  "version": "0.0.39",
+  "description": "A message editor for church leaders and pastors",
   "productName": "REAL Message",
   "cordovaId": "org.cordova.quasar.app",
   "author": "Jacob Beck <jacob@unshiftingshadows.com>",
