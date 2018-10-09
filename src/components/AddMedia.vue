@@ -253,12 +253,14 @@ export default {
               obj.thumbURL = youtubeinfo.data.thumbnail_url
               obj.title = youtubeinfo.data.title
               obj.author = youtubeinfo.data.author_name
+              obj.embedURL = 'https://www.youtube.com/embed/' + videoinfo.id
             } else if (videoinfo.service === 'vimeo') {
               var vimeoinfo = await axios.get(`https://vimeo.com/api/v2/video/${videoinfo.id}.json`)
               console.log('vimeo info', vimeoinfo)
               obj.thumbURL = vimeoinfo.data[0].thumbnail_large
               obj.title = vimeoinfo.data[0].title
               obj.author = vimeoinfo.data[0].user_name
+              obj.embedURL = 'https://player.vimeo.com/video/' + videoinfo.id
             }
             break
           default:
