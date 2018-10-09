@@ -49,6 +49,7 @@ import { Notify } from 'quasar'
 export default {
   props: ['data', 'open', 'close', 'addModule'],
   name: 'media-video',
+  fiery: true,
   data () {
     return {
       editing: false,
@@ -80,20 +81,18 @@ export default {
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$firebase.list('video').doc(this.data.id).update(this.video).then(() => {
+      console.log(this.video)
+      this.$fiery.update(this.video).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Video saved!',
           position: 'bottom-left'
         })
         this.editing = false
-        for (var prop in this.video) {
-          this.data[prop] = this.video[prop]
-        }
       })
     },
     add () {
-      this.addModule(this.video._id, 'video')
+      this.addModule(this.data.id, 'video')
       this.close()
     }
   }

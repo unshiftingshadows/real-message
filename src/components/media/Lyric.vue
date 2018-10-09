@@ -49,6 +49,7 @@ import { Notify } from 'quasar'
 export default {
   props: ['data', 'open', 'close', 'addModule'],
   name: 'media-lyric',
+  fiery: true,
   data () {
     return {
       editing: false,
@@ -80,20 +81,17 @@ export default {
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$firebase.list('lyric').doc(this.data.id).update(this.lyric).then(() => {
+      this.$fiery.update(this.lyric).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Lyric saved!',
           position: 'bottom-left'
         })
         this.editing = false
-        for (var prop in this.lyric) {
-          this.data[prop] = this.lyric[prop]
-        }
       })
     },
     add () {
-      this.addModule(this.lyric._id, 'lyric', this.lyric)
+      this.addModule(this.data.id, 'lyric', this.lyric)
       this.close()
     }
   }

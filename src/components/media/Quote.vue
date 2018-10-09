@@ -52,6 +52,7 @@ import { Notify } from 'quasar'
 export default {
   props: ['data', 'open', 'close', 'addModule'],
   name: 'media-quote',
+  fiery: true,
   data () {
     return {
       editing: false,
@@ -83,16 +84,13 @@ export default {
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$firebase.list('quote').doc(this.data.id).update(this.quote).then(() => {
+      this.$fiery.update(this.quote).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Quote saved!',
           position: 'bottom-left'
         })
         this.editing = false
-        for (var prop in this.quote) {
-          this.data[prop] = this.quote[prop]
-        }
       })
     },
     add () {

@@ -46,6 +46,7 @@ import { Notify } from 'quasar'
 export default {
   props: ['data', 'open', 'close', 'addModule'],
   name: 'media-image',
+  fiery: true,
   data () {
     return {
       editing: false,
@@ -77,20 +78,17 @@ export default {
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      this.$firebase.list('image').doc(this.data.id).update(this.image).then(() => {
+      this.$fiery.update(this.image).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Image saved!',
           position: 'bottom-left'
         })
         this.editing = false
-        for (var prop in this.image) {
-          this.data[prop] = this.image[prop]
-        }
       })
     },
     add () {
-      this.addModule(this.image._id, 'image', this.image)
+      this.addModule(this.data.id, 'image', this.image)
       this.close()
     }
   }
