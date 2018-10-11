@@ -1,15 +1,16 @@
 <template>
   <q-page padding>
     <div class="row gutter-md">
-      <div class="col-12">
+      <div class="col-xs-12" v-if="loading">
+        <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
-      <div class="col-12">
+      <div class="col-12" style="margin-top: 30px;" v-if="!loading">
         <editor :text.sync="scratch.text" :save="update" />
       </div>
-      <div class="col-xs-12 col-md-6">
+      <div class="col-xs-12 col-md-6" v-if="!loading">
         <q-chips-input v-model="scratch.tags" float-label="Tags" @blur="update" />
       </div>
-      <div class="col-xs-12 col-md-6">
+      <div class="col-xs-12 col-md-6" v-if="!loading">
         <q-chips-input
           color="secondary"
           v-model="readableRefs"
@@ -39,6 +40,26 @@
         </div>
       </div>
     </q-modal>
+    <q-modal v-model="removeConfirmation" ref="removeConfirmationModal" content-classes="edit-title-modal">
+      <div class="row gutter-md">
+        <div class="col-12">
+          <q-btn
+            color="primary"
+            @click.native="removeConfirmation = false"
+            icon="fas fa-times"
+            class="float-right"
+            size="sm"
+          />
+          <h4>Confirm Remove...</h4>
+        </div>
+        <div class="col-12">
+          <p>Are you sure you want to remove this scratch?</p>
+        </div>
+        <div class="col-12">
+          <q-btn color="primary" @click.native="remove">Remove</q-btn>
+        </div>
+      </div>
+    </q-modal>
     <q-page-sticky position="top">
       <q-toolbar color="secondary" style="z-index: 10;">
         <q-toolbar-title>
@@ -51,6 +72,7 @@
               <q-item v-close-overlay>Convert to Sermon</q-item>
               <q-item v-close-overlay>Convert to Lesson</q-item>
               <!-- <q-item v-close-overlay>Archive</q-item> -->
+              <q-item v-close-overlay @click.native="removeConfirmation = true">Remove...</q-item>
             </q-list>
           </q-popover>
         </q-btn>
@@ -71,14 +93,17 @@ export default {
   fiery: true,
   data () {
     return {
+      loading: true,
       id: this.$route.params.id,
       scratch: this.$fiery(this.$firebase.ref('scratch', '', this.$route.params.id), {
         onSuccess: (scratch) => {
           this.readableRefs = scratch.bibleRefs.map(e => { return this.$bible.readable(e) })
+          this.loading = false
         }
       }),
       readableRefs: [],
-      editTitle: false
+      editTitle: false,
+      removeConfirmation: false
     }
   },
   mounted () {
@@ -112,6 +137,10 @@ export default {
           position: 'bottom-left'
         })
       })
+    },
+    remove () {
+      this.$fiery.remove(this.scratch)
+      this.$router.push({ name: 'list', params: { type: 'scratch' } })
     }
   }
 }
