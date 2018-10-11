@@ -38,14 +38,6 @@
           </q-card-main>
         </q-card>
       </div>
-      <div class="col-12" v-if="$root.$children[0].user.realUser">
-        <q-card>
-          <q-card-title>REAL Curriculum Author</q-card-title>
-          <q-card-main>
-            <p>You are a REAL Curriculum author.</p>
-          </q-card-main>
-        </q-card>
-      </div>
       <div class="col-12">
         <q-card>
           <q-card-title>Other Settings</q-card-title>
