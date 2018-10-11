@@ -43,11 +43,11 @@
           <q-select
             v-model="sectionChoice"
             float-label="Choose Section to Add Module"
-            :options="Object.keys(sections).map(e => { return { label: sections[e].title, value: sections[e]['.key'] } })"
+            :options="sectionOptions"
           />
         </div>
         <div class="col-12">
-          <q-btn color="primary" @click.native="addModule">Save</q-btn>
+          <q-btn color="primary" @click.native="addModule(sectionChoice, false)">Save</q-btn>
         </div>
       </div>
     </q-modal>
@@ -96,6 +96,8 @@ export default {
   fiery: true,
   data () {
     return {
+      contentTypes: ['text', 'bible', 'activity', 'question'],
+      mediaTypes: ['quote', 'image', 'video', 'lyric', 'illustration'],
       loading: true,
       initRun: true,
       drag: false,
@@ -135,18 +137,25 @@ export default {
       if (val !== false) {
         console.log('tempModule not empty', val)
         if (val.sectionid) {
-          this.addModule(val.sectionid)
+          this.addModule(val.sectionid, this.contentTypes.includes(val.data.type))
         } else if (Object.keys(this.sections).length > 0) {
           console.log('pick section')
           this.$refs.addNewModule.show()
         } else {
           console.log('else add...')
-          this.addModule('hook')
+          this.addModule('hook', false)
         }
       } else {
         console.log('tempModule empty', val)
         this.$refs.addNewModule.hide()
       }
+    }
+  },
+  computed: {
+    sectionOptions: function () {
+      var options = Object.keys(this.sections).map(e => { return { label: this.sections[e].title, value: e } })
+      options.splice(0, 0, { label: 'Hook', value: 'hook' })
+      return options
     }
   },
   mounted () {
@@ -260,9 +269,11 @@ export default {
       this.$fiery.remove(this.modules[moduleid])
       this.editingid = ''
     },
-    addModule (sectionid) {
+    addModule (sectionid, editing) {
       console.log('adding module', sectionid, this.tempModule.data)
-      this.tempModule.data.editing = this.$firebase.auth.currentUser.uid
+      if (editing) {
+        this.tempModule.data.editing = this.$firebase.auth.currentUser.uid
+      }
       if (sectionid) {
         this.$fires.modules.add(this.tempModule.data).then((newMod) => {
           console.log('saved')
