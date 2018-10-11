@@ -1,6 +1,22 @@
 # Changelog
 All notable changes for this project will be documented in this file.
 
+## 0.0.40 - 2018-10-11
+### Added
+- modules open on click
+- embedURL field for new videos
+- media can now be removed
+- content can now be archived
+- archived content is shown below "normal" content
+- lessons/sermons/scratch pads can now be removed
+  - lessons and sermons can only be removed after archiving
+
+### Changed
+- media updates to Firestore through fiery-vue
+- cleaned up settings layout
+- template options are hidden until they are viable
+- structure preferences come from the document (lesson/sermon) rather than from a show variable on the subcollection document
+
 ## 0.0.39 - 2018-10-05
 ### Added
 - analytics for query timing and specific actions
