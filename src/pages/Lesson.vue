@@ -243,6 +243,7 @@ export default {
 }
 
 .main-idea-tab {
+  background-color: #777;
   z-index: 5;
   width: 100%;
   padding: 20px;
