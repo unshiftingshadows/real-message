@@ -40,7 +40,8 @@
         />
       </div>
       <div class="col-12">
-        <q-btn color="primary" @click.native="save">Save</q-btn>
+        <q-btn color="primary" @click.native="save">Save</q-btn>&nbsp;
+        <q-btn color="negative" @click.native="remove">Remove</q-btn>
       </div>
     </div>
   </div>
@@ -91,6 +92,17 @@ export default {
           position: 'bottom-left'
         })
         this.editing = false
+      })
+    },
+    remove () {
+      this.editing = false
+      this.close()
+      this.$fiery.remove(this.quote).then(() => {
+        Notify.create({
+          type: 'positive',
+          message: 'Quote removed!',
+          position: 'bottom-left'
+        })
       })
     },
     add () {
