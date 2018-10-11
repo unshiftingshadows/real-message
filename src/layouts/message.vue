@@ -101,11 +101,6 @@
           </q-item>
         </div>
         <q-item-separator v-if="$root.$children[0].user.nqUser === false" />
-        <q-item :to="{ name: 'list', params: { type: 'archive' }}" class="menu-item">
-          <q-item-tile icon="fas fa-archive" />
-          <q-item-main label="Archive" class="on-right" />
-          <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Archive</q-tooltip>
-        </q-item>
         <q-item to="/settings" class="menu-item">
           <q-item-tile icon="fas fa-cog" />
           <q-item-main label="Settings" class="on-right" />

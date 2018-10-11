@@ -1,12 +1,12 @@
 <template>
   <q-page padding>
-    <h3>{{ capitalizeTitle(type) + (type === 'lesson' || type === 'sermon' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fas fa-plus" color="primary" v-if="type !== 'archive'" @click.native="openAdd()" /></h3>
-    <div v-if="type !== 'archive' && !loading && items.length === 0">
+    <h3>{{ capitalizeTitle(type) + (type === 'lesson' || type === 'sermon' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="openAdd()" /></h3>
+    <div v-if="!loading && items.length === 0">
       <p>No {{ capitalizeTitle(type) }}s...yet! Click the '+' button above to get started</p>
     </div>
     <div v-if="!loading || (contentTypes.includes(type) && items.length !== 0)">
       <q-card inline v-for="item in items" :key="item._id" class="content-card" @click.native="openItem(item._id)">
-        <q-card-title>{{ item.title }} <span v-if="type === 'archive'" class="text-weight-light uppercase q-caption">{{ capitalizeTitle(item.type) }}</span></q-card-title>
+        <q-card-title>{{ item.title }}</q-card-title>
         <q-card-main>
           <p>{{ item.mainIdea }}</p>
           <span v-if="item.tags.length > 0">Tags: <q-chip v-for="tag in item.tags" :key="tag" color="primary" class="list-chip" dense>{{ tag }}</q-chip></span>
@@ -20,7 +20,7 @@
     </div>
     <div v-if="!loading || (contentTypes.includes(type) && archived.length !== 0)">
       <q-card inline v-for="item in archived" :key="item._id" class="content-card" @click.native="openItem(item._id)">
-        <q-card-title>{{ item.title }} <span v-if="type === 'archive'" class="text-weight-light uppercase q-caption">{{ capitalizeTitle(item.type) }}</span></q-card-title>
+        <q-card-title>{{ item.title }}</q-card-title>
         <q-card-main>
           <p>{{ item.mainIdea }}</p>
           <span v-if="item.tags.length > 0">Tags: <q-chip v-for="tag in item.tags" :key="tag" color="primary" class="list-chip" dense>{{ tag }}</q-chip></span>
@@ -49,7 +49,7 @@ export default {
   fiery: true,
   data () {
     return {
-      contentTypes: ['series', 'lesson', 'sermon', 'scratch', 'archive'],
+      contentTypes: ['series', 'lesson', 'sermon', 'scratch'],
       type: this.$route.params.type,
       items: [],
       archived: [],
