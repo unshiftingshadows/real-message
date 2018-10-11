@@ -1,13 +1,10 @@
 <template>
   <q-page padding>
-    <h3>{{ capitalizeTitle(type) + (type === 'lesson' || type === 'sermon' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="openAdd()" /></h3>
-    <div v-if="loading">
-      <q-spinner color="primary" class="absolute-center" size="3rem" />
-    </div>
-    <div v-if="!loading && items.length === 0">
+    <h3>{{ capitalizeTitle(type) + (type === 'lesson' || type === 'sermon' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fas fa-plus" color="primary" v-if="type !== 'archive'" @click.native="openAdd()" /></h3>
+    <div v-if="type !== 'archive' && !loading && items.length === 0">
       <p>No {{ capitalizeTitle(type) }}s...yet! Click the '+' button above to get started</p>
     </div>
-    <div v-if="!loading && contentTypes.includes(type) && items.size !== 0">
+    <div v-if="!loading || (contentTypes.includes(type) && items.length !== 0)">
       <q-card inline v-for="item in items" :key="item._id" class="content-card" @click.native="openItem(item._id)">
         <q-card-title>{{ item.title }} <span v-if="type === 'archive'" class="text-weight-light uppercase q-caption">{{ capitalizeTitle(item.type) }}</span></q-card-title>
         <q-card-main>
@@ -17,6 +14,23 @@
           <span v-if="Object.keys(item.bibleRefs).length > 0">Bible Refs: <q-chip v-for="ref in item.bibleRefs" :key="ref" color="secondary" class="list-chip" dense>{{ $bible.readable(ref) }}</q-chip></span>
         </q-card-main>
       </q-card>
+    </div>
+    <div>
+      <a @click="showArchived(type)"><p class="text-light cursor-pointer" style="margin-top: 20px;">Show Archived <q-icon name="fas fa-chevron-down" /></p></a>
+    </div>
+    <div v-if="!loading || (contentTypes.includes(type) && archived.length !== 0)">
+      <q-card inline v-for="item in archived" :key="item._id" class="content-card" @click.native="openItem(item._id)">
+        <q-card-title>{{ item.title }} <span v-if="type === 'archive'" class="text-weight-light uppercase q-caption">{{ capitalizeTitle(item.type) }}</span></q-card-title>
+        <q-card-main>
+          <p>{{ item.mainIdea }}</p>
+          <span v-if="item.tags.length > 0">Tags: <q-chip v-for="tag in item.tags" :key="tag" color="primary" class="list-chip" dense>{{ tag }}</q-chip></span>
+          <br v-if="item.tags.length > 0 && Object.keys(item.bibleRefs).length > 0" />
+          <span v-if="Object.keys(item.bibleRefs).length > 0">Bible Refs: <q-chip v-for="ref in item.bibleRefs" :key="ref" color="secondary" class="list-chip" dense>{{ $bible.readable(ref) }}</q-chip></span>
+        </q-card-main>
+      </q-card>
+    </div>
+    <div v-if="loading">
+      <q-spinner color="primary" class="absolute-center" size="3rem" />
     </div>
     <add-content :type="type" ref="addContent" v-if="contentTypes.includes(type)" />
   </q-page>
@@ -38,6 +52,7 @@ export default {
       contentTypes: ['series', 'lesson', 'sermon', 'scratch', 'archive'],
       type: this.$route.params.type,
       items: [],
+      archived: [],
       loading: false
     }
   },
@@ -48,6 +63,8 @@ export default {
     '$route.params.type' (newType, oldType) {
       this.type = newType
       this.$fiery.free(this.items)
+      this.$fiery.free(this.archived)
+      this.archived = []
       this.init(newType)
     }
   },
@@ -56,7 +73,7 @@ export default {
       const startTime = new Date()
       this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
-        query: (items) => items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid),
+        query: (items) => items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('archived', '==', false),
         key: '_id',
         exclude: ['_id'],
         onSuccess: () => {
@@ -87,6 +104,25 @@ export default {
     },
     capitalizeTitle (title) {
       return capitalize(title)
+    },
+    showArchived (type) {
+      const startTime = new Date()
+      this.loading = true
+      this.archived = this.$fiery(this.$firebase.list(type), {
+        query: (items) => items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('archived', '==', true),
+        key: '_id',
+        exclude: ['_id'],
+        onSuccess: () => {
+          const timeElapsed = new Date() - startTime
+          this.$ga.time({
+            timingCategory: 'query',
+            timingVar: 'content',
+            timingValue: timeElapsed,
+            timingLabel: type + '-archived'
+          })
+          this.loading = false
+        }
+      })
     }
   }
 }
