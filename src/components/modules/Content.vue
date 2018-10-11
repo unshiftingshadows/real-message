@@ -19,7 +19,8 @@
         <span class="float-right" style="font-size: .8rem; vertical-align: top; line-height: 1rem;">{{ data.time }} minutes&nbsp;&nbsp;&nbsp;</span>
         <!-- Mod Icon -->
         <q-icon :name="typeInfo[data.type].icon" color="primary" size="2rem" />&nbsp;&nbsp;&nbsp;
-        {{ data.title }}
+        <span v-if="data.type !== 'bible'">{{ data.title }}</span>
+        <span v-if="data.type === 'bible'">{{ data.bibleRef }}</span>
       </q-card-title>
       <q-card-main>
         <!-- Mod Info -->
@@ -169,16 +170,24 @@ export default {
     preSave () {
       if (this.data.type === 'bible') {
         this.loading = true
-        this.$database.bible(this.data.bibleRef, this.translation, (data) => {
-          console.log(data)
-          // NOTE: This needs to be moved to the server side -- not all versions will
-          //       follow this same format
-          this.data.text = data.text
+        var readable = this.$bible.readable(this.data.bibleRef)
+        this.$bible.text(this.data.bibleRef, this.translation).then(res => {
+          this.data.text = res.text
           this.data.translation = this.translation
-          this.data.bibleRef = this.$bible.readable(this.data.bibleRef)
+          this.data.bibleRef = readable
           this.loading = false
           this.modMethods.save(this.id, this.data)
         })
+        // this.$database.bible(this.data.bibleRef, this.translation, (data) => {
+        //   console.log(data)
+        //   // NOTE: This needs to be moved to the server side -- not all versions will
+        //   //       follow this same format
+        //   this.data.text = data.text
+        //   this.data.translation = this.translation
+        //   this.data.bibleRef = this.$bible.readable(this.data.bibleRef)
+        //   this.loading = false
+        //   this.modMethods.save(this.id, this.data)
+        // })
       } else {
         this.modMethods.save(this.id, this.data)
       }
