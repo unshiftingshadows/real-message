@@ -87,6 +87,26 @@
         </div>
       </div>
     </q-modal>
+    <q-modal v-model="removeConfirmation" ref="removeConfirmationModal" content-classes="edit-title-modal">
+      <div class="row gutter-md">
+        <div class="col-12">
+          <q-btn
+            color="primary"
+            @click.native="removeConfirmation = false"
+            icon="fas fa-times"
+            class="float-right"
+            size="sm"
+          />
+          <h4>Confirm Remove...</h4>
+        </div>
+        <div class="col-12">
+          <p>Are you sure you want to <b>permanently</b> remove this lesson? It will <b>no longer be accessible</b>.</p>
+        </div>
+        <div class="col-12">
+          <q-btn color="primary" @click.native="remove">Remove</q-btn>
+        </div>
+      </div>
+    </q-modal>
     <q-page-sticky position="top">
       <q-toolbar color="secondary" style="z-index: 10;">
         <q-toolbar-title>
@@ -104,6 +124,7 @@
               <q-item v-close-overlay><q-toggle label="Prayer" v-model="lesson.prefs.prayer" /></q-item>
               <q-item-separator />
               <q-item v-close-overlay v-if="!lesson.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
+              <q-item v-close-overlay v-if="lesson.archived" @click.native="removeConfirmation = true" class="text-negative">Remove...</q-item>
               <q-item v-close-overlay v-if="!lesson.archived">Collaborate...</q-item>
               <!-- <q-item v-close-overlay>Print...</q-item> -->
               <!-- <q-item v-close-overlay>Present...</q-item> -->
@@ -147,6 +168,7 @@ export default {
       updating: true,
       showPreview: false,
       archiveConfirmation: false,
+      removeConfirmation: false,
       showMainIdea: false
     }
   },
@@ -196,6 +218,11 @@ export default {
       this.archiveConfirmation = false
       this.lesson.archived = true
       this.$fiery.update(this.lesson)
+      this.$router.push({ name: 'list', params: { type: 'lesson' } })
+    },
+    remove () {
+      this.removeConfirmation = false
+      this.$fiery.remove(this.lesson)
       this.$router.push({ name: 'list', params: { type: 'lesson' } })
     },
     userHasScrolled (scroll) {
