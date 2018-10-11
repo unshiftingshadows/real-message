@@ -103,8 +103,8 @@
               <q-item v-close-overlay><q-toggle label="Application" v-model="sermon.prefs.application" /></q-item>
               <q-item v-close-overlay><q-toggle label="Prayer" v-model="sermon.prefs.prayer" /></q-item>
               <q-item-separator />
-              <q-item v-close-overlay @click.native="archiveConfirmation = true">Archive...</q-item>
-              <q-item v-close-overlay>Collaborate...</q-item>
+              <q-item v-close-overlay v-if="!sermon.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
+              <q-item v-close-overlay v-if="!sermon.archived">Collaborate...</q-item>
               <!-- <q-item v-close-overlay>Print...</q-item> -->
               <!-- <q-item v-close-overlay>Present...</q-item> -->
             </q-list>
