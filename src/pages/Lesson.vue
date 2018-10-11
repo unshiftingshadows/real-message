@@ -23,7 +23,7 @@
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
       <div class="col-12" v-if="lesson.sectionOrder">
-        <content-editor :key="id" :id="id" type="lesson" @modules-init="modulesInit" />
+        <content-editor :key="id" :id="id" type="lesson" />
       </div>
     </div>
     <q-modal v-model="editTitle" ref="editTitleModal" content-classes="edit-title-modal">
@@ -92,18 +92,19 @@
         <q-toolbar-title>
           {{ lesson.title }}
         </q-toolbar-title>
+        <q-chip color="warning" class="on-left" v-if="lesson.archived">Archived</q-chip>
         <q-btn icon="fas fa-ellipsis-v" color="primary" class="float-right">
           <q-popover anchor="bottom right" self="top right">
             <q-list link>
               <q-item v-close-overlay @click.native="editTitle = true">Rename...</q-item>
               <q-item v-close-overlay @click.native="showPreview = true">Preview</q-item>
               <q-item-separator />
-              <q-item v-close-overlay><q-toggle label="Hook" v-model="structure.before.hook" /></q-item>
-              <q-item v-close-overlay><q-toggle label="Application" v-model="structure.after.application" /></q-item>
-              <q-item v-close-overlay><q-toggle label="Prayer" v-model="structure.after.prayer" /></q-item>
+              <q-item v-close-overlay><q-toggle label="Hook" v-model="lesson.prefs.hook" /></q-item>
+              <q-item v-close-overlay><q-toggle label="Application" v-model="lesson.prefs.application" /></q-item>
+              <q-item v-close-overlay><q-toggle label="Prayer" v-model="lesson.prefs.prayer" /></q-item>
               <q-item-separator />
-              <q-item v-close-overlay @click.native="archiveConfirmation = true">Archive...</q-item>
-              <q-item v-close-overlay>Collaborate...</q-item>
+              <q-item v-close-overlay v-if="!lesson.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
+              <q-item v-close-overlay v-if="!lesson.archived">Collaborate...</q-item>
               <!-- <q-item v-close-overlay>Print...</q-item> -->
               <!-- <q-item v-close-overlay>Present...</q-item> -->
             </q-list>
@@ -143,15 +144,6 @@ export default {
       seriesName: '',
       readableRefs: [],
       editTitle: false,
-      structure: {
-        before: {
-          hook: true
-        },
-        after: {
-          application: true,
-          prayer: true
-        }
-      },
       updating: true,
       showPreview: false,
       archiveConfirmation: false,
@@ -162,23 +154,21 @@ export default {
     this.init()
   },
   watch: {
-    'structure.before.hook': function (newHook) {
-      this.$firebase.ref('lesson', 'structure/before', this.id).child('hook').update({ show: newHook })
+    'lesson.prefs.hook': function (newHook) {
+      // this.$firebase.ref('lesson', 'structure/before', this.id).child('hook').update({ show: newHook })
+      this.update()
     },
-    'structure.after.application': function (newApplication) {
-      this.$firebase.ref('lesson', 'structure/after', this.id).child('application').update({ show: newApplication })
+    'lesson.prefs.application': function (newApplication) {
+      // this.$firebase.ref('lesson', 'structure/after', this.id).child('application').update({ show: newApplication })
+      this.update()
     },
-    'structure.after.prayer': function (newPrayer) {
-      this.$firebase.ref('lesson', 'structure/after', this.id).child('prayer').update({ show: newPrayer })
+    'lesson.prefs.prayer': function (newPrayer) {
+      // this.$firebase.ref('lesson', 'structure/after', this.id).child('prayer').update({ show: newPrayer })
+      this.update()
     }
   },
   methods: {
     init () {
-    },
-    modulesInit (structure) {
-      this.updating = true
-      this.structure = structure
-      this.updating = false
     },
     addRef (newRef) {
       this.lesson.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
@@ -204,10 +194,9 @@ export default {
     archive () {
       console.log('archive!')
       this.archiveConfirmation = false
-      this.$database.archive('lesson', this.id, (res) => {
-        console.log(res)
-        this.$router.push({ name: 'list', params: { type: 'lesson' } })
-      })
+      this.lesson.archived = true
+      this.$fiery.update(this.lesson)
+      this.$router.push({ name: 'list', params: { type: 'lesson' } })
     },
     userHasScrolled (scroll) {
       if (scroll.position < 30) {

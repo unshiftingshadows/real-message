@@ -5,7 +5,7 @@
     </div>
     <div v-if="!loading" class="row gutter-sm">
       <!-- Before -->
-      <div class="col-12" v-if="structure.hook && structure.hook.show">
+      <div class="col-12" v-if="structure.hook && document.prefs.hook">
         <module-section id="hook" :data="structure.hook" :modules="modules" :onChange="onChangeMod" :content-type="type" :contentid="id" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
       </div>
       <!-- Sections -->
@@ -23,9 +23,8 @@
       </div> -->
       <!-- After -->
       <div class="col-12">
-        <mod-repeated-thought v-if="type === 'guide'" :seriesid="$route.params.seriesid" :lessonid="$route.params.lessonid" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" />
-        <mod-application v-if="structure.application && structure.application.show" id="application" :data="structure.application" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.application.editing === $firebase.auth.currentUser.uid }" />
-        <mod-prayer v-if="structure.prayer && structure.prayer.show" id="prayer" :data="structure.prayer" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.prayer.editing === $firebase.auth.currentUser.uid }" />
+        <mod-application v-if="structure.application && document.prefs.application" id="application" :data="structure.application" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.application.editing === $firebase.auth.currentUser.uid }" />
+        <mod-prayer v-if="structure.prayer && document.prefs.prayer" id="prayer" :data="structure.prayer" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.prayer.editing === $firebase.auth.currentUser.uid }" />
       </div>
     </div>
     <q-modal ref="addNewModule" content-classes="add-module-modal">
@@ -127,7 +126,7 @@ export default {
           }
         }
       }),
-      versions: this.$fiery(this.$firebase.ref(this.type, 'versions', this.id, this.$route.params.seriesid, this.$route.params.lessonid))
+      versions: this.$fiery(this.$firebase.ref(this.type, 'versions', this.id))
     }
   },
   watch: {
