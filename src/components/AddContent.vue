@@ -7,7 +7,7 @@
       class="float-right"
       size="sm"
     />
-    <h4>Add {{ readableType }}</h4>
+    <h4>New {{ readableType }}</h4>
     <div class="row gutter-sm">
       <div class="col-12">
         <q-field
@@ -17,7 +17,7 @@
           <q-input type="text" float-label="Title" v-model="title" @blur="$v.title.$touch" />
         </q-field>
       </div>
-      <div class="col-12" v-if="type === 'sermon' || type === 'lesson'">
+      <!-- <div class="col-12" v-if="type === 'sermon' || type === 'lesson'">
         <h5>Choose a template...</h5>
       </div>
       <div class="col-xs-12 col-md-6" v-if="type === 'sermon' || type === 'lesson'">
@@ -40,9 +40,9 @@
             <q-btn color="primary" class="float-right" @click.native="add('3point')">Choose</q-btn>
           </q-card-main>
         </q-card>
-      </div>
+      </div> -->
       <div class="col-12">
-        <h5 v-if="type === 'sermon' || type === 'lesson'">...Or start from scratch</h5>
+        <!-- <h5 v-if="type === 'sermon' || type === 'lesson'">...Or start from scratch</h5> -->
         <q-btn color="primary" class="float-right" @click.native="add('blank')">Add Blank {{ readableType }}</q-btn>
       </div>
     </div>
@@ -87,7 +87,7 @@ export default {
     init () {
       this.title = ''
     },
-    add (template) {
+    add (template, seriesid) {
       this.$v.title.$touch()
       if (this.$v.title.$error) {
         this.$q.notify('Please review fields again')
@@ -101,6 +101,9 @@ export default {
           template: template || '',
           tags: [],
           bibleRefs: []
+        }
+        if (seriesid) {
+          obj.seriesid = seriesid
         }
         console.log(obj)
         this.$firebase.list(this.type).add(obj).then((res) => {
