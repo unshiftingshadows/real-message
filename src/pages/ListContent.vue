@@ -15,7 +15,7 @@
         </q-card-main>
       </q-card>
     </div>
-    <div>
+    <div v-if="type !== 'scratch'">
       <a @click="showArchived(type)"><p class="text-light cursor-pointer" style="margin-top: 20px;">Show Archived <q-icon name="fas fa-chevron-down" /></p></a>
     </div>
     <div v-if="!loading || (contentTypes.includes(type) && archived.length !== 0)">
