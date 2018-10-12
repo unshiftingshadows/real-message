@@ -83,7 +83,7 @@
           <p>Are you sure you want to archive this lesson? It will still be accessible from the archive menu, but you will no longer be able to edit, share, or present.</p>
         </div>
         <div class="col-12">
-          <q-btn color="primary" @click.native="archive">Archive</q-btn>
+          <q-btn color="warning" @click.native="archive">Archive</q-btn>
         </div>
       </div>
     </q-modal>
@@ -103,7 +103,7 @@
           <p>Are you sure you want to <b>permanently</b> remove this lesson? It will <b>no longer be accessible</b>.</p>
         </div>
         <div class="col-12">
-          <q-btn color="primary" @click.native="remove">Remove</q-btn>
+          <q-btn color="negative" @click.native="remove">Remove</q-btn>
         </div>
       </div>
     </q-modal>
