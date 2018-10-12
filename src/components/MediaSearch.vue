@@ -28,7 +28,7 @@
             <q-card-main v-if="item.type === 'quote' || item.type === 'illustration'">
               <p v-if="item.type === 'illustration'"><b>{{ item.title }}</b></p>
               <p>{{ item.text }}</p>
-              <p class="q-body-2" v-if="item.type === 'quote' && (item.author || item.mediaTitle)">{{ item.author }} - {{ item.mediaTitle }}</p>
+              <p class="q-body-2" v-if="item.type === 'quote' && (item.author || item.title)">{{ item.author }} - {{ item.title }}</p>
               <p class="q-body-2" v-if="item.type === 'illustration'">{{ item.author }}</p>
             </q-card-main>
           </q-card>
