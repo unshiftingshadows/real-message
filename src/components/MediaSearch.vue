@@ -2,7 +2,7 @@
   <div>
     <div class="row gutter-sm">
       <div class="col-12">
-        <q-input v-model="searchTerms" @keyup.enter="search" />
+        <q-input v-model="searchTerms" @keyup.enter="search" ref="searchInput" />
       </div>
       <div class="col-12">
         <q-select
@@ -149,6 +149,7 @@ export default {
     },
     search () {
       console.log('search')
+      this.$refs.searchInput.blur()
       const startTime = new Date()
       this.loading = true
       this.$firebase.searchMedia({ searchTerms: this.searchTerms, searchTypes: this.types.map((e) => { return e.value }) }).then((res) => {
