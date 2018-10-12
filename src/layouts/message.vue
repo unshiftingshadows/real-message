@@ -9,7 +9,7 @@
           dense
           icon="fas fa-bars"
           @click="leftDrawer = !leftDrawer"
-          v-if="!$q.platform.is.desktop"
+          v-if="$q.platform.is.mobile && !$q.platform.is.ipad"
         />
         <q-toolbar-title>
           <img src="https://real-45953.firebaseapp.com/logos/logo_message_app%402x.png" style="max-height: 40px;" />
