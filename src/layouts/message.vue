@@ -151,7 +151,7 @@ export default {
   name: 'LayoutMessage',
   data () {
     return {
-      leftDrawer: !this.$q.platform.is.mobile,
+      leftDrawer: !this.$q.platform.is.mobile || this.$q.platform.is.ipad,
       rightDrawer: false,
       showRightDrawer: this.$route.name === 'lesson' || this.$route.name === 'sermon',
       pageType: this.$route.name
@@ -161,7 +161,7 @@ export default {
     '$route.name': function (val) {
       console.log('page change')
       this.pageType = val
-      this.leftDrawer = !this.$q.platform.is.mobile
+      this.leftDrawer = !this.$q.platform.is.mobile || this.$q.platform.is.ipad
       this.rightDrawer = false
       this.showRightDrawer = val === 'lesson' || val === 'sermon'
     }
