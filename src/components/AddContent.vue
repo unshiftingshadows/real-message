@@ -55,13 +55,13 @@ import { required } from 'vuelidate/lib/validators'
 const { capitalize } = format
 
 export default {
-  props: ['type'],
-  // name: 'ComponentName',
+  props: ['type', 'seriesid', 'updateSeries'],
+  name: 'AddContent',
   data () {
     return {
       showAddContent: false,
       title: '',
-      types: ['series', 'lesson', 'sermon', 'scratch'],
+      types: ['series', 'message', 'scratch'],
       bibleRef: ''
     }
   },
@@ -87,7 +87,7 @@ export default {
     init () {
       this.title = ''
     },
-    add (template, seriesid) {
+    add (template) {
       this.$v.title.$touch()
       if (this.$v.title.$error) {
         this.$q.notify('Please review fields again')
@@ -97,19 +97,24 @@ export default {
         var obj = {
           title: this.title,
           createdBy: this.$firebase.auth.currentUser.uid,
-          prefs: this.$root.$children[0].user.app.message.prefs[this.type + 'Structure'] || {},
-          template: template || '',
           tags: [],
           bibleRefs: []
         }
-        if (seriesid) {
-          obj.seriesid = seriesid
+        if (this.type === 'message') {
+          obj.prefs = this.$root.$children[0].user.app.message.prefs[this.type + 'Structure'] || {}
+          obj.template = template || ''
+        }
+        if (this.seriesid) {
+          obj.seriesid = this.seriesid
         }
         console.log(obj)
         this.$firebase.list(this.type).add(obj).then((res) => {
           // GA - Add content event
           this.$ga.event('content', 'add', this.type)
           this.showAddContent = false
+          if (this.seriesid) {
+            this.updateSeries(res.id)
+          }
           Notify.create({
             message: this.readableType + ' created!',
             type: 'positive',
@@ -144,4 +149,17 @@ export default {
 </script>
 
 <style>
+
+.add-content-modal {
+  padding: 30px;
+  width: 100%;
+}
+
+@media screen and (min-width: 1200px) {
+  .add-content-modal {
+    min-width: 500px;
+    width: 500px;
+  }
+}
+
 </style>

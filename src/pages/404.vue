@@ -8,9 +8,28 @@
     </p>
     <p class="text-faded">Sorry, nothing here...<strong>(404)</strong></p>
     <q-btn
-      color="secondary"
+      color="primary"
       style="width:200px;"
       @click="$router.push('/')"
     >Go back</q-btn>
+    <br/>
+    <br/>
+    <q-btn
+      color="negative"
+      style="width:200px;"
+      @click="openChat"
+    >Need help?</q-btn>
   </div>
 </template>
+
+<script>
+export default {
+  name: 'Error404',
+  methods: {
+    openChat () {
+      document.getElementById('fc_frame').style.display = 'block'
+      window.fcWidget.open()
+    }
+  }
+}
+</script>

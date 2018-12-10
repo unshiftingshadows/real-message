@@ -5,7 +5,7 @@
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
       <div class="col-12" v-if="!loading">
-        <q-input v-model="series.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update" />
+        <q-input v-model="message.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update" />
       </div>
       <div class="col-xs-12 col-md-6" v-if="!loading">
         <q-chips-input
@@ -17,16 +17,15 @@
         />
       </div>
       <div class="col-xs-12 col-md-6" v-if="!loading">
-        <q-chips-input v-model="series.tags" float-label="Tags" @blur="update" />
+        <q-chips-input v-model="message.tags" float-label="Tags" @blur="update" />
       </div>
-      <div v-if="!series.messageOrder">
+      <div v-if="!message.sectionOrder">
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
-      <div class="col-12" v-if="series.messageOrder">
-        <message-list :seriesid="id" :message-order="series.messageOrder" />
+      <div class="col-12" v-if="message.sectionOrder">
+        <content-editor :key="id" :id="id" :type="message.type" />
       </div>
     </div>
-    <add-content type="message" :seriesid="id" ref="addContent" :update-series="update" />
     <q-modal v-model="editTitle" ref="editTitleModal" content-classes="edit-title-modal">
       <div class="row gutter-md">
         <div class="col-12">
@@ -40,10 +39,31 @@
           <h4>Edit Title</h4>
         </div>
         <div class="col-12">
-          <q-input v-model="series.title" />
+          <q-input v-model="message.title" />
         </div>
         <div class="col-12">
           <q-btn color="primary" @click.native="update">Save</q-btn>
+        </div>
+      </div>
+    </q-modal>
+    <q-modal v-model="showPreview" ref="previewModal" content-classes="preview-modal" maximized>
+      <div class="row gutter-md justify-center" v-if="showPreview">
+        <div class="col-xs-12 col-md-8">
+          <q-btn
+            color="primary"
+            @click.native="showPreview = false"
+            icon="fas fa-times"
+            class="float-right"
+            size="sm"
+          />
+          <h2>{{ message.title }}</h2>
+        </div>
+        <div class="col-xs-12 col-md-8">
+          <h3>Main Idea</h3>
+          <h6>{{ message.mainIdea }}</h6>
+        </div>
+        <div class="col-xs-12 col-md-8">
+          <content-preview :id="id" type="message" />
         </div>
       </div>
     </q-modal>
@@ -60,10 +80,7 @@
           <h4>Confirm Archive...</h4>
         </div>
         <div class="col-12">
-          <!-- TODO: Archiving a series should probably work differently than archiving a message...
-                     might want to offer only archiving (or deleting?) the series and saving the messages
-                     as one-offs -->
-          <p>Are you sure you want to archive this series? It will still be accessible from the archive menu, but you will no longer be able to edit, share, or present.</p>
+          <p>Are you sure you want to archive this message? It will still be accessible from the archive menu, but you will no longer be able to edit, share, or present.</p>
         </div>
         <div class="col-12">
           <q-btn color="warning" @click.native="archive">Archive</q-btn>
@@ -83,7 +100,7 @@
           <h4>Confirm Remove...</h4>
         </div>
         <div class="col-12">
-          <p>Are you sure you want to <b>permanently</b> remove this series? It will <b>no longer be accessible</b>.</p>
+          <p>Are you sure you want to <b>permanently</b> remove this message? It will <b>no longer be accessible</b>.</p>
         </div>
         <div class="col-12">
           <q-btn color="negative" @click.native="remove">Remove</q-btn>
@@ -93,19 +110,22 @@
     <q-page-sticky position="top">
       <q-toolbar color="secondary" style="z-index: 10;">
         <q-toolbar-title>
-          {{ series.title }}
+          {{ message.title }}
         </q-toolbar-title>
-        <q-chip color="warning" class="on-left" v-if="series.archived">Archived</q-chip>
+        <q-chip color="warning" class="on-left" v-if="message.archived">Archived</q-chip>
         <q-btn icon="fas fa-ellipsis-v" color="primary" class="float-right">
           <q-popover anchor="bottom right" self="top right">
             <q-list link>
               <q-item v-close-overlay @click.native="editTitle = true">Rename...</q-item>
+              <q-item v-close-overlay @click.native="showPreview = true">Preview</q-item>
               <q-item-separator />
-              <q-item v-close-overlay @click.native="$refs.addContent.show()">Add Message</q-item>
+              <q-item v-close-overlay><q-toggle label="Hook" v-model="message.prefs.hook" /></q-item>
+              <q-item v-close-overlay><q-toggle label="Application" v-model="message.prefs.application" /></q-item>
+              <q-item v-close-overlay><q-toggle label="Prayer" v-model="message.prefs.prayer" /></q-item>
               <q-item-separator />
-              <q-item v-close-overlay v-if="!series.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
-              <q-item v-close-overlay v-if="series.archived" @click.native="removeConfirmation = true" class="text-negative">Remove...</q-item>
-              <q-item v-close-overlay v-if="!series.archived">Collaborate...</q-item>
+              <q-item v-close-overlay v-if="!message.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
+              <q-item v-close-overlay v-if="message.archived" @click.native="removeConfirmation = true" class="text-negative">Remove...</q-item>
+              <q-item v-close-overlay v-if="!message.archived">Collaborate...</q-item>
               <!-- <q-item v-close-overlay>Print...</q-item> -->
               <!-- <q-item v-close-overlay>Present...</q-item> -->
             </q-list>
@@ -113,37 +133,43 @@
         </q-btn>
       </q-toolbar>
       <div class="main-idea-tab float-right" v-bind:class="{ 'main-idea-show': showMainIdea }">
-        {{ series.mainIdea }}
+        {{ message.mainIdea }}
       </div>
     </q-page-sticky>
+    <comment-popover />
     <q-scroll-observable @scroll="userHasScrolled" />
   </q-page>
 </template>
 
 <script>
 import { Notify } from 'quasar'
-import MessageList from 'components/MessageList.vue'
-import AddContent from 'components/AddContent.vue'
+import ContentEditor from 'components/ContentEditor.vue'
+import ContentPreview from 'components/ContentPreview.vue'
+import CommentPopover from 'components/CommentPopover.vue'
 
 export default {
   components: {
-    MessageList,
-    AddContent
+    ContentEditor,
+    ContentPreview,
+    CommentPopover
   },
-  name: 'Series',
+  name: 'Message',
   fiery: true,
   data () {
     return {
       loading: true,
       id: this.$route.params.id,
-      series: this.$fiery(this.$firebase.ref('series', '', this.$route.params.id), {
-        onSuccess: (series) => {
-          this.readableRefs = series.bibleRefs.map(e => { return this.$bible.readable(e) })
+      message: this.$fiery(this.$firebase.ref('message', '', this.$route.params.id), {
+        onSuccess: (message) => {
+          this.readableRefs = message.bibleRefs.map(e => { return this.$bible.readable(e) })
           this.loading = false
         }
       }),
+      seriesName: '',
       readableRefs: [],
       editTitle: false,
+      updating: true,
+      showPreview: false,
       archiveConfirmation: false,
       removeConfirmation: false,
       showMainIdea: false
@@ -152,24 +178,40 @@ export default {
   mounted () {
     this.init()
   },
+  watch: {
+    'message.prefs.hook': function (newHook) {
+      // this.$firebase.ref('message', 'structure/before', this.id).child('hook').update({ show: newHook })
+      this.update()
+    },
+    'message.prefs.application': function (newApplication) {
+      // this.$firebase.ref('message', 'structure/after', this.id).child('application').update({ show: newApplication })
+      this.update()
+    },
+    'message.prefs.prayer': function (newPrayer) {
+      // this.$firebase.ref('message', 'structure/after', this.id).child('prayer').update({ show: newPrayer })
+      this.update()
+    }
+  },
   methods: {
     init () {
     },
     addRef (newRef) {
-      this.series.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
+      this.message.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
-    update (messageid) {
+    selected (item) {
+      this.seriesName = item.label
+      this.message.seriesID = item.value
+      this.update()
+    },
+    update () {
       // Call update function from database
       console.log('update!')
-      if (messageid) {
-        this.series.messageOrder.push(messageid)
-      }
       this.editTitle = false
-      this.$fiery.update(this.series).then(() => {
+      this.$fiery.update(this.message).then(() => {
         Notify.create({
           type: 'positive',
-          message: 'Series Updated!',
+          message: 'Message Updated!',
           position: 'bottom-left'
         })
       })
@@ -177,14 +219,14 @@ export default {
     archive () {
       console.log('archive!')
       this.archiveConfirmation = false
-      this.series.archived = true
-      this.$fiery.update(this.series)
-      this.$router.push({ name: 'list', params: { type: 'series' } })
+      this.message.archived = true
+      this.$fiery.update(this.message)
+      this.$router.push({ name: 'list', params: { type: 'message' } })
     },
     remove () {
       this.removeConfirmation = false
-      this.$fiery.remove(this.series)
-      this.$router.push({ name: 'list', params: { type: 'series' } })
+      this.$fiery.remove(this.message)
+      this.$router.push({ name: 'list', params: { type: 'message' } })
     },
     userHasScrolled (scroll) {
       if (scroll.position < 30) {

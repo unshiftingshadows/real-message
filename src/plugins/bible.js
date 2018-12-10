@@ -1,13 +1,13 @@
 const BCVParser = require('bible-passage-reference-parser/js/en_bcv_parser').bcv_parser
 // const BCV = new BCVParser()
 
-import axios from 'axios'
+// import axios from 'axios'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/functions'
 
-axios.defaults.baseURL = 'https://database.unshiftingshadows.com/message'
-axios.defaults.headers.post['Content-Type'] = 'application/json'
+// axios.defaults.baseURL = 'https://database.unshiftingshadows.com/message'
+// axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 function readable (ref) {
   const bcv = new BCVParser().parse(ref)

@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <h1>Builder Dashboard</h1>
+    <h1>Message Dashboard</h1>
   </q-page>
 </template>
 

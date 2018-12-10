@@ -13,7 +13,7 @@ export default {
   components: {
     AddMedia
   },
-  // name: 'ComponentName',
+  name: 'AddModule',
   props: [ 'nextModOrder', 'sectionid', 'close', 'edit', 'contentType', 'dark' ],
   data () {
     return {

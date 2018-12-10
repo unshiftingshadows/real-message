@@ -57,7 +57,7 @@
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Dashboard</q-tooltip>
         </q-item>
         <q-item-separator />
-        <q-item :to="{ name: 'list', params: { type: 'sermon' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.contentType.sermon">
+        <!-- <q-item :to="{ name: 'list', params: { type: 'sermon' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.contentType.sermon">
           <q-item-tile icon="fas fa-comment" />
           <q-item-main label="Sermons" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Sermons</q-tooltip>
@@ -66,6 +66,16 @@
           <q-item-tile icon="fas fa-file" />
           <q-item-main label="Lessons" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Lessons</q-tooltip>
+        </q-item> -->
+        <q-item :to="{ name: 'list', params: { type: 'series' }}" class="menu-item">
+          <q-item-tile icon="fas fa-folder" />
+          <q-item-main label="Sermons" class="on-right" />
+          <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Message Series</q-tooltip>
+        </q-item>
+        <q-item :to="{ name: 'list', params: { type: 'message' }}" class="menu-item">
+          <q-item-tile icon="fas fa-file" />
+          <q-item-main label="Lessons" class="on-right" />
+          <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Individual Messages</q-tooltip>
         </q-item>
         <q-item :to="{ name: 'list', params: { type: 'scratch' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.contentType.scratch">
           <q-item-tile icon="fas fa-lightbulb" />
@@ -105,6 +115,11 @@
           <q-item-tile icon="fas fa-cog" />
           <q-item-main label="Settings" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Settings</q-tooltip>
+        </q-item>
+        <q-item class="menu-item" @click.native="openChat">
+          <q-item-tile icon="fas fa-comments" />
+          <q-item-main label="Support" class="on-right" />
+          <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Support</q-tooltip>
         </q-item>
         <q-item to="/support" class="menu-item">
           <q-item-tile icon="fas fa-question" />
@@ -189,6 +204,14 @@ export default {
     },
     checkUser () {
       console.log(this.$root.$children[0].user)
+    },
+    openChat () {
+      if (window.fcWidget.isOpen()) {
+        window.fcWidget.close()
+      } else {
+        document.getElementById('fc_frame').style.display = 'block'
+        window.fcWidget.open()
+      }
     }
   }
 }

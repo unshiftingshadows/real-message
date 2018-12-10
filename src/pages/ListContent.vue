@@ -49,7 +49,7 @@ export default {
   fiery: true,
   data () {
     return {
-      contentTypes: ['series', 'lesson', 'sermon', 'scratch'],
+      contentTypes: ['series', 'message', 'scratch'],
       type: this.$route.params.type,
       items: [],
       archived: [],
@@ -73,7 +73,7 @@ export default {
       const startTime = new Date()
       this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
-        query: (items) => items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('archived', '==', false),
+        query: (items) => this.$route.params.type === 'series' ? items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('archived', '==', false) : items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('seriesid', '==', '').where('archived', '==', false),
         key: '_id',
         exclude: ['_id'],
         onSuccess: () => {
@@ -149,11 +149,6 @@ export default {
   margin-right: 2px;
 }
 
-.add-content-modal {
-  padding: 30px;
-  width: 100%;
-}
-
 @media screen and (min-width: 800px) {
   .content-card {
     width: 47%;
@@ -162,10 +157,6 @@ export default {
 @media screen and (min-width: 1200px) {
   .content-card {
     width: 31%;
-  }
-  .add-content-modal {
-    min-width: 500px;
-    width: 500px;
   }
 }
 

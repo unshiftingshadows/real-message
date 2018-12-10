@@ -176,6 +176,7 @@ export default {
   },
   methods: {
     init () {
+      window.fcWidget.destroy()
       console.log(window.fcWidget)
       this.newPassword = ''
       this.newPasswordCheck = ''
@@ -188,7 +189,13 @@ export default {
             token: '2f1c0fee-afb7-41e3-afd3-132b4330cd55',
             host: 'https://wchat.freshchat.com',
             tags: ['message'],
-            siteId: 'message'
+            siteId: 'message',
+            config: {
+              disableEvents: true,
+              headerProperty: {
+                hideChatButton: false
+              }
+            }
           })
         } else {
           console.log('currentuser', user)
@@ -207,8 +214,17 @@ export default {
                   firstName: userSnap.name.first,
                   lastName: userSnap.name.last,
                   email: userSnap.email,
-                  phone: userSnap.phone
+                  phone: userSnap.phone,
+                  config: {
+                    disableEvents: true,
+                    headerProperty: {
+                      direction: 'ltr',
+                      hideChatButton: true
+                    }
+                  }
                 })
+                document.getElementById('fc_frame').style.display = 'none'
+                console.log(window.fcWidget)
                 window.fcWidget.on('user:created', (resp) => {
                   console.log('user created', resp)
                   if (resp.status === 200) {
@@ -216,6 +232,9 @@ export default {
                       'supportRestore.message': resp.data.restoreId
                     })
                   }
+                })
+                window.fcWidget.on('widget:closed', () => {
+                  document.getElementById('fc_frame').style.display = 'none'
                 })
                 this.loading = false
               }

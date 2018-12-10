@@ -47,6 +47,7 @@ function dbref (type, selection, id) {
 }
 
 function listRef (type) {
+  console.log('list', `message${type.charAt(0).toUpperCase()}${type.substr(1)}`)
   return firestore.collection(`message${type.charAt(0).toUpperCase()}${type.substr(1)}`)
 }
 
