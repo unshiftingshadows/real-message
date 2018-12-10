@@ -1,6 +1,30 @@
 # Changelog
 All notable changes for this project will be documented in this file.
 
+## 0.0.41 - 2018-12-10
+### Added
+- auto saves and closes a module on app visibility
+- message content type to replace sermon and lesson
+- series functionality!
+  - has separate main idea, tags, and Bible refs
+- comment popover shell
+
+### Changed
+- Bible text functions now use cloud function
+- adding media from drawer allows for section selection
+- media from drawer doesn't automatically open a module for editing
+- colored archive and remove buttons
+- search input is blurred on 'enter'
+- support chat popup is controlled by menu
+- 404 page includes button to open chat window
+
+### Fixed
+- background color for main idea
+- title in media search
+- visual issue on mobile/iPad drawers
+- main idea text color
+- lots and lots of other small cleanup fixes
+
 ## 0.0.40 - 2018-10-11
 ### Added
 - modules open on click
