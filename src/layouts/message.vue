@@ -57,19 +57,9 @@
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Dashboard</q-tooltip>
         </q-item>
         <q-item-separator />
-        <!-- <q-item :to="{ name: 'list', params: { type: 'sermon' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.contentType.sermon">
-          <q-item-tile icon="fas fa-comment" />
-          <q-item-main label="Sermons" class="on-right" />
-          <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Sermons</q-tooltip>
-        </q-item>
-        <q-item :to="{ name: 'list', params: { type: 'lesson' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.contentType.lesson">
-          <q-item-tile icon="fas fa-file" />
-          <q-item-main label="Lessons" class="on-right" />
-          <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Lessons</q-tooltip>
-        </q-item> -->
         <q-item :to="{ name: 'list', params: { type: 'series' }}" class="menu-item">
           <q-item-tile icon="fas fa-folder" />
-          <q-item-main label="Sermons" class="on-right" />
+          <q-item-main label="Series" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Message Series</q-tooltip>
         </q-item>
         <q-item :to="{ name: 'list', params: { type: 'message' }}" class="menu-item">
@@ -141,7 +131,7 @@
       :breakpoint="1200"
     >
       <q-scroll-area class="fit q-pa-sm">
-        <resources v-if="$route.name === 'lesson' || $route.name === 'sermon'" add />
+        <resources v-if="$route.name === 'message'" add />
       </q-scroll-area>
     </q-layout-drawer>
 
@@ -168,7 +158,7 @@ export default {
     return {
       leftDrawer: !this.$q.platform.is.mobile || this.$q.platform.is.ipad,
       rightDrawer: false,
-      showRightDrawer: this.$route.name === 'lesson' || this.$route.name === 'sermon',
+      showRightDrawer: this.$route.name === 'message',
       pageType: this.$route.name
     }
   },
@@ -178,7 +168,7 @@ export default {
       this.pageType = val
       this.leftDrawer = !this.$q.platform.is.mobile || this.$q.platform.is.ipad
       this.rightDrawer = false
-      this.showRightDrawer = val === 'lesson' || val === 'sermon'
+      this.showRightDrawer = val === 'message'
     }
     // TODO: This will need to be edited for NQ users
     // '$root.$children[0].user.nqUser': function (val) {

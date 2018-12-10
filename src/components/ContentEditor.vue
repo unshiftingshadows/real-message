@@ -105,16 +105,16 @@ export default {
       editingSection: undefined,
       sectionChoice: '',
       tempModule: false,
-      document: this.$fiery(this.$firebase.ref(this.type, '', this.id), {
+      document: this.$fiery(this.$firebase.ref('message', '', this.id), {
         include: ['sectionOrder']
       }),
-      structure: this.$fiery(this.$firebase.ref(this.type, 'structure', this.id), {
+      structure: this.$fiery(this.$firebase.ref('message', 'structure', this.id), {
         map: true
       }),
-      sections: this.$fiery(this.$firebase.ref(this.type, 'sections', this.id), {
+      sections: this.$fiery(this.$firebase.ref('message', 'sections', this.id), {
         map: true
       }),
-      modules: this.$fiery(this.$firebase.ref(this.type, 'modules', this.id), {
+      modules: this.$fiery(this.$firebase.ref('message', 'modules', this.id), {
         map: true,
         onSuccess: (modules) => {
           this.loading = false
@@ -128,7 +128,7 @@ export default {
           }
         }
       }),
-      versions: this.$fiery(this.$firebase.ref(this.type, 'versions', this.id))
+      versions: this.$fiery(this.$firebase.ref('message', 'versions', this.id))
     }
   },
   watch: {

@@ -17,32 +17,7 @@
           <q-input type="text" float-label="Title" v-model="title" @blur="$v.title.$touch" />
         </q-field>
       </div>
-      <!-- <div class="col-12" v-if="type === 'sermon' || type === 'lesson'">
-        <h5>Choose a template...</h5>
-      </div>
-      <div class="col-xs-12 col-md-6" v-if="type === 'sermon' || type === 'lesson'">
-        <q-card>
-          <q-card-title>Expositional</q-card-title>
-          <q-card-main>
-            <p>Start out with a passage and break it down, verse-by-verse!</p>
-            <q-input type="text" float-label="Bible Passage" v-model="bibleRef" />
-            <br/>
-            <br/>
-            <q-btn color="primary" class="float-right" :disabled="bibleRef === ''" @click.native="add('expo')">Choose</q-btn>
-          </q-card-main>
-        </q-card>
-      </div>
-      <div class="col-xs-12 col-md-6" v-if="type === 'sermon' || type === 'lesson'">
-        <q-card>
-          <q-card-title>3-Point</q-card-title>
-          <q-card-main>
-            <p>The familiar 3-point {{ type }} to get you started!</p>
-            <q-btn color="primary" class="float-right" @click.native="add('3point')">Choose</q-btn>
-          </q-card-main>
-        </q-card>
-      </div> -->
       <div class="col-12">
-        <!-- <h5 v-if="type === 'sermon' || type === 'lesson'">...Or start from scratch</h5> -->
         <q-btn color="primary" class="float-right" @click.native="add('blank')">Add Blank {{ readableType }}</q-btn>
       </div>
     </div>
@@ -101,7 +76,7 @@ export default {
           bibleRefs: []
         }
         if (this.type === 'message') {
-          obj.prefs = this.$root.$children[0].user.app.message.prefs[this.type + 'Structure'] || {}
+          obj.prefs = this.$root.$children[0].user.app.message.prefs['messageStructure'] || {}
           obj.template = template || ''
         }
         if (this.seriesid) {

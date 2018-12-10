@@ -69,8 +69,7 @@
           <q-popover anchor="bottom right" self="top right">
             <q-list link>
               <q-item v-close-overlay @click.native="editTitle = true">Rename...</q-item>
-              <q-item v-close-overlay>Convert to Sermon</q-item>
-              <q-item v-close-overlay>Convert to Lesson</q-item>
+              <q-item v-close-overlay>Convert to Message</q-item>
               <!-- <q-item v-close-overlay>Archive</q-item> -->
               <q-item v-close-overlay @click.native="removeConfirmation = true">Remove...</q-item>
             </q-list>

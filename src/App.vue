@@ -61,9 +61,9 @@ var initUser = {
     message: {
       prefs: {
         contentType: {
-          lesson: true,
+          series: true,
           scratch: true,
-          sermon: true
+          message: true
         },
         mediaType: {
           illustration: true,
@@ -72,12 +72,7 @@ var initUser = {
           quote: true,
           video: true
         },
-        osermonStructure: {
-          hook: true,
-          application: true,
-          prayer: true
-        },
-        olessonStructure: {
+        messageStructure: {
           hook: true,
           application: true,
           prayer: true
@@ -90,8 +85,7 @@ var initUser = {
         speakingSpeed: 120
       },
       stats: {
-        numsermon: 0,
-        numlesson: 0,
+        nummessage: 0,
         numscratch: 0,
         numarchive: 0,
         numquote: 0,

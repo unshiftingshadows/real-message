@@ -53,22 +53,16 @@
             <q-input type="text" float-label="Application Name" placeholder="Application" v-model="$root.$children[0].user.app.message.prefs.structureNames.application" @blur="prefChange" />
             <q-input type="text" float-label="Prayer Name" placeholder="Prayer" v-model="$root.$children[0].user.app.message.prefs.structureNames.prayer" @blur="prefChange" />
             <div class="row" v-if="!$root.$children[0].user.nqUser">
-              <div class="col-xs-12 col-md-6">
-                <h6>Sermon Structure</h6>
-                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.sermonStructure.hook" label="Hook" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.sermonStructure.application" label="Application" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.sermonStructure.prayer" label="Prayer" @input="prefChange" />
-              </div>
-              <div class="col-xs-12 col-md-6">
-                <h6>Lesson Structure</h6>
-                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.lessonStructure.hook" label="Hook" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.lessonStructure.application" label="Application" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.lessonStructure.prayer" label="Prayer" @input="prefChange" />
+              <div class="col-xs-12">
+                <h6>Message Structure</h6>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.messageStructure.hook" label="Hook" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.messageStructure.application" label="Application" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.messageStructure.prayer" label="Prayer" @input="prefChange" />
               </div>
               <div class="col-xs-12 col-md-6">
                 <h6>Content Types</h6>
-                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.contentType.sermon" label="Sermons" @input="prefChange" /><br/>
-                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.contentType.lesson" label="Lessons" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.contentType.series" label="Series" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.contentType.message" label="Messages" @input="prefChange" /><br/>
                 <q-checkbox v-model="$root.$children[0].user.app.message.prefs.contentType.scratch" label="Scratch Pads" @input="prefChange" />
               </div>
               <div class="col-xs-12 col-md-6">

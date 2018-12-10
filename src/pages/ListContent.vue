@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <h3>{{ capitalizeTitle(type) + (type === 'lesson' || type === 'sermon' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="openAdd()" /></h3>
+    <h3>{{ capitalizeTitle(type) + (type === 'message' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="openAdd()" /></h3>
     <div v-if="!loading && items.length === 0">
       <p>No {{ capitalizeTitle(type) }}s...yet! Click the '+' button above to get started</p>
     </div>
