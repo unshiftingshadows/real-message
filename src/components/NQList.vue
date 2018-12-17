@@ -128,15 +128,17 @@ export default {
     }
   },
   watch: {
-    'selectedTypes': function () {
-      if (this.selectedTypes.includes('all')) {
-        if (this.selectedTypes.length > 1) {
-          this.selectedTypes = ['all']
+    'selectedTypes': function (newVal, oldVal) {
+      if (newVal.includes('all')) {
+        if (newVal.length > 1) {
+          if (oldVal.includes('all')) {
+            this.selectedTypes.splice(0, 1)
+          } else {
+            this.selectedTypes = ['all']
+          }
         }
-        this.showItems = this.items
-      } else {
-        this.showItems = this.items.filter(this.checkType)
       }
+      this.showItems = this.items.filter(this.checkType)
     },
     'items': function (value) {
       if (this.selectedTypes[0] === 'all') {
