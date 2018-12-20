@@ -138,7 +138,7 @@ export default {
         console.log('tempModule not empty', val)
         if (val.sectionid) {
           this.addModule(val.sectionid, this.contentTypes.includes(val.data.type))
-        } else if (Object.keys(this.sections).length > 0) {
+        } else if (this.document.sectionOrder.length > 0) {
           console.log('pick section')
           this.$refs.addNewModule.show()
         } else {
@@ -171,11 +171,8 @@ export default {
         sectionid: sectionid
       }
     })
-    this.init()
   },
   methods: {
-    init () {
-    },
     editModule (moduleid, sectionid) {
       console.log('edit module', moduleid, sectionid)
       if (this.editingid !== moduleid && this.editingid !== '') {
