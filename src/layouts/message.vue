@@ -73,6 +73,13 @@
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Scratch Pad</q-tooltip>
         </q-item>
         <q-item-separator />
+        <div v-if="$root.$children[0].user.nqUser !== false">
+          <q-item href="https://notesandquotes.app" target="_blank" class="menu-item">
+            <q-item-tile icon="fas fa-quote-left" />
+            <q-item-main label="Notes and Quotes" class="on-right" />
+            <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Notes and Quotes</q-tooltip>
+          </q-item>
+        </div>
         <div v-if="$root.$children[0].user.nqUser === false">
           <q-item :to="{ name: 'media', params: { type: 'quote' }}" class="menu-item" v-if="$root.$children[0].user.app.message.prefs.mediaType.quote">
             <q-item-tile icon="fas fa-quote-left" />
