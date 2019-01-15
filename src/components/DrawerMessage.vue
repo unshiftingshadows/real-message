@@ -66,16 +66,24 @@ export default {
       console.log('auth?', this.$firebase.nqAuth.currentUser)
       // this.searching = true
       const acceptableTypes = [ 'quote', 'outline', 'idea', 'illustration', 'video', 'image', 'composition', 'article', 'document' ]
-      this.$firebase.nqSearch(input, (results) => {
-        done(results.filter(e => { return acceptableTypes.includes(e.item.type) }))
-      })
+      if (input.split(':')[0] === 'bible') {
+        this.$firebase.nqBibleSearch(input.split(':')[1], results => {
+          console.log('bible results', results)
+          done(results.filter(e => { return acceptableTypes.includes(e.type) }))
+        })
+      } else {
+        this.$firebase.nqSearch(input, (results) => {
+          console.log('normal results', results)
+          done(results.filter(e => { return acceptableTypes.includes(e.type) }))
+        })
+      }
       // console.log('search term', this.searchTerm)
       // this.resources = (await this.$firebase.nqSearch(this.searchTerm, acceptableTypes)).results
       // this.searching = false
     },
     selectedMedia (item) {
       console.log('selected', item)
-      this.addModule(item.id, item.item.type)
+      this.addModule(item.id, item.type)
     }
   }
 }

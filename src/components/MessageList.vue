@@ -1,7 +1,7 @@
 <template>
   <div>
     <h4>Messages</h4>
-    <div v-if="Object.keys(items).length > 0">
+    <div v-if="!loading && Object.keys(items).length > 0">
       <q-card inline v-for="message in messageOrder" :key="message" class="content-card" @click.native="openItem(message)">
         <q-card-title>{{ items[message].title }}</q-card-title>
         <q-card-main>

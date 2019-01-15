@@ -14,7 +14,7 @@
             :error="$v.title.$error"
             error-label="Title is required"
           >
-          <q-input type="text" float-label="Title" v-model="title" @blur="$v.title.$touch" />
+          <q-input type="text" float-label="Title" v-model="title" @blur="$v.title.$touch" @keyup.enter="add('blank')" />
         </q-field>
       </div>
       <div class="col-12">
@@ -94,6 +94,11 @@ export default {
             message: this.readableType + ' created!',
             type: 'positive',
             position: 'bottom-left'
+          })
+          this.$sentry.crumb({
+            category: 'content',
+            message: `Added ${this.type} content: ${res.id}`,
+            level: 'info'
           })
           console.log('add content', res, this.type)
           this.$router.push({ name: this.type, params: { id: res.id } })

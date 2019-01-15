@@ -113,7 +113,7 @@
           <q-item-main label="Settings" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Settings</q-tooltip>
         </q-item>
-        <q-item class="menu-item" @click.native="openChat">
+        <q-item class="menu-item" link @click.native="openChat">
           <q-item-tile icon="fas fa-comments" />
           <q-item-main label="Chat" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Chat</q-tooltip>

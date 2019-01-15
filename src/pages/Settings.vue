@@ -299,9 +299,14 @@ export default {
         this.editUser = false
         this.authenticate = true
       }
-      this.$firebase.user().update({
-        name: this.$root.$children[0].user.name
-      }).then(() => {
+      Promise.all([
+        this.$firebase.user().update({
+          name: this.$root.$children[0].user.name
+        }),
+        this.$firebase.auth.currentUser.updateProfile({
+          displayName: `${this.$root.$children[0].user.name.first} ${this.$root.$children[0].user.name.last}`
+        })
+      ]).then(() => {
         this.editUser = false
       })
     },

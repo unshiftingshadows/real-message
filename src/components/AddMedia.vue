@@ -293,6 +293,11 @@ export default {
             type: 'positive',
             position: 'bottom-left'
           })
+          this.$sentry.crumb({
+            category: 'media',
+            message: `Added ${this.type} media: ${res.id}`,
+            level: 'info'
+          })
           if (this.addNew) {
             this.addNew(res.id)
           }

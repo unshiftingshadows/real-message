@@ -39,6 +39,10 @@
             </div>
             <br/>
             <q-chip v-for="tag in snippet.tags" :key="tag" color="primary">{{ tag }}</q-chip>
+            <div v-if="snippet.bibleRefs && snippet.bibleRefs.length > 0">
+              <br/>
+              <q-chip v-for="ref in snippet.bibleRefs" :key="ref" color="secondary">{{ $bible.readable(ref) }}</q-chip>
+            </div>
             <div v-if="snippet.notes !== ''">
               <h5>{{ type.charAt(0).toUpperCase() + type.slice(1) }} Notes</h5>
               <p>{{ snippet.notes }}</p>

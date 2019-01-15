@@ -165,6 +165,11 @@ export default {
   },
   mounted () {
     this.$root.$on('add-module', (data, sectionid) => {
+      this.$sentry.crumb({
+        category: 'module',
+        message: `Added external module: ${data.type}`,
+        level: 'info'
+      })
       console.log('section', sectionid)
       this.tempModule = {
         data: data,
@@ -174,6 +179,9 @@ export default {
   },
   methods: {
     editModule (moduleid, sectionid) {
+      if (moduleid === undefined) {
+        return
+      }
       console.log('edit module', moduleid, sectionid)
       if (this.editingid !== moduleid && this.editingid !== '') {
         console.log('close module before edit')
@@ -269,6 +277,11 @@ export default {
         }
       }
       this.$fiery.remove(this.modules[moduleid])
+      this.$sentry.crumb({
+        category: 'module',
+        message: `Removed module: ${moduleid}`,
+        level: 'info'
+      })
       this.editingid = ''
     },
     addModule (sectionid, editing) {
@@ -289,6 +302,11 @@ export default {
             this.sections[sectionid].moduleOrder.push(newMod.id)
             this.$fiery.update(this.sections[sectionid], ['moduleOrder'])
           }
+          this.$sentry.crumb({
+            category: 'module',
+            message: `Added module to section: ${sectionid}`,
+            level: 'info'
+          })
         })
       } else {
         console.error('cannot add module to unknown section')
@@ -306,6 +324,11 @@ export default {
         moduleOrder: []
       }
       this.$fires.sections.add(obj).then((newRef) => {
+        this.$sentry.crumb({
+          category: 'section',
+          message: `Added section: ${newRef.id}`,
+          level: 'info'
+        })
         this.document.sectionOrder.push(newRef.id)
         this.$fiery.update(this.document)
       })
@@ -324,6 +347,11 @@ export default {
       this.document.sectionOrder.splice(this.document.sectionOrder.indexOf(sectionid), 1)
       this.$fiery.update(this.document)
       this.$fiery.remove(this.sections[sectionid])
+      this.$sentry.crumb({
+        category: 'section',
+        message: `Removed section: ${sectionid}`,
+        level: 'info'
+      })
     },
     getWordCount (string) {
       if (string !== undefined) {

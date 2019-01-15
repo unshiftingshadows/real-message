@@ -8,6 +8,7 @@ import 'firebase/functions'
 // import VueFirestore from 'vue-firestore'
 import FieryVue from 'fiery-vue'
 const Fuse = require('fuse.js')
+const BCVParser = require('bible-passage-reference-parser/js/en_bcv_parser').bcv_parser
 
 const devSettings = {
   apiKey: 'AIzaSyAjXGlux1zLL4QfEi4an2-KkIT4F6HxtMc',
@@ -121,11 +122,28 @@ function setSnippetIndex () {
   })
 }
 
-async function nqSearch (searchInput, done) {
+function checkIndex () {
+  const prom = []
+
   if (mediaIndexTime === null || new Date().getTime() - mediaIndexTime.getTime() > 900000) {
-    await setMediaIndex()
+    prom.push(setMediaIndex())
     console.log('mediaIndex', mediaIndex)
   }
+
+  if (snippetIndexTime === null || new Date().getTime() - snippetIndexTime.getTime() > 900000) {
+    prom.push(setSnippetIndex())
+    console.log('snippetIndex', snippetIndex)
+  }
+
+  return Promise.all(prom)
+}
+
+async function nqSearch (searchInput, done) {
+  await checkIndex()
+  // if (mediaIndexTime === null || new Date().getTime() - mediaIndexTime.getTime() > 900000) {
+  //   await setMediaIndex()
+  //   console.log('mediaIndex', mediaIndex)
+  // }
   // console.log('search')
   // if (searchInput.split(':')[0] === 'tag') {
   //   done([
@@ -157,13 +175,14 @@ async function nqSearch (searchInput, done) {
     res.id = res.item['.key']
     res.label = res.item.title
     res.sublabel = res.item.type
+    res.type = res.item.type
   })
   // done(results)
   // }
-  if (snippetIndexTime === null || new Date().getTime() - snippetIndexTime.getTime() > 900000) {
-    await setSnippetIndex()
-    console.log('snippetIndex', snippetIndex)
-  }
+  // if (snippetIndexTime === null || new Date().getTime() - snippetIndexTime.getTime() > 900000) {
+  //   await setSnippetIndex()
+  //   console.log('snippetIndex', snippetIndex)
+  // }
   // console.log('search')
   // if (searchInput.split(':')[0] === 'tag') {
   //   done([
@@ -195,12 +214,65 @@ async function nqSearch (searchInput, done) {
     result.id = result.item['.key']
     result.label = result.item.text
     result.sublabel = `${result.item.title} | ${result.item.author}`
+    result.type = result.item.type
   })
   //   done(snippetResults)
   // }
   var finalResults = results.concat(snippetResults).sort((a, b) => { return a.score - b.score })
   console.log('results', finalResults)
   done(finalResults)
+}
+
+function checkBible (searchVal, ref) {
+  const searchBook = searchVal.entities[0].passages[0].start.b
+  const searchChap = [searchVal.entities[0].passages[0].start.c, searchVal.entities[0].passages[0].end.c]
+  const searchVers = [searchVal.entities[0].passages[0].start.v, searchVal.entities[0].passages[0].end.v]
+  const refBook = ref.entities[0].passages[0].start.b
+  const refChap = [ref.entities[0].passages[0].start.c, ref.entities[0].passages[0].end.c]
+  const refVers = [ref.entities[0].passages[0].start.v, ref.entities[0].passages[0].end.v]
+  if (searchBook === refBook) {
+    if ((searchChap[0] <= refChap[0] && searchChap[1] >= refChap[0]) || (searchChap[0] <= refChap[1] && searchChap[1] >= refChap[1])) {
+      if ((searchVers[0] <= refVers[0] && searchVers[1] >= refVers[0]) || (searchVers[0] <= refVers[1] && searchVers[1] >= refVers[1])) {
+        return true
+      }
+    }
+  }
+  return false
+}
+
+async function nqBibleSearch (term, done) {
+  await checkIndex()
+  const searchVal = new BCVParser().parse(term)
+  console.log('searchVal', searchVal)
+  // console.log('mediaIndex', mediaIndex)
+  if (searchVal.entities.length === 1) {
+    var mediaResults = mediaIndex.filter(e => {
+      return e.bibleRefs ? e.bibleRefs.split(',').map(f => { return checkBible(searchVal, new BCVParser().parse(f)) }).reduce((sum, next) => { return sum || next }, false) : false
+    }).map(e => {
+      return {
+        ...e,
+        id: e['.key'],
+        label: e.title,
+        sublabel: e.type
+      }
+    })
+    var snippetResults = snippetIndex.filter(e => {
+      return e.bibleRefs ? e.bibleRefs.split(',').map(f => { return checkBible(searchVal, new BCVParser().parse(f)) }).reduce((sum, next) => { return sum || next }, false) : false
+    }).map(e => {
+      return {
+        ...e,
+        id: e['.key'],
+        label: e.text,
+        sublabel: `${e.title} | ${e.author}`
+      }
+    })
+    console.log('mediaResults', mediaResults)
+    console.log('snippetResults', snippetResults)
+    done(mediaResults.concat(snippetResults))
+  } else {
+    console.log('bible search failed...')
+    done([])
+  }
 }
 
 function nqMedia (type, id) {
@@ -243,6 +315,32 @@ function nqMedia (type, id) {
 //   return { searchTerms, searchTypes, results: fuse.search(searchTerms).slice(0, 10) }
 // }
 
+function log (log) {
+  firestore.collection('messageLog').add({
+    ...log,
+    uid: fbapp.auth().currentUser.uid,
+    email: fbapp.auth().currentUser.email,
+    datestamp: new Date()
+  })
+}
+
+function err (err) {
+  firestore.collection('messageErr').add({
+    ...err,
+    uid: fbapp.auth().currentUser.uid,
+    email: fbapp.auth().currentUser.email,
+    datestamp: new Date(),
+    location: window.location.href,
+    host: window.location.hostname,
+    platform: navigator.platform,
+    language: navigator.language,
+    cookies: navigator.cookieEnabled,
+    vendor: navigator.vendor,
+    version: navigator.appVersion,
+    agent: navigator.userAgent
+  })
+}
+
 // leave the export, even if you don't use it
 export default ({ app, router, Vue }) => {
   // Vue.use(VueFire)
@@ -264,6 +362,9 @@ export default ({ app, router, Vue }) => {
     nqAuth: nqapp.auth(),
     nqLogin: customNQLogin,
     nqSearch: nqSearch,
-    nqMedia: nqMedia
+    nqBibleSearch: nqBibleSearch,
+    nqMedia: nqMedia,
+    log: log,
+    err: err
   }
 }

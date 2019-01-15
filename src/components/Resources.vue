@@ -60,15 +60,15 @@ export default {
         //   })
         // })
       } else {
-        this.$database.resources(this.type, this.id, 'list', {}, (res) => {
-          console.log('resources response', res)
-          this.research = res.research
-          res.research.forEach((research) => {
-            this.resources = this.resources.concat(research.media.resources)
-          })
-          // Once media is also implemented
-          // this.resources.push(res.media)
-        })
+        // this.$database.resources(this.type, this.id, 'list', {}, (res) => {
+        //   console.log('resources response', res)
+        //   this.research = res.research
+        //   res.research.forEach((research) => {
+        //     this.resources = this.resources.concat(research.media.resources)
+        //   })
+        //   // Once media is also implemented
+        //   // this.resources.push(res.media)
+        // })
       }
     },
     resType (type) {

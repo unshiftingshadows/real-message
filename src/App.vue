@@ -194,6 +194,12 @@ export default {
         } else {
           console.log('currentuser', user)
           this.$ga.set('userId', user.uid)
+          this.$sentry.setUser(user.uid, user.email, user.displayName)
+          this.$sentry.crumb({
+            category: 'auth',
+            message: `Authenticated user: ${user.email} | ${user.uid}`,
+            level: 'info'
+          })
           this.user = this.$fiery(this.$firebase.user(), {
             onSuccess: (userSnap) => {
               if (this.loading) {

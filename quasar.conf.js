@@ -10,6 +10,7 @@ module.exports = function (ctx) {
       // 'database',
       'firebase',
       'masonry',
+      'sentry',
       // 'vuefire',
       'vuelidate'
     ],
@@ -25,6 +26,9 @@ module.exports = function (ctx) {
     ],
     supportIE: false,
     build: {
+      env: {
+        VER: JSON.stringify('0.40.0')
+      },
       scopeHoisting: true,
       vueRouterMode: 'history',
       // vueCompiler: true,

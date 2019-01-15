@@ -113,7 +113,7 @@
           {{ message.title }}
         </q-toolbar-title>
         <q-chip color="warning" class="on-left" v-if="message.archived">Archived</q-chip>
-        <q-btn icon="fas fa-ellipsis-v" color="primary" class="float-right">
+        <q-btn icon="fas fa-ellipsis-v" color="primary" class="float-right" v-if="message.prefs">
           <q-popover anchor="bottom right" self="top right">
             <q-list link>
               <q-item v-close-overlay @click.native="editTitle = true">Rename...</q-item>
