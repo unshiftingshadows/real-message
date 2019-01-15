@@ -27,13 +27,15 @@
       </div>
       <div class="col-12" v-if="$root.$children[0].user">
         <q-card>
-          <q-card-title>Notes and Quotes</q-card-title>
+          <q-card-title>
+            <q-btn v-if="$root.$children[0].user.nqUser" color="negative" class="float-right on-right" @click.native="logoutNQ()">Logout</q-btn>
+            Notes and Quotes
+          </q-card-title>
           <q-card-main>
-            <q-btn color="primary" v-if="!$root.$children[0].user.nqUser">Connect</q-btn>
+            <q-btn color="primary" v-if="!$root.$children[0].user.nqUser" @click.native="openNQLogin()">Connect</q-btn>
             <div v-if="$root.$children[0].user.nqUser">
               <p>User: {{ $root.$children[0].user.nqUser.email }}</p>
               <p>ID: {{ $root.$children[0].user.nqUser.uid }}</p>
-              <q-btn color="primary" v-if="!$root.$children[0].user.nqUser">Disconnect</q-btn>
             </div>
           </q-card-main>
         </q-card>
@@ -145,15 +147,20 @@
         </div>
       </div>
     </q-modal>
+    <n-q-login ref="nqLogin" />
   </q-page>
 </template>
 
 <script>
 import { Notify } from 'quasar'
 import { required, email, sameAs, minLength } from 'vuelidate/lib/validators'
+import NQLogin from 'components/NQLogin.vue'
 
 export default {
-  // name: 'PageName',
+  components: {
+    NQLogin
+  },
+  name: 'PageSettings',
   data () {
     return {
       name: {
@@ -302,6 +309,15 @@ export default {
       this.$firebase.user().update({
         app: this.$root.$children[0].user.app
       })
+    },
+    openNQLogin () {
+      this.$refs.nqLogin.$refs.modal.show()
+    },
+    logoutNQ () {
+      this.$firebase.user().update({
+        nqUser: false
+      })
+      this.$firebase.nqAuth.signOut()
     }
   }
 }

@@ -232,6 +232,13 @@ export default {
                 })
                 this.loading = false
               }
+              if (this.user.nqUser) {
+                if (this.$firebase.nqLogin(this.user.nqUser.uid)) {
+                  console.log('nq user authenticated', this.$firebase.nqAuth.currentUser)
+                } else {
+                  console.log('nq user error...')
+                }
+              }
             }
           })
         }
@@ -359,6 +366,20 @@ export default {
   .new-user-modal {
     min-width: 500px;
     width: 500px;
+  }
+}
+
+.q-popover {
+  max-width: 100%;
+}
+@media screen and (min-width: 768px) {
+  .q-popover {
+    max-width: 400px;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .q-popover {
+    max-width: 800px;
   }
 }
 

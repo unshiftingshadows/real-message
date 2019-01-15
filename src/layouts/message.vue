@@ -74,7 +74,7 @@
         </q-item>
         <q-item-separator />
         <div v-if="$root.$children[0].user.nqUser !== false">
-          <q-item href="https://notesandquotes.app" target="_blank" class="menu-item">
+          <q-item link @click.native="openLink('https://app.notesandquotes.app')" class="menu-item">
             <q-item-tile icon="fas fa-quote-left" />
             <q-item-main label="Notes and Quotes" class="on-right" />
             <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Notes and Quotes</q-tooltip>
@@ -107,7 +107,7 @@
             <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Videos</q-tooltip>
           </q-item>
         </div>
-        <q-item-separator v-if="$root.$children[0].user.nqUser === false" />
+        <q-item-separator />
         <q-item to="/settings" class="menu-item">
           <q-item-tile icon="fas fa-cog" />
           <q-item-main label="Settings" class="on-right" />
@@ -139,6 +139,7 @@
     >
       <q-scroll-area class="fit q-pa-sm">
         <resources v-if="$route.name === 'message'" add />
+        <!-- <drawer-message /> -->
       </q-scroll-area>
     </q-layout-drawer>
 
@@ -152,6 +153,7 @@
 </template>
 
 <script>
+import { openURL } from 'quasar'
 import Resources from 'components/Resources.vue'
 import Polls from 'components/Polls.vue'
 
@@ -209,6 +211,10 @@ export default {
         document.getElementById('fc_frame').style.display = 'block'
         window.fcWidget.open()
       }
+    },
+    openLink (link) {
+      console.log('open external', link)
+      openURL(link)
     }
   }
 }

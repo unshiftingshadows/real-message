@@ -40,7 +40,7 @@
             v-if="data.moduleOrder.length > 0 && Object.keys(modules).length > 0"
             v-for="modIndex in data.moduleOrder"
             :key="modIndex"
-            v-bind:is="contentTypes.includes(modules[modIndex].type) ? 'mod-content' : 'mod-media'"
+            v-bind:is="contentTypes.includes(modules[modIndex].type) ? 'mod-content' : modules[modIndex].nqmedia ? 'mod-n-q' : 'mod-media'"
             :id="modIndex"
             :data="modules[modIndex]"
             :edit="editModule"
@@ -96,6 +96,7 @@ import ModContent from 'components/modules/Content.vue'
 // import ModComposition from 'components/modules/Composition.vue'
 // import ModIllustration from 'components/modules/Illustration.vue'
 import ModMedia from 'components/modules/Media.vue'
+import ModNQ from 'components/modules/NQMedia.vue'
 
 export default {
   components: {
@@ -111,7 +112,8 @@ export default {
     // ModImage,
     // ModComposition,
     // ModIllustration
-    ModMedia
+    ModMedia,
+    ModNQ
   },
   name: 'ModuleSection',
   props: ['id', 'data', 'modules', 'edit', 'remove', 'disabled', 'contentType', 'contentid', 'onChange'],

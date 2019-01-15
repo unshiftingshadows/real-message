@@ -2,8 +2,9 @@
   <div v-if="$root.$children[0].user && $root.$children[0].user.app && $root.$children[0].user.app.message">
     <!-- <q-btn color="primary" label="Refresh" @click.native="init" /> -->
     <div v-if="$root.$children[0].user.nqUser">
-      <add-research :currentResearch="research" :id="id" :type="type" :reinit="init" v-if="add === ''" />
-      <n-q-list :items="resources" :addModule="addModule" />
+      <!-- <add-research :currentResearch="research" :id="id" :type="type" :reinit="init" v-if="add === ''" />
+      <n-q-list :items="resources" :addModule="addModule" /> -->
+      <drawer-message />
     </div>
     <div v-if="!$root.$children[0].user.nqUser">
       <media-search :addModule="addModule" v-if="!$root.$children[0].user.nqUser" />
@@ -13,16 +14,18 @@
 
 <script>
 import MediaSearch from 'components/MediaSearch.vue'
-import NQList from 'components/NQList.vue'
-import AddResearch from 'components/AddResearch.vue'
+// import NQList from 'components/NQList.vue'
+// import AddResearch from 'components/AddResearch.vue'
+import DrawerMessage from 'components/DrawerMessage.vue'
 
 var mediaTypes = ['quote', 'image', 'illustration', 'lyric', 'video']
 
 export default {
   components: {
     MediaSearch,
-    NQList,
-    AddResearch
+    // NQList,
+    // AddResearch
+    DrawerMessage
   },
   // name: 'ComponentName',
   props: ['add'],
@@ -84,10 +87,10 @@ export default {
           mediaid: id,
           editing: false,
           slide: false,
-          order: 'new',
           time: 0,
           wordcount: 0,
-          type: type
+          type: type,
+          nqmedia: false
         }
         // newRef.set(obj)
         this.$root.$emit('add-module', obj)
