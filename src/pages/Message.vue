@@ -194,6 +194,7 @@ export default {
   },
   methods: {
     init () {
+      this.$ga.event('content', 'view', 'message', this.$route.params.id)
     },
     addRef (newRef) {
       this.message.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
@@ -207,6 +208,7 @@ export default {
     update () {
       // Call update function from database
       console.log('update!')
+      this.$ga.event('content', 'update', 'message', this.$route.params.id)
       this.editTitle = false
       this.$fiery.update(this.message).then(() => {
         Notify.create({
@@ -218,12 +220,14 @@ export default {
     },
     archive () {
       console.log('archive!')
+      this.$ga.event('content', 'archive', 'message', this.$route.params.id)
       this.archiveConfirmation = false
       this.message.archived = true
       this.$fiery.update(this.message)
       this.$router.push({ name: 'list', params: { type: 'message' } })
     },
     remove () {
+      this.$ga.event('content', 'remove', 'message', this.$route.params.id)
       this.removeConfirmation = false
       this.$fiery.remove(this.message)
       this.$router.push({ name: 'list', params: { type: 'message' } })

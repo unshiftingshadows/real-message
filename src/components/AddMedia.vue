@@ -269,23 +269,11 @@ export default {
         }
         console.log(obj)
         this.loading = true
-        // this.$database.add(this.type, obj, (res) => {
-        //   // GA - Add media event
-        //   this.$ga.event('media', 'add', this.type)
-        //   this.showAddMedia = false
-        //   this.loading = false
-        //   this.addNew(res)
-        //   Notify.create({
-        //     message: this.type + ' created!',
-        //     type: 'positive',
-        //     position: 'bottom-left'
-        //   })
-        // })
         this.$firebase.list(this.type).add(obj).then((res) => {
           this.refresh(this.type)
           console.log('added', res)
           // GA - Add media event
-          this.$ga.event('media', 'add', this.type)
+          this.$ga.event('media', 'add', this.type, res.id)
           this.showAddMedia = false
           this.init()
           Notify.create({
@@ -298,6 +286,13 @@ export default {
             message: `Added ${this.type} media: ${res.id}`,
             level: 'info'
           })
+          // this.$firebase.log({
+          //   category: 'media',
+          //   action: 'create',
+          //   label: this.type,
+          //   curValue: obj,
+          //   component: 'AddMedia'
+          // })
           if (this.addNew) {
             this.addNew(res.id)
           }

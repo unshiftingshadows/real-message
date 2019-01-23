@@ -315,36 +315,7 @@ function nqMedia (type, id) {
 //   return { searchTerms, searchTypes, results: fuse.search(searchTerms).slice(0, 10) }
 // }
 
-function log (log) {
-  firestore.collection('messageLog').add({
-    ...log,
-    uid: fbapp.auth().currentUser.uid,
-    email: fbapp.auth().currentUser.email,
-    datestamp: new Date()
-  })
-}
-
-function err (err) {
-  firestore.collection('messageErr').add({
-    ...err,
-    uid: fbapp.auth().currentUser.uid,
-    email: fbapp.auth().currentUser.email,
-    datestamp: new Date(),
-    location: window.location.href,
-    host: window.location.hostname,
-    platform: navigator.platform,
-    language: navigator.language,
-    cookies: navigator.cookieEnabled,
-    vendor: navigator.vendor,
-    version: navigator.appVersion,
-    agent: navigator.userAgent
-  })
-}
-
-// leave the export, even if you don't use it
 export default ({ app, router, Vue }) => {
-  // Vue.use(VueFire)
-  // Vue.use(VueFirestore)
   Vue.use(FieryVue)
   Vue.prototype.$firebase = {
     emailCred: firebase.auth.EmailAuthProvider.credential,
@@ -357,14 +328,42 @@ export default ({ app, router, Vue }) => {
     list: listRef,
     user: user,
     imagesRef: fbapp.storage().ref('images'),
-    // modules: modules,
-    // sections: sections
     nqAuth: nqapp.auth(),
     nqLogin: customNQLogin,
     nqSearch: nqSearch,
     nqBibleSearch: nqBibleSearch,
-    nqMedia: nqMedia,
-    log: log,
-    err: err
+    nqMedia: nqMedia
+    // log: function (log, docid, type) {
+    //   console.log('route', router.history.current)
+    //   firestore.collection('log').add({
+    //     ...log,
+    //     uid: fbapp.auth().currentUser.uid,
+    //     email: fbapp.auth().currentUser.email,
+    //     datestamp: new Date(),
+    //     route: {
+    //       fullPath: router.history.current.fullPath,
+    //       hash: router.history.current.hash,
+    //       meta: router.history.current.meta,
+    //       name: router.history.current.name,
+    //       params: router.history.current.params,
+    //       path: router.history.current.path,
+    //       query: router.history.current.query
+    //     },
+    //     app: 'message'
+    //   })
+    //   firestore.collection('user').doc(fbapp.auth().currentUser.uid).collection('log').add({
+    //     ...log,
+    //     datestamp: new Date()
+    //   })
+    //   if (docid) {
+    //     firestore.collection(`message${type.charAt(0).toUpperCase()}${type.slice(1)}`).doc(docid).collection('log').add({
+    //       ...log,
+    //       uid: fbapp.auth().currentUser.uid,
+    //       email: fbapp.auth().currentUser.email,
+    //       username: fbapp.auth().currentUser.displayName,
+    //       datestamp: new Date()
+    //     })
+    //   }
+    // }
   }
 }

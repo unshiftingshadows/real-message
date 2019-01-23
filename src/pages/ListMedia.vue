@@ -69,6 +69,7 @@ export default {
   },
   methods: {
     init (type) {
+      this.$ga.event('media', 'list', this.$route.params.type)
       const startTime = new Date()
       this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
@@ -79,8 +80,8 @@ export default {
         onSuccess: (list) => {
           const timeElapsed = new Date() - startTime
           this.$ga.time({
-            timingCategory: 'query',
-            timingVar: 'media',
+            timingCategory: 'media',
+            timingVar: 'query',
             timingValue: timeElapsed,
             timingLabel: type
           })

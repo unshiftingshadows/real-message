@@ -5,7 +5,7 @@
       <p>No {{ capitalizeTitle(type) }}s...yet! Click the '+' button above to get started</p>
     </div>
     <div v-if="!loading || (contentTypes.includes(type) && items.length !== 0)">
-      <q-card inline v-for="item in items" :key="item._id" class="content-card" @click.native="openItem(item._id)">
+      <q-card inline v-for="item in items" :key="item.id" class="content-card" @click.native="openItem(item.id)">
         <q-card-title>{{ item.title }}</q-card-title>
         <q-card-main>
           <p>{{ item.mainIdea }}</p>
@@ -19,7 +19,7 @@
       <a @click="showArchived(type)"><p class="text-light cursor-pointer" style="margin-top: 20px;">Show Archived <q-icon name="fas fa-chevron-down" /></p></a>
     </div>
     <div v-if="!loading || (contentTypes.includes(type) && archived.length !== 0)">
-      <q-card inline v-for="item in archived" :key="item._id" class="content-card" @click.native="openItem(item._id)">
+      <q-card inline v-for="item in archived" :key="item.id" class="content-card" @click.native="openItem(item.id)">
         <q-card-title>{{ item.title }}</q-card-title>
         <q-card-main>
           <p>{{ item.mainIdea }}</p>
@@ -70,17 +70,18 @@ export default {
   },
   methods: {
     init (type) {
+      this.$ga.event('content', 'list', this.$route.params.type)
       const startTime = new Date()
       this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
         query: (items) => this.$route.params.type === 'series' ? items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('archived', '==', false) : items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('seriesid', '==', '').where('archived', '==', false),
-        key: '_id',
-        exclude: ['_id'],
+        key: 'id',
+        exclude: ['id'],
         onSuccess: () => {
           const timeElapsed = new Date() - startTime
           this.$ga.time({
-            timingCategory: 'query',
-            timingVar: 'content',
+            timingCategory: 'content',
+            timingVar: 'list',
             timingValue: timeElapsed,
             timingLabel: type
           })
@@ -110,8 +111,8 @@ export default {
       this.loading = true
       this.archived = this.$fiery(this.$firebase.list(type), {
         query: (items) => items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('archived', '==', true),
-        key: '_id',
-        exclude: ['_id'],
+        key: 'id',
+        exclude: ['id'],
         onSuccess: () => {
           const timeElapsed = new Date() - startTime
           this.$ga.time({

@@ -4,9 +4,10 @@ import VueAnalytics from 'vue-analytics'
 export default ({ app, router, Vue }) => {
   Vue.use(VueAnalytics, {
     id: 'UA-125091051-1',
-    // router,
+    router,
     debug: {
-      sendHitTask: !process.env.DEV
+      enabled: process.env.DEV
+      // sendHitTask: !process.env.DEV
     },
     autoTracking: {
       exception: true,

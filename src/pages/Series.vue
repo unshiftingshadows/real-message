@@ -154,6 +154,7 @@ export default {
   },
   methods: {
     init () {
+      this.$ga.event('content', 'view', 'series', this.$route.params.id)
     },
     addRef (newRef) {
       this.series.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
@@ -162,6 +163,7 @@ export default {
     update (messageid) {
       // Call update function from database
       console.log('update!')
+      this.$ga.event('content', 'update', 'message', this.$route.params.id)
       if (messageid) {
         this.series.messageOrder.push(messageid)
       }
@@ -176,12 +178,14 @@ export default {
     },
     archive () {
       console.log('archive!')
+      this.$ga.event('content', 'archive', 'series', this.$route.params.id)
       this.archiveConfirmation = false
       this.series.archived = true
       this.$fiery.update(this.series)
       this.$router.push({ name: 'list', params: { type: 'series' } })
     },
     remove () {
+      this.$ga.event('content', 'remove', 'series', this.$route.params.id)
       this.removeConfirmation = false
       this.$fiery.remove(this.series)
       this.$router.push({ name: 'list', params: { type: 'series' } })

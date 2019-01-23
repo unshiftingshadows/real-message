@@ -85,7 +85,7 @@ export default {
         console.log(obj)
         this.$firebase.list(this.type).add(obj).then((res) => {
           // GA - Add content event
-          this.$ga.event('content', 'add', this.type)
+          this.$ga.event('content', 'add', this.type, res.id)
           this.showAddContent = false
           if (this.seriesid) {
             this.updateSeries(res.id)
@@ -100,6 +100,14 @@ export default {
             message: `Added ${this.type} content: ${res.id}`,
             level: 'info'
           })
+          // this.$firebase.log({
+          //   category: 'content',
+          //   action: 'create',
+          //   label: this.type,
+          //   id: res.id,
+          //   curValue: obj,
+          //   component: 'AddContent'
+          // })
           console.log('add content', res, this.type)
           this.$router.push({ name: this.type, params: { id: res.id } })
         })

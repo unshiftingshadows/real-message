@@ -110,10 +110,7 @@ export default {
   },
   methods: {
     init () {
-      this.$database.view('scratch', this.id, (data) => {
-        this.scratch = data
-        this.readableRefs = data.bibleRefs.map(e => { return this.$bible.readable(e) })
-      })
+      this.$ga.event('content', 'view', 'scratch', this.$route.params.id)
     },
     addRef (newRef) {
       this.scratch.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
@@ -121,15 +118,9 @@ export default {
     },
     update () {
       console.log('update!')
+      this.$ga.event('content', 'update', 'scratch', this.$route.params.id)
       this.editTitle = false
-      var obj = {
-        title: this.scratch.title,
-        text: this.scratch.text,
-        tags: this.scratch.tags,
-        bibleRefs: this.scratch.bibleRefs
-      }
-      this.$database.update('scratch', this.id, obj, (res) => {
-        console.log(res)
+      this.$fiery.update(this.scratch).then(() => {
         Notify.create({
           type: 'positive',
           message: 'Scratch updated!',
@@ -138,6 +129,7 @@ export default {
       })
     },
     remove () {
+      this.$ga.event('content', 'remove', 'scratch', this.$route.params.id)
       this.$fiery.remove(this.scratch)
       this.$router.push({ name: 'list', params: { type: 'scratch' } })
     }
