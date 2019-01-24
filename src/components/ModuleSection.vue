@@ -18,7 +18,7 @@
     </q-card-title>
     <div class="row gutter-sm" style="padding-left: 10px; padding-right: 10px;" v-if="open && data.moduleOrder">
       <div class="col-12" v-if="modules && data.moduleOrder">
-        <draggable style="min-height: 20px;" :list="data.moduleOrder" @change="changeMod" ref="secModuleDrag" :options="{ group: { name: 'modules', pull: true, put: true }, ghostClass: 'sortable-ghost', handle: '.drag-handle', disabled: disabled || ($q.platform.is.mobile && !$q.platform.is.ipad) }">
+        <draggable v-if="data.moduleOrder.length > 0 && Object.keys(modules).length > 0" style="min-height: 20px;" :list="data.moduleOrder" @change="changeMod" ref="secModuleDrag" :options="{ group: { name: 'modules', pull: true, put: true }, ghostClass: 'sortable-ghost', handle: '.drag-handle', disabled: disabled || ($q.platform.is.mobile && !$q.platform.is.ipad) }">
           <!-- <component
             v-if="data.moduleOrder.length > 0 && Object.keys(modules).length > 0"
             v-for="modIndex in data.moduleOrder"
@@ -37,7 +37,6 @@
             v-bind:class="{ 'active-card': modules[modIndex].editing === $firebase.auth.currentUser.uid }"
           /> -->
           <component
-            v-if="data.moduleOrder.length > 0 && Object.keys(modules).length > 0"
             v-for="modIndex in data.moduleOrder"
             :key="modIndex"
             v-bind:is="contentTypes.includes(modules[modIndex].type) ? 'mod-content' : modules[modIndex].nqmedia ? 'mod-n-q' : 'mod-media'"

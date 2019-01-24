@@ -107,6 +107,39 @@
         </div>
       </div>
     </q-modal>
+    <q-modal v-model="showCollab" ref="collabModal" content-classes="edit-title-modal">
+      <div class="row gutter-md">
+        <div class="col-12">
+          <q-btn
+            color="primary"
+            @click.native="removeConfirmation = false"
+            icon="fas fa-times"
+            class="float-right"
+            size="sm"
+          />
+          <h4>Share this Message with...</h4>
+        </div>
+        <div class="col-12">
+          <q-field
+            :error="$v.collabEmail.$error"
+            error-label="Please enter a valid email address"
+          >
+            <q-input
+              float-label="Email"
+              placeholder="Enter a user's email here..."
+              type="email"
+              v-model="collabEmail"
+              @blur="$v.collabEmail.$touch"
+              @keyup.enter="share()"
+            />
+          </q-field>
+          <div class="q-caption" style="margin-top: 10px;">If the email address you enter is not associated with a current user, we will send them an invite to join!</div>
+        </div>
+        <div class="col-12">
+          <q-btn color="primary" @click.native="share()">Share</q-btn>
+        </div>
+      </div>
+    </q-modal>
     <q-page-sticky position="top">
       <q-toolbar color="secondary" style="z-index: 10;">
         <q-toolbar-title>
@@ -125,7 +158,7 @@
               <q-item-separator />
               <q-item v-close-overlay v-if="!message.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
               <q-item v-close-overlay v-if="message.archived" @click.native="removeConfirmation = true" class="text-negative">Remove...</q-item>
-              <q-item v-close-overlay v-if="!message.archived">Collaborate...</q-item>
+              <q-item v-close-overlay v-if="!message.archived" @click.native="showCollab = true">Collaborate...</q-item>
               <!-- <q-item v-close-overlay>Print...</q-item> -->
               <!-- <q-item v-close-overlay>Present...</q-item> -->
             </q-list>
@@ -142,6 +175,7 @@
 </template>
 
 <script>
+import { required, email } from 'vuelidate/lib/validators'
 import { Notify } from 'quasar'
 import ContentEditor from 'components/ContentEditor.vue'
 import ContentPreview from 'components/ContentPreview.vue'
@@ -172,7 +206,15 @@ export default {
       showPreview: false,
       archiveConfirmation: false,
       removeConfirmation: false,
+      showCollab: false,
+      collabEmail: '',
       showMainIdea: false
+    }
+  },
+  validations: {
+    collabEmail: {
+      required,
+      email
     }
   },
   mounted () {
@@ -194,7 +236,7 @@ export default {
   },
   methods: {
     init () {
-      this.$ga.event('content', 'view', 'message', this.$route.params.id)
+      this.$ga.event('message', 'view', this.$route.params.id)
     },
     addRef (newRef) {
       this.message.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
@@ -208,7 +250,7 @@ export default {
     update () {
       // Call update function from database
       console.log('update!')
-      this.$ga.event('content', 'update', 'message', this.$route.params.id)
+      this.$ga.event('message', 'update', this.$route.params.id)
       this.editTitle = false
       this.$fiery.update(this.message).then(() => {
         Notify.create({
@@ -220,17 +262,42 @@ export default {
     },
     archive () {
       console.log('archive!')
-      this.$ga.event('content', 'archive', 'message', this.$route.params.id)
+      this.$ga.event('message', 'archive', this.$route.params.id)
       this.archiveConfirmation = false
       this.message.archived = true
       this.$fiery.update(this.message)
+      if (this.message.seriesid !== '') {
+        this.$firebase.ref('series', '', this.message.seriesid).update({
+          messageOrder: this.$firebase.base.firestore.FieldValue.arrayRemove(this.id)
+        })
+      }
       this.$router.push({ name: 'list', params: { type: 'message' } })
     },
     remove () {
-      this.$ga.event('content', 'remove', 'message', this.$route.params.id)
+      this.$ga.event('message', 'remove', this.$route.params.id)
       this.removeConfirmation = false
       this.$fiery.remove(this.message)
       this.$router.push({ name: 'list', params: { type: 'message' } })
+    },
+    share () {
+      this.$v.collabEmail.$touch()
+      if (this.$v.collabEmail.$error) {
+        return
+      }
+      this.showCollab = false
+      const email = this.collabEmail
+      this.collabEmail = ''
+      this.$firebase.addDocUser('message', this.id, email).then((res) => {
+        console.log(res)
+        if (res.data.success) {
+          Notify.create({
+            type: 'positive',
+            message: `${email} ${res.data.invited ? 'invited' : 'added'}!`,
+            position: 'bottom-left'
+          })
+        }
+      })
+      console.log('share!')
     },
     userHasScrolled (scroll) {
       if (scroll.position < 30) {

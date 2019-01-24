@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     init () {
-      this.$ga.event('content', 'view', 'scratch', this.$route.params.id)
+      this.$ga.event('scratch', 'view', this.$route.params.id)
     },
     addRef (newRef) {
       this.scratch.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
@@ -118,7 +118,7 @@ export default {
     },
     update () {
       console.log('update!')
-      this.$ga.event('content', 'update', 'scratch', this.$route.params.id)
+      this.$ga.event('scratch', 'update', this.$route.params.id)
       this.editTitle = false
       this.$fiery.update(this.scratch).then(() => {
         Notify.create({
@@ -129,7 +129,7 @@ export default {
       })
     },
     remove () {
-      this.$ga.event('content', 'remove', 'scratch', this.$route.params.id)
+      this.$ga.event('scratch', 'remove', this.$route.params.id)
       this.$fiery.remove(this.scratch)
       this.$router.push({ name: 'list', params: { type: 'scratch' } })
     }

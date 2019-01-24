@@ -279,6 +279,15 @@ function nqMedia (type, id) {
   return nqFirestore.collection(type + 's').doc(id)
 }
 
+function addDocUser (type, id, email) {
+  const addUserFunction = functions.httpsCallable('message-shareDoc')
+  return addUserFunction({
+    docType: type,
+    docid: id,
+    email
+  })
+}
+
 // async function nqSearch (searchTerms, searchTypes) {
 //   // const searchFunction = nqapp.functions().httpsCallable('search-all')
 //   // return searchFunction({ searchTerms, searchTypes })
@@ -318,6 +327,7 @@ function nqMedia (type, id) {
 export default ({ app, router, Vue }) => {
   Vue.use(FieryVue)
   Vue.prototype.$firebase = {
+    base: fbapp.firebase_,
     emailCred: firebase.auth.EmailAuthProvider.credential,
     auth: fbapp.auth(),
     // db: fbapp.database(),
@@ -332,7 +342,8 @@ export default ({ app, router, Vue }) => {
     nqLogin: customNQLogin,
     nqSearch: nqSearch,
     nqBibleSearch: nqBibleSearch,
-    nqMedia: nqMedia
+    nqMedia: nqMedia,
+    addDocUser: addDocUser
     // log: function (log, docid, type) {
     //   console.log('route', router.history.current)
     //   firestore.collection('log').add({

@@ -2,23 +2,33 @@
   <div>
     <h4>Messages</h4>
     <div v-if="!loading && Object.keys(items).length > 0">
-      <q-card inline v-for="message in messageOrder" :key="message" class="content-card" @click.native="openItem(message)">
-        <q-card-title>{{ items[message].title }}</q-card-title>
-        <q-card-main>
-          <p>{{ items[message].mainIdea }}</p>
-          <span v-if="items[message].tags.length > 0">Tags: <q-chip v-for="tag in items[message].tags" :key="tag" color="primary" class="list-chip" dense>{{ tag }}</q-chip></span>
-          <br v-if="items[message].tags.length > 0 && Object.keys(items[message].bibleRefs).length > 0" />
-          <span v-if="Object.keys(items[message].bibleRefs).length > 0">Bible Refs: <q-chip v-for="ref in items[message].bibleRefs" :key="ref" color="secondary" class="list-chip" dense>{{ $bible.readable(ref) }}</q-chip></span>
-        </q-card-main>
-      </q-card>
+      <draggable v-if="messageOrder.length > 0 && Object.keys(items).length > 0" style="min-height: 20px;" :list="messageOrder" @change="order()" ref="messageDrag" :options="{ ghostClass: 'message-ghost', handle: '.drag-handle', disabled: $q.platform.is.mobile && !$q.platform.is.ipad }">
+        <q-card inline v-for="message in messageOrder" :key="message" class="content-card" @click.native="openItem(message)">
+          <div class="round-borders bg-primary drag-handle" v-if="!$q.platform.is.mobile || $q.platform.is.ipad">
+            <q-icon name="fas fa-arrows-alt" size="1rem" />
+          </div>
+          <q-card-title>{{ items[message].title }}</q-card-title>
+          <q-card-main>
+            <p>{{ items[message].mainIdea }}</p>
+            <span v-if="items[message].tags.length > 0">Tags: <q-chip v-for="tag in items[message].tags" :key="tag" color="primary" class="list-chip" dense>{{ tag }}</q-chip></span>
+            <br v-if="items[message].tags.length > 0 && Object.keys(items[message].bibleRefs).length > 0" />
+            <span v-if="Object.keys(items[message].bibleRefs).length > 0">Bible Refs: <q-chip v-for="ref in items[message].bibleRefs" :key="ref" color="secondary" class="list-chip" dense>{{ $bible.readable(ref) }}</q-chip></span>
+          </q-card-main>
+        </q-card>
+      </draggable>
     </div>
   </div>
 </template>
 
 <script>
+import Draggable from 'vuedraggable'
+
 export default {
+  components: {
+    Draggable
+  },
   name: 'MessageList',
-  props: [ 'seriesid', 'messageOrder' ],
+  props: [ 'seriesid', 'messageOrder', 'update' ],
   fiery: true,
   data () {
     return {
@@ -53,6 +63,10 @@ export default {
     },
     openItem (id) {
       this.$router.push({ name: 'message', params: { id: id } })
+    },
+    order () {
+      // console.log('reordered...', this.updateOrder)
+      this.update()
     }
   }
 }
@@ -88,6 +102,37 @@ export default {
   .content-card {
     width: 31%;
   }
+}
+
+.drag-handle {
+  float: left;
+  height: 60px;
+  margin-right: -5px;
+  padding-top: 20px;
+  padding-left: 4px;
+  padding-right: 4px;
+  opacity: 0.5;
+  cursor: move;
+}
+
+.drag-handle:hover {
+  opacity: .7;
+}
+
+.message-ghost {
+  width: 2px !important;
+  height: 100px !important;
+  margin: 3px !important;
+  background-color: var(--q-color-primary) !important;
+  opacity: 0.7 !important;
+}
+
+.message-ghost.content-card > div {
+  display: none !important;
+}
+
+.message-drag {
+  display: block;
 }
 
 </style>
