@@ -289,13 +289,9 @@ export default {
       this.showCollab = false
       const email = this.collabEmail
       this.collabEmail = ''
-      this.$firebase.addDocUser('message', this.id, email).then(async (res) => {
+      this.$firebase.addDocUser('message', this.id, email, this.message.seriesid).then(async (res) => {
         console.log(res)
         if (res.data.success) {
-          if (this.message.seriesid !== '') {
-            const seriesRes = await this.$firebase.addDocUser('series', this.message.seriesid, email)
-            if (!seriesRes.data.success) return
-          }
           Notify.create({
             type: 'positive',
             message: `${email} ${res.data.invited ? 'invited' : 'added'}!`,

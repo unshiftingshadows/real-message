@@ -279,12 +279,13 @@ function nqMedia (type, id) {
   return nqFirestore.collection(type + 's').doc(id)
 }
 
-function addDocUser (type, id, email) {
+function addDocUser (type, id, email, seriesid) {
   const addUserFunction = functions.httpsCallable('message-shareDoc')
   return addUserFunction({
     docType: type,
     docid: id,
-    email
+    email,
+    seriesid
   })
 }
 
