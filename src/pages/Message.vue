@@ -134,6 +134,7 @@
             />
           </q-field>
           <div class="q-caption" style="margin-top: 10px;">If the email address you enter is not associated with a current user, we will send them an invite to join!</div>
+          <div class="q-caption" style="margin-top: 10px;" v-if="this.message.seriesid !== ''">Since this message is part of a Series, we will also invite this person to edit the Series. However, they will only be able to see the Messages you share with them.</div>
         </div>
         <div class="col-12">
           <q-btn color="primary" @click.native="share()">Share</q-btn>
@@ -260,17 +261,18 @@ export default {
         })
       })
     },
-    archive () {
+    async archive () {
       console.log('archive!')
       this.$ga.event('message', 'archive', this.$route.params.id)
-      this.archiveConfirmation = false
-      this.message.archived = true
-      this.$fiery.update(this.message)
       if (this.message.seriesid !== '') {
-        this.$firebase.ref('series', '', this.message.seriesid).update({
+        await this.$firebase.ref('series', '', this.message.seriesid).update({
           messageOrder: this.$firebase.base.firestore.FieldValue.arrayRemove(this.id)
         })
       }
+      this.archiveConfirmation = false
+      this.message.archived = true
+      this.message.seriesid = ''
+      this.$fiery.update(this.message)
       this.$router.push({ name: 'list', params: { type: 'message' } })
     },
     remove () {
@@ -287,9 +289,13 @@ export default {
       this.showCollab = false
       const email = this.collabEmail
       this.collabEmail = ''
-      this.$firebase.addDocUser('message', this.id, email).then((res) => {
+      this.$firebase.addDocUser('message', this.id, email).then(async (res) => {
         console.log(res)
         if (res.data.success) {
+          if (this.message.seriesid !== '') {
+            const seriesRes = await this.$firebase.addDocUser('series', this.message.seriesid, email)
+            if (!seriesRes.data.success) return
+          }
           Notify.create({
             type: 'positive',
             message: `${email} ${res.data.invited ? 'invited' : 'added'}!`,
