@@ -90,6 +90,39 @@
         </div>
       </div>
     </q-modal>
+    <q-modal v-model="showCollab" ref="collabModal" content-classes="edit-title-modal">
+      <div class="row gutter-md">
+        <div class="col-12">
+          <q-btn
+            color="primary"
+            @click.native="showCollab = false; collabEmail = ''"
+            icon="fas fa-times"
+            class="float-right"
+            size="sm"
+          />
+          <h4>Share this Series with...</h4>
+        </div>
+        <div class="col-12">
+          <q-field
+            :error="$v.collabEmail.$error && collabEmail !== ''"
+            error-label="Please enter a valid email address"
+          >
+            <q-input
+              float-label="Email"
+              placeholder="Enter a user's email here..."
+              type="email"
+              v-model="collabEmail"
+              @blur="$v.collabEmail.$touch"
+              @keyup.enter="share()"
+            />
+          </q-field>
+          <div class="q-caption" style="margin-top: 10px;">If the email address you enter is not associated with a current user, we will send them an invite to join!</div>
+        </div>
+        <div class="col-12">
+          <q-btn color="primary" @click.native="share()">Share</q-btn>
+        </div>
+      </div>
+    </q-modal>
     <q-page-sticky position="top">
       <q-toolbar color="secondary" style="z-index: 10;">
         <q-toolbar-title>
@@ -105,7 +138,7 @@
               <q-item-separator />
               <q-item v-close-overlay v-if="!series.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
               <q-item v-close-overlay v-if="series.archived" @click.native="removeConfirmation = true" class="text-negative">Remove...</q-item>
-              <q-item v-close-overlay v-if="!series.archived">Collaborate...</q-item>
+              <q-item v-close-overlay v-if="!series.archived" @click.native="showCollab = true">Collaborate...</q-item>
               <!-- <q-item v-close-overlay>Print...</q-item> -->
               <!-- <q-item v-close-overlay>Present...</q-item> -->
             </q-list>
@@ -121,6 +154,7 @@
 </template>
 
 <script>
+import { required, email } from 'vuelidate/lib/validators'
 import { Notify } from 'quasar'
 import MessageList from 'components/MessageList.vue'
 import AddContent from 'components/AddContent.vue'
@@ -146,7 +180,15 @@ export default {
       editTitle: false,
       archiveConfirmation: false,
       removeConfirmation: false,
+      showCollab: false,
+      collabEmail: '',
       showMainIdea: false
+    }
+  },
+  validations: {
+    collabEmail: {
+      required,
+      email
     }
   },
   mounted () {
@@ -189,6 +231,26 @@ export default {
       this.removeConfirmation = false
       this.$fiery.remove(this.series)
       this.$router.push({ name: 'list', params: { type: 'series' } })
+    },
+    share () {
+      this.$v.collabEmail.$touch()
+      if (this.$v.collabEmail.$error) {
+        return
+      }
+      this.showCollab = false
+      const email = this.collabEmail.split(', ')
+      this.collabEmail = ''
+      this.$firebase.addDocUser('series', this.id, email).then(async (res) => {
+        console.log(res)
+        if (res.data.success) {
+          Notify.create({
+            type: 'positive',
+            message: `${email.length > 1 ? 'Invites' : 'Invite'} sent to: ${email.join(', ')}`,
+            position: 'bottom-left'
+          })
+        }
+      })
+      console.log('share!')
     },
     userHasScrolled (scroll) {
       if (scroll.position < 30) {

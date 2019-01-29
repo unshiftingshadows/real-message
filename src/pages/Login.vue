@@ -2,7 +2,7 @@
   <q-page padding>
     <q-card class="absolute-center login-card">
       <q-card-title align="center">
-        <h4>Login</h4>
+        <div class="q-display-1">Login</div>
       </q-card-title>
       <q-card-main>
         <div class="row gutter-sm">

@@ -31,7 +31,6 @@ import PreviewActivity from 'components/preview/Activity.vue'
 import PreviewQuestion from 'components/preview/Question.vue'
 import PreviewVideo from 'components/preview/Video.vue'
 import PreviewImage from 'components/preview/Image.vue'
-// import PreviewComposition from 'components/preview/Composition.vue'
 import PreviewLyric from 'components/preview/Lyric.vue'
 import PreviewIllustration from 'components/preview/Illustration.vue'
 import PreviewApplication from 'components/preview/Application.vue'
@@ -46,13 +45,12 @@ export default {
     PreviewQuestion,
     PreviewVideo,
     PreviewImage,
-    // PreviewComposition,
     PreviewLyric,
     PreviewIllustration,
     PreviewApplication,
     PreviewPrayer
   },
-  // name: 'ComponentName',
+  name: 'ContentPreview',
   props: ['type', 'id'],
   data () {
     return {

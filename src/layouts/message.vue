@@ -197,6 +197,7 @@ export default {
       console.log('signing out')
       window.fcWidget.user.clear()
       window.fcWidget.destroy()
+      this.$firebase.nqAuth.signOut()
       this.$firebase.auth.signOut().then(() => {
         this.$router.replace({ path: '/login' })
       })

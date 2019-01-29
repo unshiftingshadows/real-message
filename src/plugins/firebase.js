@@ -83,12 +83,18 @@ function user (uid) {
 
 async function customNQLogin (uid) {
   var loginFunction = functions.httpsCallable('nq-login')
-  const loginToken = await loginFunction({ uid })
-  try {
-    await nqapp.auth().signInWithCustomToken(loginToken)
-    console.log('logged with token', nqapp.auth().currentUser)
-    return true
-  } catch (error) {
+  const loginToken = (await loginFunction({ uid })).data
+  if (loginToken.status) {
+    try {
+      await nqapp.auth().signInWithCustomToken(loginToken.token)
+      console.log('nq logged with token', nqapp.auth().currentUser)
+      return true
+    } catch (error) {
+      console.log('nqlogin error', error)
+      return false
+    }
+  } else {
+    console.log('nqlogin unsuccessful...', loginToken)
     return false
   }
 }
@@ -279,13 +285,14 @@ function nqMedia (type, id) {
   return nqFirestore.collection(type + 's').doc(id)
 }
 
-function addDocUser (type, id, email, seriesid) {
+function addDocUser (type, id, emails) {
   const addUserFunction = functions.httpsCallable('message-shareDoc')
   return addUserFunction({
     docType: type,
     docid: id,
-    email,
-    seriesid
+    emails
+  }).catch(err => {
+    console.log('addDocUser error', err)
   })
 }
 

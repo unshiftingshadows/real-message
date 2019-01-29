@@ -112,7 +112,7 @@
         <div class="col-12">
           <q-btn
             color="primary"
-            @click.native="removeConfirmation = false"
+            @click.native="showCollab = false; collabEmail = ''"
             icon="fas fa-times"
             class="float-right"
             size="sm"
@@ -121,7 +121,7 @@
         </div>
         <div class="col-12">
           <q-field
-            :error="$v.collabEmail.$error"
+            :error="$v.collabEmail.$error && collabEmail !== ''"
             error-label="Please enter a valid email address"
           >
             <q-input
@@ -134,7 +134,6 @@
             />
           </q-field>
           <div class="q-caption" style="margin-top: 10px;">If the email address you enter is not associated with a current user, we will send them an invite to join!</div>
-          <div class="q-caption" style="margin-top: 10px;" v-if="this.message.seriesid !== ''">Since this message is part of a Series, we will also invite this person to edit the Series. However, they will only be able to see the Messages you share with them.</div>
         </div>
         <div class="col-12">
           <q-btn color="primary" @click.native="share()">Share</q-btn>
@@ -287,14 +286,14 @@ export default {
         return
       }
       this.showCollab = false
-      const email = this.collabEmail
+      const email = this.collabEmail.slice(', ')
       this.collabEmail = ''
-      this.$firebase.addDocUser('message', this.id, email, this.message.seriesid).then(async (res) => {
+      this.$firebase.addDocUser('message', this.id, email).then(async (res) => {
         console.log(res)
         if (res.data.success) {
           Notify.create({
             type: 'positive',
-            message: `${email} ${res.data.invited ? 'invited' : 'added'}!`,
+            message: `${email.length > 1 ? 'Invites' : 'Invite'} sent to: ${email.join(', ')}`,
             position: 'bottom-left'
           })
         }
