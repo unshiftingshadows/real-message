@@ -11,6 +11,7 @@ module.exports = function (ctx) {
       'firebase',
       'masonry',
       'sentry',
+      'types',
       // 'vuefire',
       'vuelidate'
     ],

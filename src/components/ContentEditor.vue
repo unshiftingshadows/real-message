@@ -51,6 +51,7 @@
         </div>
       </div>
     </q-modal>
+    <content-preview v-model="preview" :type="type" :id="id" :sections="sections" :modules="modules" :structure="structure" :document="document" />
   </div>
 </template>
 
@@ -61,6 +62,7 @@ import AddSection from 'components/AddSection.vue'
 import ModApplication from 'components/modules/Application.vue'
 import ModPrayer from 'components/modules/Prayer.vue'
 import ModuleSection from 'components/ModuleSection.vue'
+import ContentPreview from 'components/ContentPreview.vue'
 
 export default {
   components: {
@@ -69,7 +71,8 @@ export default {
     AddSection,
     ModApplication,
     ModPrayer,
-    ModuleSection
+    ModuleSection,
+    ContentPreview
   },
   name: 'ContentEditor',
   props: ['type', 'id'],
@@ -85,6 +88,7 @@ export default {
       editingSection: undefined,
       sectionChoice: '',
       tempModule: false,
+      preview: false,
       document: this.$fiery(this.$firebase.ref('message', '', this.id), {
         include: ['sectionOrder']
       }),
@@ -156,10 +160,16 @@ export default {
         sectionid: sectionid
       }
     })
+    this.$root.$on('preview-document', (data) => {
+      console.log('preview!', data)
+      if (data === this.id) {
+        this.preview = true
+      }
+    })
   },
   methods: {
     editModule (moduleid, sectionid) {
-      if (moduleid === undefined) {
+      if (moduleid === undefined || moduleid === '') {
         return
       }
       console.log('edit module', moduleid, sectionid)
@@ -377,6 +387,8 @@ export default {
 
 .section-card {
   margin-bottom: 10px;
+  background-color: inherit;
+  border: 2px dashed var(--q-color-primary);
 }
 
 .add-module-modal {

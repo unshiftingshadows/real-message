@@ -4,7 +4,7 @@
       <div class="col-xs-12" v-if="loading">
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
-      <div class="col-12" v-if="!loading">
+      <div class="col-12" v-if="!loading" style="margin-top: 20px;">
         <q-input v-model="message.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update" />
       </div>
       <div class="col-xs-12 col-md-6" v-if="!loading">
@@ -46,7 +46,7 @@
         </div>
       </div>
     </q-modal>
-    <q-modal v-model="showPreview" ref="previewModal" content-classes="preview-modal" maximized>
+    <!-- <q-modal v-model="showPreview" ref="previewModal" content-classes="preview-modal" maximized>
       <div class="row gutter-md justify-center" v-if="showPreview">
         <div class="col-xs-12 col-md-8">
           <q-btn
@@ -66,7 +66,7 @@
           <content-preview :id="id" type="message" />
         </div>
       </div>
-    </q-modal>
+    </q-modal> -->
     <q-modal v-model="archiveConfirmation" ref="archiveConfirmationModal" content-classes="edit-title-modal">
       <div class="row gutter-md">
         <div class="col-12">
@@ -150,11 +150,11 @@
           <q-popover anchor="bottom right" self="top right">
             <q-list link>
               <q-item v-close-overlay @click.native="editTitle = true">Rename...</q-item>
-              <q-item v-close-overlay @click.native="showPreview = true">Preview</q-item>
+              <q-item v-close-overlay @click.native="$root.$emit('preview-document', id)">Preview</q-item>
               <q-item-separator />
-              <q-item v-close-overlay><q-toggle label="Hook" v-model="message.prefs.hook" /></q-item>
-              <q-item v-close-overlay><q-toggle label="Application" v-model="message.prefs.application" /></q-item>
-              <q-item v-close-overlay><q-toggle label="Prayer" v-model="message.prefs.prayer" /></q-item>
+              <q-item v-close-overlay><q-toggle label="Hook" v-model="message.prefs.hook" @input="update()" /></q-item>
+              <q-item v-close-overlay><q-toggle label="Application" v-model="message.prefs.application" @input="update()" /></q-item>
+              <q-item v-close-overlay><q-toggle label="Prayer" v-model="message.prefs.prayer" @input="update()" /></q-item>
               <q-item-separator />
               <q-item v-close-overlay v-if="!message.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
               <q-item v-close-overlay v-if="message.archived" @click.native="removeConfirmation = true" class="text-negative">Remove...</q-item>
@@ -219,20 +219,6 @@ export default {
   },
   mounted () {
     this.init()
-  },
-  watch: {
-    'message.prefs.hook': function (newHook) {
-      // this.$firebase.ref('message', 'structure/before', this.id).child('hook').update({ show: newHook })
-      this.update()
-    },
-    'message.prefs.application': function (newApplication) {
-      // this.$firebase.ref('message', 'structure/after', this.id).child('application').update({ show: newApplication })
-      this.update()
-    },
-    'message.prefs.prayer': function (newPrayer) {
-      // this.$firebase.ref('message', 'structure/after', this.id).child('prayer').update({ show: newPrayer })
-      this.update()
-    }
   },
   methods: {
     init () {
@@ -346,7 +332,7 @@ export default {
   }
 }
 
-.edit-title-modal, .preview-modal {
+.edit-title-modal {
   padding: 30px;
   width: 100%;
 }

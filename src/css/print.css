@@ -1,0 +1,26 @@
+@media print {
+  * {
+    -webkit-transition: none !important;
+    transition: none !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  body, html, #wrapper {
+    height: auto;
+  }
+  p {
+    page-break-inside: avoid;
+  }
+  #print-preview {
+    width: 100%;
+    height: auto;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    overflow: visible;
+  }
+  #print-preview, #print-preview * {
+    visibility: visible;
+  }
+}

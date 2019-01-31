@@ -9,6 +9,7 @@
         <q-card inline v-masonry-tile v-for="item in items" :key="item.id" class="media-card media-item" @click.native="openItem(item.id, item)">
           <q-card-media v-if="type === 'image' || type === 'video'">
             <img v-if="item.thumbURL" :src="item.thumbURL" />
+            <img v-else :src="item.imageURL" />
             <q-card-title slot="overlay" v-if="type === 'video'">{{ item.title }}</q-card-title>
           </q-card-media>
           <q-card-title v-if="type === 'lyric' || type === 'illustration'">{{ item.title }}</q-card-title>

@@ -22,7 +22,7 @@ export default {
 <style>
 
 .comment-btn {
-  position: absolute;
+  position: fixed;
   right: 30px;
   bottom: 30px;
 }

@@ -49,10 +49,10 @@
       <div class="col-12" v-if="type === 'video'">
         <q-input type="text" float-label="Video URL" v-model="videoURL" />
       </div>
-      <!-- <div class="col-12" v-if="!(type === 'image' && imageType === 'upload')">
+      <div class="col-12">
         <q-btn color="primary" class="float-right" @click.native="add" :disabled="loading">Add {{ type }}</q-btn>
         <q-spinner class="float-right" size="2rem" color="primary" style="margin-right: 20px;" v-if="loading" />
-      </div> -->
+      </div>
     </div>
   </q-modal>
 </template>
@@ -100,7 +100,7 @@ export default {
       // imageType: '',
       imageTitle: '',
       // images: [],
-      // imageURL: '',
+      imageURL: '',
       // imageOptions: [
       //   // {
       //   //   label: 'Wiki',

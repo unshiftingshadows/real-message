@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card color="primary" v-if="!loading">
     <div v-show="!data.editing || data.editing !== $firebase.auth.currentUser.uid">
       <!-- Drag Handle -->
       <div class="round-borders bg-primary drag-handle" v-if="!$q.platform.is.mobile || $q.platform.is.ipad">
@@ -18,13 +18,15 @@
         <!-- Time Notice -->
         <span class="float-right" style="font-size: .8rem; vertical-align: top; line-height: 1rem;">{{ data.time }} minutes&nbsp;&nbsp;&nbsp;</span>
         <!-- Mod Icon -->
-        <q-icon :name="typeInfo[data.type].icon" color="primary" size="2rem" />&nbsp;&nbsp;&nbsp;
+        <q-icon :name="typeInfo[data.type].icon" color="white" size="2rem" />&nbsp;&nbsp;&nbsp;
         <!-- Mod Title -->
-        <span v-if="data.type !== 'image' || data.type !== 'video'">{{ media.title }} | {{ media.author }}</span>
+        <span v-if="data.type === 'illustration' || data.type === 'lyric'">{{ media.title }}<span v-if="media.title !== '' && media.author !==''"> | </span>{{ media.author }}</span>
+        <span v-if="data.type === 'quote'">{{ media.text }}</span>
       </q-card-title>
       <q-card-main>
         <!-- Mod Info -->
-        <p v-if="data.type !== 'image' || data.type !== 'video'">{{ media.text }}</p>
+        <div class="q-body-2" style="text-align: right;" v-if="data.type === 'quote'">{{ media.title }}<span v-if="media.title !== '' && media.author !== ''"> | </span>{{ media.author }}</div>
+        <p v-if="data.type === 'illustration' && data.type === 'lyric'">{{ media.text }}</p>
         <q-video v-if="data.type === 'video'" :src="getEmbedURL()" />
         <img v-if="data.type === 'image'" :src="media.imageURL" style="width: 100%;" />
         <p v-if="data.notes && data.notes !== ''">Notes:<br/>{{ data.notes }}</p>
@@ -81,7 +83,7 @@ export default {
   fiery: true,
   data () {
     return {
-      loading: false,
+      loading: true,
       mediaOpen: true,
       media: {
         text: '',
@@ -129,6 +131,7 @@ export default {
         exclude: ['id'],
         onSuccess: () => {
           console.log('media loaded successfully')
+          this.loading = false
         }
       })
     },

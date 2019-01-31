@@ -298,7 +298,7 @@ export default {
   }
 }
 
-.edit-title-modal, .preview-modal {
+.edit-title-modal {
   padding: 30px;
   width: 100%;
 }

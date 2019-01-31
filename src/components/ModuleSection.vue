@@ -195,9 +195,4 @@ export default {
   opacity: 0.5;
 }
 
-.section-card {
-  background-color: inherit;
-  border: 2px dashed var(--q-color-primary);
-}
-
 </style>

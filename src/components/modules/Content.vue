@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card :color="data.type === 'bible' ? 'secondary' : ''">
     <div v-show="!data.editing || data.editing !== $firebase.auth.currentUser.uid" @click="clicked">
       <!-- Drag Handle -->
       <div class="round-borders bg-primary drag-handle" v-if="!$q.platform.is.mobile || $q.platform.is.ipad">
@@ -18,7 +18,7 @@
         <!-- Time Notice -->
         <span class="float-right" style="font-size: .8rem; vertical-align: top; line-height: 1rem;">{{ data.time }} minutes&nbsp;&nbsp;&nbsp;</span>
         <!-- Mod Icon -->
-        <q-icon :name="typeInfo[data.type].icon" color="primary" size="2rem" />&nbsp;&nbsp;&nbsp;
+        <q-icon :name="typeInfo[data.type].icon" :color="data.type === 'bible' ? 'white' : 'primary'" size="2rem" />&nbsp;&nbsp;&nbsp;
         <span v-if="data.type !== 'bible'">{{ data.title }}</span>
         <span v-if="data.type === 'bible'">{{ data.bibleRef }}</span>
       </q-card-title>
