@@ -201,7 +201,7 @@ export default {
             level: 'info'
           })
           this.user = this.$fiery(this.$firebase.user(), {
-            onSuccess: (userSnap) => {
+            onSuccess: async (userSnap) => {
               if (this.loading) {
                 console.log('logged user', userSnap)
                 window.fcWidget.init({
@@ -236,14 +236,14 @@ export default {
                 window.fcWidget.on('widget:closed', () => {
                   document.getElementById('fc_frame').style.display = 'none'
                 })
-                this.loading = false
-              }
-              if (this.user.nqUser) {
-                if (this.$firebase.nqLogin(this.user.nqUser.uid)) {
-                  console.log('nq user authenticated', this.$firebase.nqAuth.currentUser)
-                } else {
-                  console.log('nq user error...')
+                if (this.user.nqUser) {
+                  if (await this.$firebase.nqLogin(this.user.nqUser.uid)) {
+                    console.log('nq user authenticated', this.$firebase.nqAuth.currentUser)
+                  } else {
+                    console.log('nq user error...')
+                  }
                 }
+                this.loading = false
               }
             }
           })
