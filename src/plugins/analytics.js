@@ -6,7 +6,7 @@ export default ({ app, router, Vue }) => {
     id: 'UA-125091051-1',
     router,
     debug: {
-      enabled: process.env.DEV
+      // enabled: process.env.DEV
       // sendHitTask: !process.env.DEV
     },
     autoTracking: {
