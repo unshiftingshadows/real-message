@@ -172,7 +172,7 @@ export default {
         this.loading = true
         var readable = this.$bible.readable(this.data.bibleRef)
         this.$bible.text(this.data.bibleRef, this.translation).then(res => {
-          this.data.text = res.text
+          this.data.text = res
           this.data.translation = this.translation
           this.data.bibleRef = readable
           this.loading = false
@@ -203,7 +203,9 @@ export default {
     },
     clicked (e) {
       if (e.srcElement.nodeName !== 'I' && e.srcElement.nodeName !== 'BUTTON') {
-        this.modMethods.edit(this.id)
+        if (!this.data.editing) {
+          this.modMethods.edit(this.id)
+        }
       }
     }
   }
