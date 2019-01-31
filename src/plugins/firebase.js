@@ -43,15 +43,15 @@ const fbapp = firebase.initializeApp(process.env.DEV ? devSettings : prodSetting
 const nqapp = firebase.initializeApp(nqSettings, 'nq')
 
 const firestore = fbapp.firestore()
-const settings = {
-  timestampsInSnapshots: true
-}
-firestore.settings(settings)
+// const settings = {
+//   timestampsInSnapshots: true
+// }
+// firestore.settings(settings)
 
 const functions = fbapp.functions()
 
 const nqFirestore = nqapp.firestore()
-nqFirestore.settings(settings)
+// nqFirestore.settings(settings)
 
 function dbref (type, selection, id) {
   console.log('run dbref')
