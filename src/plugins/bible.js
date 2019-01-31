@@ -39,7 +39,7 @@ function text (ref, version) {
   return firebase.functions().httpsCallable('bible-bibleText')({ bibleRef: ref, version: version })
     .then((res) => {
       console.log(res)
-      return res.data
+      return fixQuotations(res.data.text)
     })
     .catch((err) => {
       console.error(err)
@@ -60,6 +60,19 @@ function text (ref, version) {
   //       return null
   //     })
   // })
+}
+
+function fixQuotations (text) {
+  console.log('text', text)
+  let goodText = text.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/xx|[\u0060][\u0060]/g, '"').trim()
+  console.log('goodText', goodText)
+  if (goodText.charAt(0) === '"' || goodText.charAt(0) === "'") {
+    return goodText.endsWith('"') || goodText.endsWith("'") ? goodText : goodText.concat(goodText.charAt(0) === '"' ? '"' : "'")
+  } else if (goodText.endsWith('"') || goodText.endsWith("'")) {
+    return goodText.endsWith('"') ? '"'.concat(goodText) : "'".concat(goodText)
+  } else {
+    return goodText
+  }
 }
 
 // leave the export, even if you don't use it
