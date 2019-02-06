@@ -285,6 +285,7 @@ export default {
             this.$firebase.list(this.tempModule.data.type).doc(this.tempModule.data.mediaid).update({
               used: this.$firebase.base.firestore.FieldValue.arrayUnion({
                 message: this.id,
+                section: sectionid,
                 module: newMod.id
               })
             })

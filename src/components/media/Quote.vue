@@ -95,9 +95,23 @@ export default {
         this.editing = false
       })
     },
-    remove () {
+    async remove () {
       this.editing = false
       this.close()
+      var proms = []
+      proms.concat(...this.quote.used.map(e => {
+        return this.$firebase.list('message').doc(e.message).collection('modules').doc(e.module).delete()
+      }))
+      proms.concat(...this.quote.used.map(e => {
+        return this.$firebase.list('message').doc(e.message).collection('sections').doc(e.section).update({
+          moduleOrder: this.$firebase.base.firestore.FieldValue.arrayRemove(e.module)
+        })
+      }))
+      try {
+        await Promise.all(proms)
+      } catch (err) {
+        console.error(err)
+      }
       this.$fiery.remove(this.quote).then(() => {
         Notify.create({
           type: 'positive',
