@@ -19,8 +19,11 @@
         <div v-masonry transition-duration="0.3" item-selection=".media-cardl">
           <q-card v-for="item in showItems" :key="item.id" color="primary" inline v-bind:class="[item.type] + 'l'" class="media-cardl" @click.native="openItem(item, item.type)">
             <!-- <q-icon name="fas fa-plus" color="positive" class="float-right cursor-pointer" style="margin-top: 5px; margin-right: 5px;" /> -->
-            <q-card-media v-if="item.type == 'video' || item.type == 'image'">
+            <q-card-media v-if="item.type == 'video'">
               <img :src="item.thumbURL" />
+            </q-card-media>
+            <q-card-media v-if="item.type == 'image'">
+              <img :src="item.imageURL" />
             </q-card-media>
             <q-card-title v-if="item.type == 'video' || item.type === 'lyric'">
               {{ item.title }}
@@ -28,8 +31,8 @@
             <q-card-main v-if="item.type === 'quote' || item.type === 'illustration'">
               <p v-if="item.type === 'illustration'"><b>{{ item.title }}</b></p>
               <p>{{ item.text }}</p>
-              <p class="q-body-2" v-if="item.type === 'quote' && (item.author || item.title)">{{ item.author }} - {{ item.title }}</p>
-              <p class="q-body-2" v-if="item.type === 'illustration'">{{ item.author }}</p>
+              <p class="q-body-2 float-right" v-if="item.type === 'quote' && (item.author !== '' || item.title !== '')">{{ item.author }}<span v-if="item.author !== '' && item.title !== ''"> - </span>{{ item.title }}</p>
+              <p class="q-body-2 float-right" v-if="item.type === 'illustration'">{{ item.author }}</p>
             </q-card-main>
           </q-card>
         </div>
@@ -162,6 +165,7 @@ export default {
         })
         this.loading = false
         this.items = res.data.results
+        console.log('results', res.data)
       })
       // this.$database.search('media', this.searchTerms, {}, (res) => {
       //   this.items = res

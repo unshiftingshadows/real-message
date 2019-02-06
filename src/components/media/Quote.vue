@@ -9,12 +9,10 @@
         <p>{{ quote.title }} | {{ quote.author }}</p>
       </div>
       <div class="col-12" v-if="quote.tags.length > 0 || quote.bibleRefs.length > 0">
-        <q-chip v-if="quote.tags.length > 0" v-for="tag in quote.tags" :key="tag" color="primary">{{ tag }}</q-chip>
-        |
-        <q-chip v-if="readableRefs.length > 0" v-for="ref in readableRefs" :key="ref" color="secondary">{{ ref }}</q-chip>
+        <q-chip v-for="tag in quote.tags" :key="tag" color="primary">{{ tag }}</q-chip><br v-if="quote.tags.length > 0 && quote.bibleRefs.length > 0" /><q-chip v-for="ref in readableRefs" :key="ref" color="secondary">{{ ref }}</q-chip>
       </div>
       <div class="col-12">
-        <q-btn color="primary" @click.native="editing = true">Edit</q-btn>
+        <q-btn color="primary" @click.native="editing = true" v-if="editable === ''">Edit</q-btn>
         <q-btn color="primary" v-if="addModule !== undefined" @click.native="add">Add</q-btn>
       </div>
     </div>
@@ -51,13 +49,16 @@
 import { Notify } from 'quasar'
 
 export default {
-  props: ['data', 'open', 'close', 'addModule'],
+  props: ['data', 'open', 'close', 'addModule', 'editable'],
   name: 'media-quote',
   fiery: true,
   data () {
     return {
       editing: false,
-      quote: {},
+      quote: {
+        tags: [],
+        bibleRefs: []
+      },
       readableRefs: []
     }
   },

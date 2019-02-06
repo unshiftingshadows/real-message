@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h4>Messages</h4>
-    <div v-if="!loading && Object.keys(items).length > 0">
+    <h4>Messages <q-btn icon="fas fa-plus" color="primary" size="sm" @click.native="$refs.addContent.show()" /></h4>
+    <div v-if="!loading && Object.keys(items).length > 0 && Object.keys(items).length === messageOrder.length">
       <draggable v-if="messageOrder.length > 0 && Object.keys(items).length > 0" style="min-height: 20px;" :list="messageOrder" @change="order()" ref="messageDrag" :options="{ ghostClass: 'message-ghost', handle: '.drag-handle', disabled: $q.platform.is.mobile && !$q.platform.is.ipad }">
         <q-card inline v-for="message in messageOrder" :key="message" class="content-card" @click.native="openItem(message)">
           <div class="round-borders bg-primary drag-handle" v-if="!$q.platform.is.mobile || $q.platform.is.ipad">
@@ -17,15 +17,18 @@
         </q-card>
       </draggable>
     </div>
+    <add-content type="message" :seriesid="seriesid" ref="addContent" :update-series="update" />
   </div>
 </template>
 
 <script>
 import Draggable from 'vuedraggable'
+import AddContent from 'components/AddContent'
 
 export default {
   components: {
-    Draggable
+    Draggable,
+    AddContent
   },
   name: 'MessageList',
   props: [ 'seriesid', 'messageOrder', 'update' ],

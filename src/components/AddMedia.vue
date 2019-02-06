@@ -21,27 +21,6 @@
         <q-input type="text" float-label="Lyric Title" v-model="lyricTitle" />
       </div>
       <div class="col-12" v-if="type === 'image'">
-        <!-- <q-btn-toggle
-          v-model="imageType"
-          toggle-color="primary"
-          :options="imageOptions"
-        />
-        <br/>
-        <br/> -->
-        <!-- <div class="col-12" v-if="imageType === 'wiki'">
-          <q-input type="text" float-label="Wiki Title" v-model="imageTitle" />
-        </div> -->
-        <!-- <div class="col-12" v-if="imageType === 'upload'">
-          <FilePond
-            name="image-upload"
-            ref="image-upload"
-            labelIdle="Drop files here..."
-            allowMultiple="false"
-            acceptedFileTypes="image/jpeg, image/png"
-            :files="images"
-            :server="imageServer"
-          />
-        </div> -->
         <div class="col-12">
           <q-input type="text" float-label="Image URL" v-model="imageURL" />
         </div>
@@ -84,6 +63,9 @@ export default {
     },
     addNew: {
       type: Function
+    },
+    setLoading: {
+      type: Function
     }
   },
   fiery: true,
@@ -97,73 +79,8 @@ export default {
       illustrationTitle: '',
       lyricTitle: '',
       videoURL: '',
-      // imageType: '',
       imageTitle: '',
-      // images: [],
       imageURL: '',
-      // imageOptions: [
-      //   // {
-      //   //   label: 'Wiki',
-      //   //   value: 'wiki'
-      //   // },
-      //   // {
-      //   //   label: 'Upload',
-      //   //   value: 'upload'
-      //   // },
-      //   {
-      //     label: 'Link',
-      //     value: 'link'
-      //   }
-      // ],
-      // imageServer: {
-      //   process: (fieldName, file, metadata, load, error, progress, abort) => {
-      //     // Should do custom file upload or local storing here
-      //     this.loading = true
-      //     this.$firebase.list(this.type).add({ service: 'upload', user: this.$firebase.auth.currentUser.uid }).then((res) => {
-      //     // this.$database.add('image', { service: 'upload' }, (res) => {
-      //       // GA - Add image media event
-      //       this.$ga.event('media', 'add', 'image-upload')
-      //       var uploadProcess = this.$firebase.imagesRef.child(res.id).put(file)
-      //       uploadProcess.on('state_changed', (snapshot) => {
-      //         progress(true, snapshot.bytesTransferred, snapshot.totalBytes)
-      //       }, (err) => {
-      //         error(err)
-      //       }, () => {
-      //         load(uploadProcess.snapshot.ref.name)
-      //         uploadProcess.snapshot.ref.getDownloadURL().then((url) => {
-      //           this.refresh(this.type)
-      //           this.showAddMedia = false
-      //           this.init()
-      //         })
-      //       })
-      //     })
-
-      //     // Can call the error method if something is wrong, should exit after
-      //     // error('oh my goodness');
-
-      //     // Should call the progress method to update the progress to 100% before calling load
-      //     // (endlessMode, processedSize, totalSize)
-      //     // progress(true, 0, 1024);
-
-      //     // Should call the load method when done and pass the returned server file id
-      //     // the unique server file id is used by revert and restore functions
-      //     // load('unique-file-id');
-
-      //     // Should expose an abort method so the request can be cancelled
-      //     return {
-      //       abort: () => {
-      //         // User tapped abort, cancel our ongoing actions here
-
-      //         // Let FilePond know the request has been cancelled
-      //         abort()
-      //       }
-      //     }
-      //   },
-      //   revert: './revert',
-      //   restore: './restore/',
-      //   load: './load/',
-      //   fetch: './fetch/'
-      // },
       types: ['quote', 'image', 'illustration', 'lyric', 'video'],
       showAddMedia: false
     }
@@ -187,6 +104,10 @@ export default {
       console.log('add')
       if (this.types.includes(this.type)) {
         var obj = {
+          bibleRefs: [],
+          tags: [],
+          dateAdded: new Date(),
+          dateModified: new Date(),
           user: this.$firebase.auth.currentUser.uid
         }
         switch (this.type) {
@@ -200,18 +121,6 @@ export default {
             obj.title = this.quoteTitle
             break
           case 'image':
-            // switch (this.imageType) {
-            //   case 'wiki':
-            //     if (this.imageTitle === '') {
-            //       this.$q.notify('Please review fields again')
-            //       return
-            //     }
-            //     obj.title = this.imageTitle
-            //     obj.service = 'wiki'
-            //     break
-            //   case 'upload':
-            //     return
-            //   case 'link':
             if (this.imageURL === '') {
               this.$q.notify('Please review fields again')
               return
@@ -219,16 +128,14 @@ export default {
             obj.imageURL = this.imageURL
             obj.service = 'link'
             break
-            //   default:
-            //     console.error('invalid image type')
-            // }
-            // break
           case 'illustration':
             if (this.illustrationTitle === '') {
               this.$q.notify('Please review fields again')
               return
             }
             obj.title = this.illustrationTitle
+            obj.text = ''
+            obj.author = ''
             break
           case 'lyric':
             if (this.lyricTitle === '') {
@@ -236,6 +143,8 @@ export default {
               return
             }
             obj.title = this.lyricTitle
+            obj.text = ''
+            obj.author = ''
             break
           case 'video':
             if (this.videoURL === '') {
@@ -269,6 +178,7 @@ export default {
         }
         console.log(obj)
         this.loading = true
+        this.setLoading()
         this.$firebase.list(this.type).add(obj).then((res) => {
           this.refresh(this.type)
           console.log('added', res)

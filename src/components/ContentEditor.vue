@@ -281,6 +281,14 @@ export default {
       }
       if (sectionid) {
         this.$fires.modules.add(this.tempModule.data).then((newMod) => {
+          if (this.$types.MEDIA.includes(this.tempModule.data.type)) {
+            this.$firebase.list(this.tempModule.data.type).doc(this.tempModule.data.mediaid).update({
+              used: this.$firebase.base.firestore.FieldValue.arrayUnion({
+                message: this.id,
+                module: newMod.id
+              })
+            })
+          }
           console.log('saved')
           this.tempModule = false
           this.editingid = newMod.id

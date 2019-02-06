@@ -4,7 +4,7 @@
     <div v-if="loading">
       <q-spinner color="primary" class="absolute-center" size="3rem" />
     </div>
-    <div v-if="!loading && mediaTypes.includes(type)">
+    <div v-if="!loading && $types.MEDIA.includes(type)">
       <div v-masonry transition-duration="0.3s" item-selectior=".media-item">
         <q-card inline v-masonry-tile v-for="item in items" :key="item.id" class="media-card media-item" @click.native="openItem(item.id, item)">
           <q-card-media v-if="type === 'image' || type === 'video'">
@@ -19,9 +19,9 @@
         </q-card>
       </div>
     </div>
-    <add-media :type="type" ref="addMedia" v-if="mediaTypes.includes(type)" :refresh="init" />
-    <q-modal ref="showMediaModal" v-model="showMedia" content-classes="add-media-modal" v-if="mediaTypes.includes(type)">
-      <component v-bind:is="'media-' + type" :data="openMedia" :open="showMedia" :close="closeMedia" @hide="closeMedia" v-if="showMedia" />
+    <add-media :type="type" ref="addMedia" v-if="$types.MEDIA.includes(type)" :refresh="init" :set-loading="setLoading" />
+    <q-modal ref="showMediaModal" v-model="showMedia" content-classes="add-media-modal" v-if="$types.MEDIA.includes(type)">
+      <component v-bind:is="'media-' + type" :data="openMedia" :open="showMedia" :close="closeMedia" @hide="closeMedia" v-if="showMedia" editable />
     </q-modal>
   </q-page>
 </template>
@@ -49,7 +49,6 @@ export default {
   fiery: true,
   data () {
     return {
-      mediaTypes: ['quote', 'image', 'illustration', 'lyric', 'video'],
       type: this.$route.params.type,
       items: [],
       loading: false,
@@ -70,15 +69,16 @@ export default {
   },
   methods: {
     init (type) {
+      this.loading = true
       this.$ga.event('media', 'list', this.$route.params.type)
       const startTime = new Date()
-      this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
         // once: true,
         query: (list) => list.where('user', '==', this.$firebase.auth.currentUser.uid).orderBy('dateAdded', 'desc'),
         key: 'id',
         exclude: ['id'],
         onSuccess: (list) => {
+          this.loading = true
           const timeElapsed = new Date() - startTime
           this.$ga.time({
             timingCategory: 'media',
@@ -86,25 +86,17 @@ export default {
             timingValue: timeElapsed,
             timingLabel: type
           })
-          if (type === 'image') {
-            list.forEach((image) => {
-              if (image.service === 'upload') {
-                this.$firebase.imagesRef.child(image.id).getDownloadURL().then((url) => {
-                  image.thumbURL = url
-                  image.imageURL = url
-                  image.pageURL = url
-                })
-              }
-            })
-          }
           this.loading = false
         }
       })
     },
+    setLoading () {
+      this.loading = true
+    },
     openItem (id, item) {
       console.log(id)
       console.log(this.type)
-      if (this.mediaTypes.includes(this.type)) {
+      if (this.$types.MEDIA.includes(this.type)) {
         console.log('open media')
         this.openMedia = item
         this.showMedia = true

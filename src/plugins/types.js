@@ -1,5 +1,5 @@
 const CONTENT = [ 'text', 'bible', 'activity', 'question' ]
-const MEDIA = [ 'quote', 'video', 'image', 'illustration', 'composition' ]
+const MEDIA = [ 'quote', 'video', 'image', 'illustration', 'lyric' ]
 const NQ_MEDIA = [ 'quote', 'outline', 'idea', 'illustration', 'book', 'movie', 'video', 'image', 'composition', 'article', 'document', 'note', 'discourse' ]
 
 const ALL_TYPES = {

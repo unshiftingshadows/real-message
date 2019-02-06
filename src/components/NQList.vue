@@ -13,8 +13,8 @@
         />
       </div>
       <div class="col-12">
-        <div v-masonry transition-duration="0.3s" item-selection=".media-cardl">
-          <q-card v-masonry-tile v-for="item in showItems" :key="item.id" color="primary" v-bind:class="singlecolumn === '' ? ' one-column' : ''" class="media-cardl" @click.native="openItem(item.media, item.id, item.type)">
+        <div v-masonry transition-duration="0.3s" item-selection=".nq-media-cardl">
+          <q-card v-masonry-tile v-for="item in showItems" :key="item.id" color="primary" v-bind:class="singlecolumn === '' ? ' one-column' : ''" class="nq-media-cardl" @click.native="openItem(item.media, item.id, item.type)">
             <q-btn v-if="addButton === ''" icon="fas fa-plus" color="positive" class="float-right cursor-pointer" style="margin-bottom: 5px; margin-left: 5px;" dense size="sm" />
             <q-card-media v-if="item.type == 'book' || item.type == 'movie' || item.type == 'video' || item.type == 'article' || item.type == 'image'">
               <img :src="item.media.thumbURL" />
@@ -176,10 +176,10 @@ export default {
 </script>
 
 <style>
-.one-column.media-cardl {
+.one-column.nq-media-cardl {
   width: 95% !important;
 }
-.media-cardl {
+.nq-media-cardl {
   margin: 5px;
   width: 95%;
   cursor: pointer;
@@ -193,12 +193,12 @@ export default {
   opacity: 1;
 }
 @media screen and (min-width: 800px) {
-  .media-cardl {
+  .nq-media-cardl {
     width: 31%;
   }
 }
 @media screen and (min-width: 1200px) {
-  .media-cardl {
+  .nq-media-cardl {
     width: 45%;
   }
 }
