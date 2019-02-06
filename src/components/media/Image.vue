@@ -32,8 +32,19 @@
         />
       </div>
       <div class="col-12">
-        <q-btn color="primary" @click.native="save">Save</q-btn>&nbsp;
-        <q-btn color="negative" @click.native="remove">Remove</q-btn>
+        <q-btn color="primary" @click.native="save()" v-if="!showRemove">Save</q-btn>&nbsp;
+        <q-btn color="negative" @click.native="showRemove = true" v-if="!showRemove">Remove</q-btn>
+        <q-alert
+          v-if="showRemove"
+          color="negative"
+          icon="fas fa-question-circle"
+          message="Are you sure?"
+          detail="Removing this media will also remove it from any Messages"
+          :actions="[
+            { label: 'Yes', icon: 'fas fa-check', handler: () => { return remove() } },
+            { label: 'Nope', icon: 'fas fa-times', handler: () => { return showRemove = false } }
+          ]"
+        />
       </div>
     </div>
   </div>
@@ -53,7 +64,8 @@ export default {
         tags: [],
         bibleRefs: []
       },
-      readableRefs: []
+      readableRefs: [],
+      showRemove: false
     }
   },
   watch: {
@@ -92,19 +104,21 @@ export default {
     async remove () {
       this.editing = false
       this.close()
-      var proms = []
-      proms.concat(...this.image.used.map(e => {
-        return this.$firebase.list('message').doc(e.message).collection('modules').doc(e.module).delete()
-      }))
-      proms.concat(...this.image.used.map(e => {
-        return this.$firebase.list('message').doc(e.message).collection('sections').doc(e.section).update({
-          moduleOrder: this.$firebase.base.firestore.FieldValue.arrayRemove(e.module)
-        })
-      }))
-      try {
-        await Promise.all(proms)
-      } catch (err) {
-        console.error(err)
+      if (this.image.used) {
+        var proms = []
+        proms.concat(...this.image.used.map(e => {
+          return this.$firebase.list('message').doc(e.message).collection('modules').doc(e.module).delete()
+        }))
+        proms.concat(...this.image.used.map(e => {
+          return this.$firebase.list('message').doc(e.message).collection('sections').doc(e.section).update({
+            moduleOrder: this.$firebase.base.firestore.FieldValue.arrayRemove(e.module)
+          })
+        }))
+        try {
+          await Promise.all(proms)
+        } catch (err) {
+          console.error(err)
+        }
       }
       this.$fiery.remove(this.image).then(() => {
         Notify.create({
