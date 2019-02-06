@@ -5,7 +5,7 @@ module.exports = function (ctx) {
     // app plugins (/src/plugins)
     plugins: [
       'analytics',
-      // 'axios',
+      'axios',
       'bible',
       // 'database',
       'firebase',
@@ -92,6 +92,7 @@ module.exports = function (ctx) {
         'QCardTitle',
         'QCardMedia',
         'QCardActions',
+        'QCardSeparator',
         'QField',
         'QInput',
         'QSearch',

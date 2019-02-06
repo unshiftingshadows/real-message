@@ -6,7 +6,7 @@
     </div>
     <div v-if="!loading && $types.MEDIA.includes(type)">
       <div v-masonry transition-duration="0.3s" item-selectior=".media-item">
-        <q-card inline v-masonry-tile v-for="item in items" :key="item.id" class="media-card media-item" @click.native="openItem(item.id, item)">
+        <q-card inline v-masonry-tile v-for="item in solidItems" :key="item.id" class="media-card media-item" @click.native="openItem(item.id, item)">
           <q-card-media v-if="type === 'image' || type === 'video'">
             <img v-if="item.thumbURL" :src="item.thumbURL" />
             <img v-else :src="item.imageURL" />
@@ -67,6 +67,13 @@ export default {
       this.init(newType)
     }
   },
+  computed: {
+    solidItems: function () {
+      return this.items.filter((u) => {
+        return u.id
+      })
+    }
+  },
   methods: {
     init (type) {
       this.loading = true
@@ -74,7 +81,7 @@ export default {
       const startTime = new Date()
       this.items = this.$fiery(this.$firebase.list(type), {
         // once: true,
-        query: (list) => list.where('user', '==', this.$firebase.auth.currentUser.uid).orderBy('dateAdded', 'desc'),
+        query: (list) => list.where('user', '==', this.$firebase.auth.currentUser.uid).orderBy('createdDate', 'desc'),
         key: 'id',
         exclude: ['id'],
         onSuccess: (list) => {

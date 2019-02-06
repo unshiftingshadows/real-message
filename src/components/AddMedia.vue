@@ -81,7 +81,6 @@ export default {
       videoURL: '',
       imageTitle: '',
       imageURL: '',
-      types: ['quote', 'image', 'illustration', 'lyric', 'video'],
       showAddMedia: false
     }
   },
@@ -92,22 +91,22 @@ export default {
     init () {
       this.loading = false
       this.quoteText = ''
+      this.quoteAuthor = ''
+      this.quoteTitle = ''
       this.illustrationTitle = ''
       this.lyricTitle = ''
       this.videoURL = ''
-      this.imageType = ''
       this.imageTitle = ''
-      this.images = []
       this.imageURL = ''
     },
     add: async function () {
       console.log('add')
-      if (this.types.includes(this.type)) {
+      if (this.$types.MEDIA.includes(this.type)) {
         var obj = {
           bibleRefs: [],
           tags: [],
-          dateAdded: new Date(),
-          dateModified: new Date(),
+          createdDate: new Date(),
+          modifiedDate: new Date(),
           user: this.$firebase.auth.currentUser.uid
         }
         switch (this.type) {

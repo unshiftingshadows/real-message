@@ -3,7 +3,7 @@
     <div class="row gutter-sm" v-if="!editing">
       <div class="col-12">
         <q-btn icon="fas fa-times" size="xs" color="primary" @click.native="close" class="float-right" />
-        <q-video :src="video.embedURL" />
+        <q-video v-if="video.embedURL" :src="video.embedURL" />
       </div>
       <div class="col-12">
         <p>{{ video.title }}</p>
@@ -18,7 +18,7 @@
     </div>
     <div class="row gutter-sm" v-if="editing">
       <div class="col-12">
-        <q-video :src="video.embedURL" />
+        <q-video v-if="video.embedURL" :src="video.embedURL" />
       </div>
       <div class="col-12">
         <p><b>Location:</b> {{ video.service }}</p>
