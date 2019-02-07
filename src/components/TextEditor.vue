@@ -2,7 +2,6 @@
   <div>
     <vue-editor
       ref="vueeditor"
-      :editorToolbar="toolbar"
       :editorOptions="options"
       :value="text"
       @input="$emit('update:text', $event)"
@@ -23,15 +22,29 @@ export default {
   data () {
     return {
       content: this.text,
-      toolbar: [
-        [{ 'header': [] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        ['blockquote'],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        ['clean']
-      ],
+      // toolbar: [
+      //   [{ 'header': [] }],
+      //   ['bold', 'italic', 'underline', 'strike'],
+      //   ['blockquote'],
+      //   [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      //   ['clean']
+      // ],
       options: {
         modules: {
+          toolbar: {
+            container: [
+              [{ 'header': [] }],
+              ['bold', 'italic', 'underline', 'strike'],
+              // ['blockquote'],
+              // [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+              ['clean']
+              // [{ beyondgrammar: [false] }]
+            ]
+            // handlers: {
+            //   beyondgrammar: window.BeyondGrammar.getToolbarHandler(Quill)
+            // }
+          },
+          // beyondgrammar: {},
           keyboard: {
             bindings: [{
               key: 13,
@@ -51,6 +64,11 @@ export default {
       saveInterval: null
     }
   },
+  // beforeMount () {
+  //   window.Quill = Quill
+  //   window.BeyondGrammar.initBeyondGrammar()
+  //   console.log(window.BeyondGrammar)
+  // },
   mounted () {
     this.$refs.vueeditor.quill.on('selection-change', (range, oldRange, source) => {
       if (range === null && oldRange !== null) {

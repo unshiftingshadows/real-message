@@ -23,6 +23,11 @@ export default ({ app, router, Vue }) => {
     release: `real-message@${process.env.VER}`,
     environment: process.env.DEV ? 'staging' : 'prod',
     beforeSend (event) {
+      console.error('event error', event.exception.values[0].value)
+      if (event.exception.values[0].value === 'ResizeObserver loop limit exceeded') {
+        console.info('ResizeObserver loop limit exceeded')
+        return null
+      }
       if (event.exception) {
         Sentry.showReportDialog({
           user: {

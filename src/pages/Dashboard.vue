@@ -1,11 +1,23 @@
 <template>
   <q-page padding>
+    <q-alert
+      color="primary"
+      message="These are some sample Dashboard modules"
+      detail="These are planned to be customizable and movable. If you have suggestions for other modules to include, please submit a request =>"
+      :actions="[
+        { label: 'Submit', handler: () => { openURL('https://www.google.com') } }
+      ]"
+    />
+    <br/>
     <div class="row gutter-lg">
       <div class="col-4">
         <!-- <recent-media /> -->
         <random-media type="quote" />
         <random-media type="video" />
         <qotd />
+        <votd />
+        <church-calendar />
+        <random-hymn />
       </div>
       <div class="col-4">
         <recent-messages :limit="5" />
@@ -25,6 +37,10 @@ import RandomMedia from 'components/dashboard/RandomMedia'
 import RecentNews from 'components/dashboard/RecentNews'
 import Potd from 'components/dashboard/POTD'
 import Qotd from 'components/dashboard/QOTD'
+import Votd from 'components/dashboard/VOTD'
+import ChurchCalendar from 'components/dashboard/Calendar'
+import RandomHymn from 'components/dashboard/RandomHymn'
+import { openURL } from 'quasar'
 
 export default {
   components: {
@@ -33,9 +49,15 @@ export default {
     RandomMedia,
     RecentNews,
     Potd,
-    Qotd
+    Qotd,
+    Votd,
+    ChurchCalendar,
+    RandomHymn
   },
-  name: 'Dashboard'
+  name: 'Dashboard',
+  methods: {
+    openURL: (url) => openURL(url)
+  }
 }
 </script>
 

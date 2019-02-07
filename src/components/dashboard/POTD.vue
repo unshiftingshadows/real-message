@@ -6,12 +6,15 @@
     </q-card-media>
     <q-card-main>
       <b>{{ title.replace('File:', '').split('.')[0] }}</b>
-      <p class="text-faded" v-html="description" />
+      <p class="text-faded">{{ description }}</p>
     </q-card-main>
   </q-card>
 </template>
 
 <script>
+const htmlToText = require('html-to-text')
+import { date } from 'quasar'
+
 export default {
   name: 'DashboardPOTD',
   data () {
@@ -25,7 +28,7 @@ export default {
     this.$axios({
       method: 'get',
       // url: 'https://commons.wikimedia.org/w/api.php?action=featuredfeed&feed=potd&feedformat=rss&language=en'
-      url: 'https://commons.wikimedia.org/w/api.php?action=query&origin=*&format=json&prop=images&titles=Template:Potd/2019-02-06_(en)',
+      url: `https://commons.wikimedia.org/w/api.php?action=query&origin=*&format=json&prop=images&titles=Template:Potd/${this.formatDate()}_(en)`,
       responseType: 'json',
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
@@ -47,9 +50,17 @@ export default {
         console.log('info', info)
         this.url = info.imageinfo[0].url
         this.title = info.title
-        this.description = info.imageinfo[0].extmetadata.ImageDescription.value
+        this.description = htmlToText.fromString(info.imageinfo[0].extmetadata.ImageDescription.value, {
+          ignoreHref: true,
+          ignoreImage: true
+        })
       })
     })
+  },
+  methods: {
+    formatDate () {
+      return date.formatDate(Date.now(), 'YYYY-MM-DD')
+    }
   }
 }
 </script>
