@@ -2,8 +2,8 @@
   <q-card class="dashboard-card">
     <q-card-title>Recent News</q-card-title>
     <q-card-separator />
-    <q-card-main>
-      <q-list>
+    <q-card-main style="padding: 0px;">
+      <q-list no-border>
         <q-item link v-for="item in items" :key="item.title" @click.native="open(item.link)">
           <q-item-main :label="item.title" :sublabel="cleanLink(item.description)">
             <!-- <q-item-tile>{{ formatDate(item.pubDate) }}</q-item-tile> -->
