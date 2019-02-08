@@ -4,7 +4,7 @@
     <q-card-main>
       <p><b>Season: </b>{{ capitalize(data.season) }}</p>
       <ul style="list-style-type: none;">
-        <li v-for="event in data.celebrations" :key="event.rank_num"><q-chip :color="event.colour">{{ event.title }}</q-chip></li>
+        <li v-for="event in data.celebrations" :key="event.title"><q-chip :color="event.colour === 'white' ? 'light' : event.colour">{{ event.title }}</q-chip></li>
       </ul>
     </q-card-main>
   </q-card>

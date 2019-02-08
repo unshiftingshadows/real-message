@@ -11,12 +11,12 @@
     <br/>
     <div class="row gutter-lg">
       <div class="col-4">
-        <!-- <recent-media /> -->
+        <donate />
         <random-media type="quote" />
         <random-media type="video" />
         <qotd />
         <votd />
-        <church-calendar />
+        <!-- <church-calendar /> -->
         <random-hymn />
       </div>
       <div class="col-4">
@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import Donate from 'components/dashboard/Donate'
 import RecentMessages from 'components/dashboard/RecentMessages'
 import RecentMedia from 'components/dashboard/RecentMedia'
 import RandomMedia from 'components/dashboard/RandomMedia'
@@ -44,6 +45,7 @@ import { openURL } from 'quasar'
 
 export default {
   components: {
+    Donate,
     RecentMessages,
     RecentMedia,
     RandomMedia,

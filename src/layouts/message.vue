@@ -128,6 +128,68 @@
           <q-item-main label="Log Out" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Log Out</q-tooltip>
         </q-item>
+        <div class="fixed-bottom" v-if="!$q.platform.is.mobile">
+          <q-item link class="menu-item" @click.native="openDonate()">
+            <q-item-tile icon="fas fa-donate fab" />
+            <q-item-main label="Donate" class="on-right" />
+            <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Donate</q-tooltip>
+          </q-item>
+          <q-item link class="menu-item">
+            <q-item-tile>
+              <img src="https://real-45953.firebaseapp.com/icons/icon_church%402x.png" width="50px" />
+            </q-item-tile>
+            <q-popover anchor="bottom right" self="bottom left" :fit="$q.platform.is.mobile && !$q.platform.is.ipad" :cover="$q.platform.is.mobile && !$q.platform.is.ipad">
+              <q-list link>
+                <q-item v-close-overlay @click.native="openLink('https://realchurch.app')">
+                  <q-item-tile>
+                    <img src="https://real-45953.firebaseapp.com/icons/icon_church%402x.png" width="50px" />
+                  </q-item-tile>
+                  <q-item-main label="REAL Church" class="on-right" />
+                </q-item>
+                <q-item v-close-overlay @click.native="openLink('https://curriculum.realchurch.app')">
+                  <q-item-tile>
+                    <img src="https://real-45953.firebaseapp.com/icons/icon_curriculum%402x.png" width="50px" />
+                  </q-item-tile>
+                  <q-item-main label="REAL Curriculum" class="on-right" />
+                </q-item>
+                <q-item v-close-overlay @click.native="openLink('https://database.realchurch.app')">
+                  <q-item-tile>
+                    <img src="https://real-45953.firebaseapp.com/icons/icon_database%402x.png" width="50px" />
+                  </q-item-tile>
+                  <q-item-main label="REAL Database" class="on-right" />
+                </q-item>
+              </q-list>
+            </q-popover>
+          </q-item>
+        </div>
+        <div class="fixed-bottom" v-if="$q.platform.is.mobile" style="padding: 30px;">
+          <q-btn label="Give" icon="fas fa-donate" class="float-left" color="primary" />
+          <q-btn round class="float-right">
+            <img src="https://real-45953.firebaseapp.com/icons/icon_church%402x.png" width="42px" />
+            <q-popover anchor="bottom right" self="bottom left" :fit="$q.platform.is.mobile && !$q.platform.is.ipad" :cover="$q.platform.is.mobile && !$q.platform.is.ipad">
+              <q-list link>
+                <q-item v-close-overlay @click.native="openLink('https://realchurch.app')">
+                  <q-item-tile>
+                    <img src="https://real-45953.firebaseapp.com/icons/icon_church%402x.png" width="50px" />
+                  </q-item-tile>
+                  <q-item-main label="REAL Church" class="on-right" />
+                </q-item>
+                <q-item v-close-overlay @click.native="openLink('https://curriculum.realchurch.app')">
+                  <q-item-tile>
+                    <img src="https://real-45953.firebaseapp.com/icons/icon_curriculum%402x.png" width="50px" />
+                  </q-item-tile>
+                  <q-item-main label="REAL Curriculum" class="on-right" />
+                </q-item>
+                <q-item v-close-overlay @click.native="openLink('https://database.realchurch.app')">
+                  <q-item-tile>
+                    <img src="https://real-45953.firebaseapp.com/icons/icon_database%402x.png" width="50px" />
+                  </q-item-tile>
+                  <q-item-main label="REAL Database" class="on-right" />
+                </q-item>
+              </q-list>
+            </q-popover>
+          </q-btn>
+        </div>
       </q-scroll-area>
     </q-layout-drawer>
 
@@ -216,6 +278,9 @@ export default {
     openLink (link) {
       console.log('open external', link)
       openURL(link)
+    },
+    openDonate () {
+      document.getElementById('donate-link').click()
     }
   }
 }
