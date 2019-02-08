@@ -35,12 +35,6 @@ export default {
     }).then((res) => {
       console.log('church calendar', res)
       this.data = res.data
-      // const text = htmlToText.fromString(res.data.parse.text['*'], {
-      //   ignoreHref: true,
-      //   ignoreImage: true
-      // })
-      // this.author = text.split('~')[1].trim()
-      // this.text = text.split('~')[0].trim()
     })
   },
   methods: {

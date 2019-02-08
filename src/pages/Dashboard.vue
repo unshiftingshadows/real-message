@@ -17,11 +17,11 @@
         <qotd />
         <votd />
         <!-- <church-calendar /> -->
-        <random-hymn />
       </div>
       <div class="col-4">
         <recent-messages :limit="5" />
         <potd />
+        <random-hymn />
       </div>
       <div class="col-4">
         <recent-news />
