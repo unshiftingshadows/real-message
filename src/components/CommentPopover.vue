@@ -3,7 +3,8 @@
     <q-btn icon="fas fa-comments" color="primary" size="lg" class="comment-btn" round>
       <q-popover :fit="$q.platform.is.mobile">
         <div class="comment-div">
-          <p>Comments</p>
+          <span class="q-title">Comments</span>
+          <p>Not yet implemented...</p>
         </div>
       </q-popover>
     </q-btn>

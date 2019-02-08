@@ -1,27 +1,49 @@
 <template>
   <q-page padding>
-    <q-btn-toggle
-      v-model="orderBy"
-      :options="[
-        { label: 'Date Added', value: 'createdDate' },
-        { label: 'Date Modified', value: 'modifiedDate' },
-        { label: 'A-Z', value: 'title' }
-      ]"
-    />
-    <q-btn-toggle
-      v-model="orderDirection"
-      :options="[
-        { label: 'Ascending', value: 'asc' },
-        { label: 'Descending', value: 'desc'}
-      ]"
-    />
+    <div class="float-right gt-sm">
+      <span class="on-left">Sort By: </span>
+      <q-btn-toggle
+        v-model="orderBy"
+        :options="[
+          { label: 'Added', value: 'createdDate' },
+          { label: 'Modified', value: 'modifiedDate' },
+          { label: 'A-Z', value: 'title' }
+        ]"
+      />
+      <q-btn-toggle
+        v-model="orderDirection"
+        class="on-right"
+        :options="[
+          { icon: 'fas fa-arrow-up', value: 'asc' },
+          { icon: 'fas fa-arrow-down', value: 'desc'}
+        ]"
+      />
+    </div>
     <h3>{{ capitalizeTitle(type) + (type === 'message' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="openAdd()" /></h3>
+    <div class="lt-md">
+      <q-btn-toggle
+        v-model="orderBy"
+        :options="[
+          { label: 'Added', value: 'createdDate' },
+          { label: 'Modified', value: 'modifiedDate' },
+          { label: 'A-Z', value: 'title' }
+        ]"
+      />
+      <q-btn-toggle
+        v-model="orderDirection"
+        class="on-right"
+        :options="[
+          { icon: 'fas fa-arrow-up', value: 'asc' },
+          { icon: 'fas fa-arrow-down', value: 'desc'}
+        ]"
+      />
+    </div>
     <div v-if="!loading && items.length === 0">
       <p>No {{ capitalizeTitle(type) }}s...yet! Click the '+' button above to get started</p>
     </div>
     <div v-if="!loading || (contentTypes.includes(type) && items.length !== 0)">
       <q-card inline v-for="item in items" :key="item.id" class="content-card" @click.native="openItem(item.id)">
-        <q-card-title style="position: relative;">
+        <q-card-title class="relative-position">
           {{ item.title }}
           <q-chip v-if="item.ownedBy !== $firebase.auth.currentUser.uid" floating icon="fas fa-share-alt" color="primary" style="min-height: 28px; padding: 8px; font-size: 14px;">
             <display-name :uid="item.ownedBy" />
@@ -152,7 +174,7 @@ export default {
       const startTime = new Date()
       this.loading = true
       this.archived = this.$fiery(this.$firebase.list(type), {
-        query: (items) => items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('archived', '==', true),
+        query: (items) => items.where('ownedBy', '==', this.$firebase.auth.currentUser.uid).where('archived', '==', true),
         key: 'id',
         exclude: ['id'],
         onSuccess: () => {

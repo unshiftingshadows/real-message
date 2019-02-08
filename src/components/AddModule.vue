@@ -163,6 +163,8 @@ export default {
         grid: true,
         dismissLabel: 'Cancel',
         actions: actions
+      }).catch(() => {
+        console.log('user dismissed add module action sheet')
       })
     },
     addModule (type, id) {

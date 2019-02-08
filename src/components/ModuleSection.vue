@@ -187,9 +187,9 @@ export default {
   padding: 20px;
 }
 
-.q-card-title {
+/* .q-card-title {
   height: 36px;
-}
+} */
 
 .sortable-ghost {
   opacity: 0.5;
