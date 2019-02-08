@@ -30,7 +30,7 @@ import { required } from 'vuelidate/lib/validators'
 const { capitalize } = format
 
 export default {
-  props: ['type', 'seriesid', 'updateSeries'],
+  props: ['type', 'seriesid', 'series', 'updateSeries'],
   name: 'AddContent',
   data () {
     return {
@@ -69,11 +69,13 @@ export default {
         return
       }
       if (this.types.includes(this.type)) {
+        const users = this.series ? this.series.sharedWith : null
         var obj = {
           title: this.title,
           createdBy: this.$firebase.auth.currentUser.uid,
           tags: [],
-          bibleRefs: []
+          bibleRefs: [],
+          users: users === null ? [this.$firebase.auth.currentUser.uid] : users
         }
         if (this.type === 'message') {
           obj.prefs = this.$root.$children[0].user.app.message.prefs['messageStructure'] || {}

@@ -5,28 +5,28 @@
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
       <div class="col-12" v-if="!loading">
-        <q-input v-model="series.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update" />
+        <q-input :value="series.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @change="update()" :readonly="!fullAccess" />
       </div>
       <div class="col-xs-12 col-md-6" v-if="!loading">
         <q-chips-input
           color="secondary"
           v-model="readableRefs"
           float-label="Bible References"
-          @blur="update"
           @input="addRef"
+          :readonly="!fullAccess"
         />
       </div>
       <div class="col-xs-12 col-md-6" v-if="!loading">
-        <q-chips-input v-model="series.tags" float-label="Tags" @blur="update" />
+        <q-chips-input v-model="series.tags" float-label="Tags" @input="update()" :readonly="!fullAccess" />
       </div>
       <div v-if="!series.messageOrder">
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
       <div class="col-12" v-if="series.messageOrder">
-        <message-list :seriesid="id" :message-order="series.messageOrder" :update="update" />
+        <message-list :seriesid="id" :series="series" :message-order="series.messageOrder" :update="update" />
       </div>
     </div>
-    <add-content type="message" :seriesid="id" ref="addContent" :update-series="update" />
+    <add-content type="message" :seriesid="id" :series="series" ref="addContent" :update-series="update" />
     <q-modal v-model="editTitle" ref="editTitleModal" content-classes="edit-title-modal">
       <div class="row gutter-md">
         <div class="col-12">
@@ -129,7 +129,7 @@
           {{ series.title }}
         </q-toolbar-title>
         <q-chip color="warning" class="on-left" v-if="series.archived">Archived</q-chip>
-        <q-btn icon="fas fa-ellipsis-v" color="primary" class="float-right">
+        <q-btn icon="fas fa-ellipsis-v" color="primary" class="float-right" v-if="fullAccess">
           <q-popover anchor="bottom right" self="top right">
             <q-list link>
               <q-item v-close-overlay @click.native="editTitle = true">Rename...</q-item>
@@ -185,6 +185,15 @@ export default {
       showMainIdea: false
     }
   },
+  computed: {
+    fullAccess: function () {
+      if (this.series && this.series.sharedWith) {
+        return this.series.sharedWith.includes(this.$firebase.auth.currentUser.uid)
+      } else {
+        return false
+      }
+    }
+  },
   validations: {
     collabEmail: {
       required,
@@ -201,9 +210,17 @@ export default {
     addRef (newRef) {
       this.series.bibleRefs = newRef.map(e => { return this.$bible.parse(e) })
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
+      this.update()
     },
     update (messageid) {
-      // Call update function from database
+      if (!this.fullAccess) {
+        Notify.create({
+          type: 'negative',
+          message: 'Not authorized to update Series',
+          position: 'bottom-left'
+        })
+        return
+      }
       console.log('update!')
       this.$ga.event('series', 'update', this.$route.params.id)
       if (messageid) {
@@ -219,6 +236,14 @@ export default {
       })
     },
     archive () {
+      if (!this.fullAccess) {
+        Notify.create({
+          type: 'negative',
+          message: 'Not authorized to update Series',
+          position: 'bottom-left'
+        })
+        return
+      }
       console.log('archive!')
       this.$ga.event('series', 'archive', this.$route.params.id)
       this.archiveConfirmation = false
@@ -227,12 +252,28 @@ export default {
       this.$router.push({ name: 'list', params: { type: 'series' } })
     },
     remove () {
+      if (!this.fullAccess) {
+        Notify.create({
+          type: 'negative',
+          message: 'Not authorized to update Series',
+          position: 'bottom-left'
+        })
+        return
+      }
       this.$ga.event('series', 'remove', this.$route.params.id)
       this.removeConfirmation = false
       this.$fiery.remove(this.series)
       this.$router.push({ name: 'list', params: { type: 'series' } })
     },
     share () {
+      if (!this.fullAccess) {
+        Notify.create({
+          type: 'negative',
+          message: 'Not authorized to update Series',
+          position: 'bottom-left'
+        })
+        return
+      }
       this.$v.collabEmail.$touch()
       if (this.$v.collabEmail.$error) {
         return

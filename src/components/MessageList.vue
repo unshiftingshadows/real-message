@@ -1,23 +1,23 @@
 <template>
   <div>
-    <h4>Messages <q-btn icon="fas fa-plus" color="primary" size="sm" @click.native="$refs.addContent.show()" /></h4>
-    <div v-if="!loading && Object.keys(items).length > 0 && Object.keys(items).length === messageOrder.length">
-      <draggable v-if="messageOrder.length > 0 && Object.keys(items).length > 0" style="min-height: 20px;" :list="messageOrder" @change="order()" ref="messageDrag" :options="{ ghostClass: 'message-ghost', handle: '.drag-handle', disabled: $q.platform.is.mobile && !$q.platform.is.ipad }">
-        <q-card inline v-for="message in messageOrder" :key="message" class="content-card" @click.native="openItem(message)">
-          <div class="round-borders bg-primary drag-handle" v-if="!$q.platform.is.mobile || $q.platform.is.ipad">
+    <h4>Messages <q-btn v-if="fullAccess" icon="fas fa-plus" color="primary" size="sm" @click.native="$refs.addContent.show()" /></h4>
+    <div v-if="!loading && Object.keys(items).length > 0">
+      <draggable v-if="messageOrder.length > 0 && Object.keys(items).length > 0" style="min-height: 20px;" :list="messageOrder" @change="order()" ref="messageDrag" :options="{ ghostClass: 'message-ghost', handle: '.drag-handle', disabled: ($q.platform.is.mobile && !$q.platform.is.ipad) || !fullAccess }">
+        <q-card inline v-for="message in visibleItems" :key="message.id" class="content-card" @click.native="openItem(message.id)">
+          <div class="round-borders bg-primary drag-handle" v-if="(!$q.platform.is.mobile || $q.platform.is.ipad) && fullAccess">
             <q-icon name="fas fa-arrows-alt" size="1rem" />
           </div>
-          <q-card-title>{{ items[message].title }}</q-card-title>
+          <q-card-title>{{ message.title }}</q-card-title>
           <q-card-main>
-            <p>{{ items[message].mainIdea }}</p>
-            <span v-if="items[message].tags.length > 0">Tags: <q-chip v-for="tag in items[message].tags" :key="tag" color="primary" class="list-chip" dense>{{ tag }}</q-chip></span>
-            <br v-if="items[message].tags.length > 0 && Object.keys(items[message].bibleRefs).length > 0" />
-            <span v-if="Object.keys(items[message].bibleRefs).length > 0">Bible Refs: <q-chip v-for="ref in items[message].bibleRefs" :key="ref" color="secondary" class="list-chip" dense>{{ $bible.readable(ref) }}</q-chip></span>
+            <p>{{ message.mainIdea }}</p>
+            <span v-if="message.tags.length > 0">Tags: <q-chip v-for="tag in message.tags" :key="tag" color="primary" class="list-chip" dense>{{ tag }}</q-chip></span>
+            <br v-if="message.tags.length > 0 && Object.keys(message.bibleRefs).length > 0" />
+            <span v-if="message.bibleRefs.length > 0">Bible Refs: <q-chip v-for="ref in message.bibleRefs" :key="ref" color="secondary" class="list-chip" dense>{{ $bible.readable(ref) }}</q-chip></span>
           </q-card-main>
         </q-card>
       </draggable>
     </div>
-    <add-content type="message" :seriesid="seriesid" ref="addContent" :update-series="update" />
+    <add-content type="message" :seriesid="seriesid" :series="series" ref="addContent" :update-series="update" />
   </div>
 </template>
 
@@ -31,12 +31,20 @@ export default {
     AddContent
   },
   name: 'MessageList',
-  props: [ 'seriesid', 'messageOrder', 'update' ],
+  props: [ 'seriesid', 'messageOrder', 'update', 'series' ],
   fiery: true,
   data () {
     return {
       loading: true,
       items: []
+    }
+  },
+  computed: {
+    visibleItems: function () {
+      return this.messageOrder.filter(e => { return this.items[e] }).map(f => { return this.items[f] })
+    },
+    fullAccess: function () {
+      return this.series.sharedWith.includes(this.$firebase.auth.currentUser.uid)
     }
   },
   mounted () {
@@ -49,8 +57,8 @@ export default {
       this.items = this.$fiery(this.$firebase.list('message'), {
         query: (items) => items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('seriesid', '==', this.seriesid).where('archived', '==', false),
         map: true,
-        key: '_id',
-        exclude: ['_id'],
+        key: 'id',
+        exclude: ['id'],
         onSuccess: () => {
           const timeElapsed = new Date() - startTime
           this.$ga.time({

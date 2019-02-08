@@ -1,12 +1,32 @@
 <template>
   <q-page padding>
+    <q-btn-toggle
+      v-model="orderBy"
+      :options="[
+        { label: 'Date Added', value: 'createdDate' },
+        { label: 'Date Modified', value: 'modifiedDate' },
+        { label: 'A-Z', value: 'title' }
+      ]"
+    />
+    <q-btn-toggle
+      v-model="orderDirection"
+      :options="[
+        { label: 'Ascending', value: 'asc' },
+        { label: 'Descending', value: 'desc'}
+      ]"
+    />
     <h3>{{ capitalizeTitle(type) + (type === 'message' ? 's' :  type === 'scratch' ? ' Pad' : '') }} <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="openAdd()" /></h3>
     <div v-if="!loading && items.length === 0">
       <p>No {{ capitalizeTitle(type) }}s...yet! Click the '+' button above to get started</p>
     </div>
     <div v-if="!loading || (contentTypes.includes(type) && items.length !== 0)">
       <q-card inline v-for="item in items" :key="item.id" class="content-card" @click.native="openItem(item.id)">
-        <q-card-title>{{ item.title }}</q-card-title>
+        <q-card-title style="position: relative;">
+          {{ item.title }}
+          <q-chip v-if="item.ownedBy !== $firebase.auth.currentUser.uid" floating icon="fas fa-share-alt" color="primary" style="min-height: 28px; padding: 8px; font-size: 14px;">
+            <display-name :uid="item.ownedBy" />
+          </q-chip>
+        </q-card-title>
         <q-card-main>
           <p>{{ item.mainIdea }}</p>
           <span v-if="item.tags.length > 0">Tags: <q-chip v-for="tag in item.tags" :key="tag" color="primary" class="list-chip" dense>{{ tag }}</q-chip></span>
@@ -37,13 +57,15 @@
 </template>
 
 <script>
-import AddContent from 'components/AddContent.vue'
+import AddContent from 'components/AddContent'
+import DisplayName from 'components/DisplayName'
 import { format } from 'quasar'
 const { capitalize } = format
 
 export default {
   components: {
-    AddContent
+    AddContent,
+    DisplayName
   },
   name: 'ListContent',
   fiery: true,
@@ -53,6 +75,8 @@ export default {
       type: this.$route.params.type,
       items: [],
       archived: [],
+      orderBy: 'createdDate',
+      orderDirection: 'asc',
       loading: false
     }
   },
@@ -66,6 +90,14 @@ export default {
       this.$fiery.free(this.archived)
       this.archived = []
       this.init(newType)
+    },
+    orderBy (newType, oldType) {
+      console.log('watch order', newType, oldType)
+      this.init(this.type)
+    },
+    orderDirection (newDir, oldDir) {
+      console.log('watch direction', newDir, oldDir)
+      this.init(this.type)
     }
   },
   methods: {
@@ -74,9 +106,19 @@ export default {
       const startTime = new Date()
       this.loading = true
       this.items = this.$fiery(this.$firebase.list(type), {
-        query: (items) => this.$route.params.type === 'series' ? items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('archived', '==', false) : items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid).where('seriesid', '==', '').where('archived', '==', false),
+        query: (items) => {
+          var query = items.where('users', 'array-contains', this.$firebase.auth.currentUser.uid)
+          if (type !== 'scratch') {
+            query = query.where('archived', '==', false)
+          }
+          if (type === 'message') {
+            query = query.where('seriesid', '==', '')
+          }
+          query = query.orderBy(this.orderBy, this.orderDirection)
+          return query
+        },
         key: 'id',
-        exclude: ['id'],
+        exclude: ['id', 'ownedName'],
         onSuccess: () => {
           const timeElapsed = new Date() - startTime
           this.$ga.time({

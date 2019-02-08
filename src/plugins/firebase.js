@@ -83,18 +83,23 @@ function user (uid) {
 
 async function customNQLogin (uid) {
   var loginFunction = functions.httpsCallable('nq-login')
-  const loginToken = (await loginFunction({ uid })).data
-  if (loginToken.status) {
-    try {
-      await nqapp.auth().signInWithCustomToken(loginToken.token)
-      console.log('nq logged with token', nqapp.auth().currentUser)
-      return true
-    } catch (error) {
-      console.log('nqlogin error', error)
+  try {
+    const loginToken = (await loginFunction({ uid })).data
+    if (loginToken.status) {
+      try {
+        await nqapp.auth().signInWithCustomToken(loginToken.token)
+        console.log('nq logged with token', nqapp.auth().currentUser)
+        return true
+      } catch (error) {
+        console.log('nqlogin error', error)
+        return false
+      }
+    } else {
+      console.log('nqlogin unsuccessful...', loginToken)
       return false
     }
-  } else {
-    console.log('nqlogin unsuccessful...', loginToken)
+  } catch (error) {
+    console.error('nqLogin function errored...', error)
     return false
   }
 }
@@ -292,7 +297,16 @@ function addDocUser (type, id, emails) {
     docid: id,
     emails
   }).catch(err => {
-    console.log('addDocUser error', err)
+    console.error('addDocUser error', err)
+  })
+}
+
+function getDisplayName (uid) {
+  const getDisplayNameFunction = functions.httpsCallable('user-getDisplayName')
+  return getDisplayNameFunction({
+    uid
+  }).catch(err => {
+    console.error('getDisplayname error', err)
   })
 }
 
@@ -351,7 +365,8 @@ export default ({ app, router, Vue }) => {
     nqSearch: nqSearch,
     nqBibleSearch: nqBibleSearch,
     nqMedia: nqMedia,
-    addDocUser: addDocUser
+    addDocUser: addDocUser,
+    getDisplayName
     // log: function (log, docid, type) {
     //   console.log('route', router.history.current)
     //   firestore.collection('log').add({

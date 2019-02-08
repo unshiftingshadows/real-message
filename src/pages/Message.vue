@@ -272,11 +272,11 @@ export default {
         return
       }
       this.showCollab = false
-      const email = this.collabEmail.slice(', ')
+      const email = this.collabEmail.split(', ')
       this.collabEmail = ''
       this.$firebase.addDocUser('message', this.id, email).then(async (res) => {
         console.log(res)
-        if (res.data.success) {
+        if (res.data && res.data.success) {
           Notify.create({
             type: 'positive',
             message: `${email.length > 1 ? 'Invites' : 'Invite'} sent to: ${email.join(', ')}`,
