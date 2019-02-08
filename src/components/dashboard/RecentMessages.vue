@@ -4,7 +4,7 @@
     <q-card-separator />
     <q-card-main>
       <q-list link no-border>
-        <q-item v-for="message in messages" :key="message.id" @click.native="$router.push({ name: 'message', params: { id: message.id } })">
+        <q-item v-for="message in solidMessages" :key="message.id" @click.native="$router.push({ name: 'message', params: { id: message.id } })">
           <q-item-main :label="message.title"></q-item-main>
           <q-item-side>{{ formatDate(message.modifiedDate) }}</q-item-side>
         </q-item>
@@ -30,6 +30,11 @@ export default {
           console.log('messages loaded', list)
         }
       })
+    }
+  },
+  computed: {
+    solidMessages () {
+      return this.messages.filter(e => { return e !== undefined })
     }
   },
   methods: {
