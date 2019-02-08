@@ -329,6 +329,8 @@ export default {
           level: 'info'
         })
         this.document.sectionOrder.push(newRef.id)
+        this.document.modifiedDate = new Date()
+        this.document.modifiedBy = this.$firebase.auth.currentUser.uid
         this.$fiery.update(this.document)
       })
     },
@@ -344,6 +346,8 @@ export default {
       console.log('remove section', sectionid)
       // this.$fiery.remove(this.getSectionById(sectionid))
       this.document.sectionOrder.splice(this.document.sectionOrder.indexOf(sectionid), 1)
+      this.document.modifiedDate = new Date()
+      this.document.modifiedBy = this.$firebase.auth.currentUser.uid
       this.$fiery.update(this.document)
       this.$fiery.remove(this.sections[sectionid])
       this.$sentry.crumb({
@@ -367,7 +371,9 @@ export default {
       this.drag = false
       if (val.moved) {
         console.log('moved')
-        this.$fiery.update(this.document, ['sectionOrder']).then(() => {
+        this.document.modifiedDate = new Date()
+        this.document.modifiedBy = this.$firebase.auth.currentUser.uid
+        this.$fiery.update(this.document).then(() => {
           console.log('saved')
         })
       }

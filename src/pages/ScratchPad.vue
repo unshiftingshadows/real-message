@@ -120,6 +120,8 @@ export default {
       console.log('update!')
       this.$ga.event('scratch', 'update', this.$route.params.id)
       this.editTitle = false
+      this.scratch.modifiedDate = new Date()
+      this.scratch.modifiedBy = this.$firebase.auth.currentUser.uid
       this.$fiery.update(this.scratch).then(() => {
         Notify.create({
           type: 'positive',

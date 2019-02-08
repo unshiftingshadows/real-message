@@ -238,6 +238,8 @@ export default {
       console.log('update!')
       this.$ga.event('message', 'update', this.$route.params.id)
       this.editTitle = false
+      this.message.modifiedDate = new Date()
+      this.message.modifiedBy = this.$firebase.auth.currentUser.uid
       this.$fiery.update(this.message).then(() => {
         Notify.create({
           type: 'positive',
@@ -257,6 +259,8 @@ export default {
       this.archiveConfirmation = false
       this.message.archived = true
       this.message.seriesid = ''
+      this.message.modifiedDate = new Date()
+      this.message.modifiedBy = this.$firebase.auth.currentUser.uid
       this.$fiery.update(this.message)
       this.$router.push({ name: 'list', params: { type: 'message' } })
     },

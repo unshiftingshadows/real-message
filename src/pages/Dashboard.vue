@@ -9,8 +9,8 @@
       ]"
     />
     <br/>
-    <div class="row gutter-lg">
-      <div class="col-4">
+    <div class="row gutter-md">
+      <div class="col-12 col-md-6 col-lg-4">
         <donate />
         <random-media type="quote" />
         <random-media type="video" />
@@ -18,12 +18,12 @@
         <votd />
         <!-- <church-calendar /> -->
       </div>
-      <div class="col-4">
+      <div class="col-12 col-md-6 col-lg-4">
         <recent-messages :limit="5" />
         <potd />
         <random-hymn />
       </div>
-      <div class="col-4">
+      <div class="col-12 col-md-6 col-lg-4">
         <recent-news />
       </div>
     </div>

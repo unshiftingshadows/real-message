@@ -14,8 +14,8 @@
         v-model="orderDirection"
         class="on-right"
         :options="[
-          { icon: 'fas fa-arrow-up', value: 'asc' },
-          { icon: 'fas fa-arrow-down', value: 'desc'}
+          { icon: 'fas fa-arrow-down', value: 'desc'},
+          { icon: 'fas fa-arrow-up', value: 'asc' }
         ]"
       />
     </div>
@@ -98,7 +98,7 @@ export default {
       items: [],
       archived: [],
       orderBy: 'createdDate',
-      orderDirection: 'asc',
+      orderDirection: 'desc',
       loading: false
     }
   },
@@ -115,6 +115,11 @@ export default {
     },
     orderBy (newType, oldType) {
       console.log('watch order', newType, oldType)
+      if (newType === 'title') {
+        this.orderDirection = 'asc'
+      } else {
+        this.orderDirection = 'desc'
+      }
       this.init(this.type)
     },
     orderDirection (newDir, oldDir) {

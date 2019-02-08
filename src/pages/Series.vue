@@ -227,6 +227,8 @@ export default {
         this.series.messageOrder.push(messageid)
       }
       this.editTitle = false
+      this.series.modifiedDate = new Date()
+      this.series.modifiedBy = this.$firebase.auth.currentUser.uid
       this.$fiery.update(this.series).then(() => {
         Notify.create({
           type: 'positive',
@@ -248,6 +250,8 @@ export default {
       this.$ga.event('series', 'archive', this.$route.params.id)
       this.archiveConfirmation = false
       this.series.archived = true
+      this.series.modifiedDate = new Date()
+      this.series.modifiedBy = this.$firebase.auth.currentUser.uid
       this.$fiery.update(this.series)
       this.$router.push({ name: 'list', params: { type: 'series' } })
     },

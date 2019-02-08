@@ -198,9 +198,10 @@
       v-model="rightDrawer"
       content-class="lg-drawer"
       :breakpoint="1200"
+      v-if="$route.name === 'message'"
     >
       <q-scroll-area class="fit q-pa-sm">
-        <resources v-if="$route.name === 'message'" add />
+        <resources add />
         <!-- <drawer-message /> -->
       </q-scroll-area>
     </q-layout-drawer>
