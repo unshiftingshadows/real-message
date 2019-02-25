@@ -1,6 +1,39 @@
 # Changelog
 All notable changes for this project will be documented in this file.
 
+## 0.0.42 - 2019-02-25
+### Added
+- users can now use the "login2" system
+- added a link for NQ users to go to notesandquotes.app directly
+- NQ system for authentication and media modules
+- Sentry for debugging purposes (suspended for now)
+- messages in a series can be rearranged
+- messages and series can be shared with others
+- messages can now be previewed (not printed yet...)
+- media modules were updated to allow for user deletion
+- users are warned before deleting media
+- dashboard modules
+- users can sort lists
+- donation module
+- main idea module
+
+### Changed
+- cleaned up ContentEditor and labels on the Layout
+- cleaned up some Analytics - logging tabled for now
+- archived messages are removed from series
+- Bible text is now cleaned up before saving and displaying
+- using createdBy and createdDate and modifiedBy and modifiedDate rather than dateCreated and dateModified
+- Support page is replaced with option to email from the user's email program
+
+### Fixed
+- NQList - selecting 'all' removes other checks
+- NQ relogging issue
+- modules opening at incorrect times when collaborating
+
+### Removed
+- Old Bible system
+- users cannot upload image
+
 ## 0.0.41 - 2018-12-10
 ### Added
 - auto saves and closes a module on app visibility
