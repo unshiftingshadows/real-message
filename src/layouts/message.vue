@@ -118,7 +118,8 @@
           <q-item-main label="Chat" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Chat</q-tooltip>
         </q-item>
-        <q-item to="/support" class="menu-item">
+        <q-item class="menu-item" link @click.native="supportEmail">
+        <!-- <q-item to="/support" class="menu-item"> -->
           <q-item-tile icon="fas fa-question" />
           <q-item-main label="Support" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Support</q-tooltip>
@@ -282,6 +283,13 @@ export default {
     },
     openDonate () {
       document.getElementById('donate-link').click()
+    },
+    supportEmail () {
+      if (this.$q.platform.is.cordova || this.$q.platform.is.electron) {
+        openURL(`mailto:support@realchurch.app?subject=REAL Message Support | ${this.$route.name}&body=Route: ${this.$route.path}%0AParams: ${JSON.stringify(this.$route.params)}%0AQuery: ${JSON.stringify(this.$route.query)}%0A%0A`)
+      } else {
+        window.open(`mailto:support@realchurch.app?subject=REAL Message Support | ${this.$route.name}&body=Route: ${this.$route.path}%0AParams: ${JSON.stringify(this.$route.params)}%0AQuery: ${JSON.stringify(this.$route.query)}%0A%0A`, '_self')
+      }
     }
   }
 }
