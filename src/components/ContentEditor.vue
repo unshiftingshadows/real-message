@@ -6,12 +6,12 @@
     <div v-if="!loading" class="row gutter-sm">
       <!-- Before -->
       <div class="col-12" v-if="structure.hook && document.prefs.hook">
-        <module-section id="hook" :data="structure.hook" :modules="modules" :onChange="onChangeMod" :content-type="type" :contentid="id" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
+        <module-section id="hook" :data="structure.hook" :modules="modules" :onChange="onChangeMod" :document="document" :content-type="type" :contentid="id" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
       </div>
       <!-- Sections -->
-      <div class="col-12" v-if="document && document.sectionOrder && document.sectionOrder.length > 0 && Object.keys(sections).length > 0">
+      <div class="col-12" v-if="document !== undefined && document.sectionOrder && document.sectionOrder.length > 0 && Object.keys(sections).length > 0">
         <draggable :list="document.sectionOrder" @start="drag=true" @change="onSectionDrag" ref="sectionDrag" :options="{ group: 'sections', disabled: $q.platform.is.mobile }">
-          <module-section v-for="orderIndex in document.sectionOrder" :key="orderIndex" :id="orderIndex" :data="sections[orderIndex]" :modules="modules" :onChange="onChangeMod" :content-type="type" :contentid="id" :edit="editSection" :remove="removeSection" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
+          <module-section v-for="orderIndex in document.sectionOrder" :key="orderIndex" :id="orderIndex" :data="sections[orderIndex]" :modules="modules" :onChange="onChangeMod" :document="document" :content-type="type" :contentid="id" :edit="editSection" :remove="removeSection" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
         </draggable>
       </div>
       <add-section :add-section="addSection" :close="closeModule" />

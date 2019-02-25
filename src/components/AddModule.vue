@@ -17,7 +17,7 @@ export default {
   props: [ 'nextModOrder', 'sectionid', 'close', 'edit', 'contentType', 'dark' ],
   data () {
     return {
-      moduleTypes: ['activity', 'bible', 'question', 'text'],
+      moduleTypes: ['activity', 'bible', 'question', 'text', 'mainidea'],
       omediaTypes: ['quote', 'image', 'illustration', 'lyric', 'video'],
       nqmediaTypes: ['book', 'movie', 'video', 'image', 'article', 'composition', 'document', 'discourse', 'note', 'quote', 'illustration', 'outline', 'idea'],
       showAddMedia: false,
@@ -73,19 +73,17 @@ export default {
             console.log('bible!')
             this.addModule('bible')
           }
-        }
-      ]
-      if (this.contentType === 'lesson') {
-        actions.push({
-          label: 'Activity',
+        },
+        {
+          label: 'Main Idea',
           color: 'primary',
-          icon: 'fas fa-trophy',
+          icon: 'fas fa-lightbulb',
           handler: () => {
-            console.log('activity!')
-            this.addModule('activity')
+            console.log('mainidea!')
+            this.addModule('mainidea')
           }
-        })
-        actions.push({
+        },
+        {
           label: 'Question',
           color: 'primary',
           icon: 'fas fa-question',
@@ -93,8 +91,17 @@ export default {
             console.log('question!')
             this.addModule('question')
           }
-        })
-      }
+        },
+        {
+          label: 'Activity',
+          color: 'primary',
+          icon: 'fas fa-trophy',
+          handler: () => {
+            console.log('activity!')
+            this.addModule('activity')
+          }
+        }
+      ]
       if (!this.$root.$children[0].user.nqUser) {
         console.log('running')
         if (this.$root.$children[0].user.app.message.prefs.mediaType.quote) {

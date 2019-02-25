@@ -10,13 +10,13 @@
         <q-btn v-show="!data.editing" class="float-right cursor-pointer" icon="fas fa-ellipsis-v" color="primary" size="sm">
           <q-popover anchor="bottom right" self="top right">
             <q-list>
-              <q-item link v-close-overlay @click.native="modMethods.edit(id)">Edit</q-item>
+              <q-item link v-close-overlay @click.native="modMethods.edit(id)" v-if="data.type !== 'mainidea'">Edit</q-item>
               <q-item link @click.native="modMethods.remove(id)">Delete</q-item>
             </q-list>
           </q-popover>
         </q-btn>
         <!-- Time Notice -->
-        <span class="float-right" style="font-size: .8rem; vertical-align: top; line-height: 1rem;">{{ data.time }} minutes&nbsp;&nbsp;&nbsp;</span>
+        <span v-if="data.type !== 'mainidea'" class="float-right" style="font-size: .8rem; vertical-align: top; line-height: 1rem;">{{ data.time }} minutes&nbsp;&nbsp;&nbsp;</span>
         <!-- Mod Icon -->
         <q-icon :name="typeInfo[data.type].icon" :color="data.type === 'bible' ? 'white' : 'primary'" size="2rem" />&nbsp;&nbsp;&nbsp;
         <span v-if="data.type !== 'bible'">{{ data.title }}</span>
@@ -77,6 +77,9 @@
 import TextEditor from 'components/TextEditor.vue'
 
 export default {
+  mounted () {
+    console.log(this)
+  },
   components: {
     TextEditor
   },
@@ -85,7 +88,7 @@ export default {
   data () {
     return {
       loading: false,
-      types: [ 'text', 'bible', 'activity', 'question' ],
+      types: [ 'text', 'bible', 'activity', 'question', 'mainidea' ],
       typeInfo: {
         text: {
           label: 'Title',
@@ -106,6 +109,11 @@ export default {
           label: 'Bible Ref',
           ref: 'bibleRef',
           icon: 'fas fa-book'
+        },
+        mainidea: {
+          label: 'Main Idea',
+          ref: 'mainidea',
+          icon: 'fas fa-lightbulb'
         }
       },
       translation: this.data.translation,

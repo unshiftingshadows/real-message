@@ -41,7 +41,7 @@
             :key="modIndex"
             v-bind:is="contentTypes.includes(modules[modIndex].type) ? 'mod-content' : modules[modIndex].nqmedia ? 'mod-n-q' : 'mod-media'"
             :id="modIndex"
-            :data="modules[modIndex]"
+            :data="modules[modIndex].type === 'mainidea' ? { title: document.mainIdea, type: 'mainidea' } : modules[modIndex]"
             :edit="editModule"
             :save="saveModule"
             :autosave="autoSaveModule"
@@ -115,7 +115,7 @@ export default {
     ModNQ
   },
   name: 'ModuleSection',
-  props: ['id', 'data', 'modules', 'edit', 'remove', 'disabled', 'contentType', 'contentid', 'onChange'],
+  props: ['id', 'data', 'modules', 'edit', 'remove', 'disabled', 'document', 'contentType', 'contentid', 'onChange'],
   fiery: true,
   data () {
     return {
@@ -123,7 +123,7 @@ export default {
       editTitle: false,
       newTitle: '',
       open: true,
-      contentTypes: [ 'text', 'bible', 'activity', 'question' ],
+      contentTypes: [ 'text', 'bible', 'activity', 'question', 'mainidea' ],
       mediaTypes: [ 'quote', 'video', 'image', 'illustration', 'composition', 'outline', 'idea' ],
       methods: {
         edit: (moduleid) => { this.$emit('edit', moduleid, this.id) },
