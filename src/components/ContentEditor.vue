@@ -8,9 +8,12 @@
       <div class="col-12" v-if="structure.hook && document.prefs.hook">
         <module-section id="hook" :data="structure.hook" :modules="modules" :onChange="onChangeMod" :document="document" :content-type="type" :contentid="id" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
       </div>
+      <div class="col-12" v-if="structure.bible && document.prefs.bible && document.bibleRefs.length > 0">
+        <module-section id="bible" :data="structure.bible" :document="document" :content-type="type" :contentid="id" class="section-card" />
+      </div>
       <!-- Sections -->
       <div class="col-12" v-if="document !== undefined && document.sectionOrder && document.sectionOrder.length > 0 && Object.keys(sections).length > 0">
-        <draggable :list="document.sectionOrder" @start="drag=true" @change="onSectionDrag" ref="sectionDrag" :options="{ group: 'sections', disabled: $q.platform.is.mobile }">
+        <draggable :list="document.sectionOrder" @start="drag=true" @change="onSectionDrag" ref="sectionDrag" :options="{ group: 'sections', disabled: $q.platform.is.mobile || editingid !== '', handle: '.drag-section' }">
           <module-section v-for="orderIndex in document.sectionOrder" :key="orderIndex" :id="orderIndex" :data="sections[orderIndex]" :modules="modules" :onChange="onChangeMod" :document="document" :content-type="type" :contentid="id" :edit="editSection" :remove="removeSection" @edit="editModule" @save="saveModule" @autosave="autoSaveModule" @close="closeModule" @remove="removeModule" class="section-card" />
         </draggable>
       </div>
@@ -364,7 +367,7 @@ export default {
       }
     },
     getEstTime (wordcount) {
-      return Math.ceil(wordcount / 120)
+      return Math.ceil(wordcount / this.$root.$children[0].user.app.message.prefs.speakingSpeed)
     },
     onSectionDrag (val) {
       console.log('section drag', val)
@@ -422,6 +425,23 @@ export default {
 }
 
 .drag-handle:hover {
+  opacity: .7;
+}
+
+.drag-section {
+  position: absolute;
+  height: 80px;
+  top: 5px;
+  left: -33px;
+  margin-right: -5px;
+  padding-top: 30px;
+  padding-left: 4px;
+  padding-right: 4px;
+  opacity: 0.5;
+  cursor: move;
+}
+
+.drag-section:hover {
   opacity: .7;
 }
 

@@ -1,7 +1,10 @@
 <template>
-  <q-card flat>
-    <q-card-title>
-      <q-btn color="dark" icon="fas fa-ellipsis-v" class='float-right' v-if="id !== 'hook'">
+  <q-card flat style="position: relative;">
+    <div class="round-borders bg-primary drag-section" v-if="(!$q.platform.is.mobile || $q.platform.is.ipad) && id !== 'hook'">
+      <q-icon name="fas fa-arrows-alt" size="1.5rem" />
+    </div>
+    <q-card-title style="position: relative;">
+      <q-btn color="dark" icon="fas fa-ellipsis-v" style="position: absolute; top: 10px; right: 10px;" v-if="id !== 'hook'">
         <q-popover anchor="bottom right" self="top right">
           <q-list>
             <q-item link v-close-overlay @click.native="editTitle = true">Edit</q-item>
@@ -13,12 +16,23 @@
         <q-icon v-if="!open" name="fas fa-caret-right cursor-pointer" style="margin-top: -5px; padding-left: 4px; padding-right: 4px;" size="2rem" @click.native="open = true" />
         <q-icon v-if="open" name="fas fa-caret-down cursor-pointer" style="margin-top: -5px;" size="2rem" @click.native="open = false" />
         &nbsp;
-        {{ id === 'hook' ? 'Hook' : data.title }}
+        {{ id === 'hook' ? 'Hook' : id === 'bible' ? 'Bible Refs' : data.title }}
       </h5>
     </q-card-title>
     <div class="row gutter-sm" style="padding-left: 10px; padding-right: 10px;" v-if="open && data.moduleOrder">
+      <div class="col-12" v-if="id === 'bible'">
+        <mod-bible
+          v-for="ref in document.bibleRefs"
+          :key="ref"
+          class="module-card"
+          :mod-options="{ disabled: true }"
+          :data="{
+            bibleRef: ref
+          }"
+        />
+      </div>
       <div class="col-12" v-if="modules && data.moduleOrder">
-        <draggable v-if="data.moduleOrder.length > 0 && Object.keys(modules).length > 0" style="min-height: 20px;" :list="data.moduleOrder" @change="changeMod" ref="secModuleDrag" :options="{ group: { name: 'modules', pull: true, put: true }, ghostClass: 'sortable-ghost', handle: '.drag-handle', disabled: disabled || ($q.platform.is.mobile && !$q.platform.is.ipad) }">
+        <draggable style="min-height: 20px;" :list="data.moduleOrder" @change="changeMod" ref="secModuleDrag" :options="{ group: { name: 'modules', pull: true, put: true }, ghostClass: 'sortable-ghost', handle: '.drag-handle', disabled: disabled || ($q.platform.is.mobile && !$q.platform.is.ipad) }">
           <!-- <component
             v-if="data.moduleOrder.length > 0 && Object.keys(modules).length > 0"
             v-for="modIndex in data.moduleOrder"
@@ -54,7 +68,7 @@
           />
         </draggable>
       </div>
-      <div class="col-12" style="padding-top: 0;">
+      <div class="col-12" style="padding-top: 0;" v-if="id !== 'bible'">
         <add-module :next-mod-order="nextModOrder" :sectionid="id" :edit="editModule" :close="closeModule" :content-type="contentType" dark />
       </div>
     </div>
@@ -85,7 +99,7 @@
 import Draggable from 'vuedraggable'
 import AddModule from 'components/AddModule.vue'
 // import ModText from 'components/modules/Text.vue'
-// import ModBible from 'components/modules/Bible.vue'
+import ModBible from 'components/modules/Bible.vue'
 // import ModActivity from 'components/modules/Activity.vue'
 // import ModQuestion from 'components/modules/Question.vue'
 import ModContent from 'components/modules/Content.vue'
@@ -102,7 +116,7 @@ export default {
     Draggable,
     AddModule,
     // ModText,
-    // ModBible,
+    ModBible,
     // ModActivity,
     // ModQuestion,
     ModContent,
@@ -123,7 +137,7 @@ export default {
       editTitle: false,
       newTitle: '',
       open: true,
-      contentTypes: [ 'text', 'bible', 'activity', 'question', 'mainidea' ],
+      contentTypes: [ 'text', 'bible', 'activity', 'question', 'mainidea', 'bullet' ],
       mediaTypes: [ 'quote', 'video', 'image', 'illustration', 'composition', 'outline', 'idea' ],
       methods: {
         edit: (moduleid) => { this.$emit('edit', moduleid, this.id) },

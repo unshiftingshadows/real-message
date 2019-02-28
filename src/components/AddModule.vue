@@ -17,7 +17,7 @@ export default {
   props: [ 'nextModOrder', 'sectionid', 'close', 'edit', 'contentType', 'dark' ],
   data () {
     return {
-      moduleTypes: ['activity', 'bible', 'question', 'text', 'mainidea'],
+      moduleTypes: ['activity', 'bible', 'question', 'text', 'mainidea', 'bullet'],
       omediaTypes: ['quote', 'image', 'illustration', 'lyric', 'video'],
       nqmediaTypes: ['book', 'movie', 'video', 'image', 'article', 'composition', 'document', 'discourse', 'note', 'quote', 'illustration', 'outline', 'idea'],
       showAddMedia: false,
@@ -66,6 +66,15 @@ export default {
           }
         },
         {
+          label: 'Bullet',
+          color: 'primary',
+          icon: 'fas fa-list',
+          handler: () => {
+            console.log('bullet!')
+            this.addModule('bullet')
+          }
+        },
+        {
           label: 'Bible',
           color: 'primary',
           icon: 'fas fa-book',
@@ -104,6 +113,7 @@ export default {
       ]
       if (!this.$root.$children[0].user.nqUser) {
         console.log('running')
+        actions.push({})
         if (this.$root.$children[0].user.app.message.prefs.mediaType.quote) {
           actions.push({
             label: 'Quote',
@@ -167,7 +177,7 @@ export default {
       }
       this.$q.actionSheet({
         title: 'Add Module',
-        grid: true,
+        grid: false,
         dismissLabel: 'Cancel',
         actions: actions
       }).catch(() => {
@@ -192,6 +202,14 @@ export default {
         if (type === 'text' || type === 'activity') {
           obj.title = ''
           obj.text = ''
+        }
+        if (type === 'bullet') {
+          obj.title = ''
+          obj.list = []
+          obj.ordered = false
+        }
+        if (type === 'activity') {
+          obj.equipment = []
         }
         if (type === 'question') {
           obj.text = ''

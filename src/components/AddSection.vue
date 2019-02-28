@@ -38,6 +38,7 @@ export default {
     add () {
       this.showAddSection = false
       this.addSection(this.newTitle)
+      this.newTitle = ''
     }
   }
 }

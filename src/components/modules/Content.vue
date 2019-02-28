@@ -2,12 +2,12 @@
   <q-card :color="data.type === 'bible' ? 'secondary' : ''">
     <div v-show="!data.editing || data.editing !== $firebase.auth.currentUser.uid" @click="clicked">
       <!-- Drag Handle -->
-      <div class="round-borders bg-primary drag-handle" v-if="!$q.platform.is.mobile || $q.platform.is.ipad">
+      <div class="round-borders bg-primary drag-handle" v-if="(!$q.platform.is.mobile || $q.platform.is.ipad) && !modOptions.disabled">
         <q-icon name="fas fa-arrows-alt" size="1rem" />
       </div>
       <q-card-title>
         <!-- Menu Options -->
-        <q-btn v-show="!data.editing" class="float-right cursor-pointer" icon="fas fa-ellipsis-v" color="primary" size="sm">
+        <q-btn v-show="!data.editing" v-if="!modOptions.disabled" class="float-right cursor-pointer" icon="fas fa-ellipsis-v" color="primary" size="sm">
           <q-popover anchor="bottom right" self="top right">
             <q-list>
               <q-item link v-close-overlay @click.native="modMethods.edit(id)" v-if="data.type !== 'mainidea'">Edit</q-item>
@@ -19,12 +19,21 @@
         <span v-if="data.type !== 'mainidea'" class="float-right" style="font-size: .8rem; vertical-align: top; line-height: 1rem;">{{ data.time }} minutes&nbsp;&nbsp;&nbsp;</span>
         <!-- Mod Icon -->
         <q-icon :name="typeInfo[data.type].icon" :color="data.type === 'bible' ? 'white' : 'primary'" size="2rem" />&nbsp;&nbsp;&nbsp;
-        <span v-if="data.type !== 'bible'">{{ data.title }}</span>
+        <span v-if="data.type !== 'bible' && data.type !== 'question'">{{ data.title }}</span>
+        <span v-if="data.type === 'question'">{{ data.question }}</span>
         <span v-if="data.type === 'bible'">{{ data.bibleRef }}</span>
       </q-card-title>
       <q-card-main>
         <!-- Mod Info -->
         <p><span v-html="data.text" /></p>
+        <blockquote v-if="data.notes || data.type === 'activity'" class="q-caption"><span v-html="data.type === 'activity' ? 'Equipment: ' + data.equipment.join(', ') : data.notes" /></blockquote>
+        <span class="q-title" v-if="data.type === 'bullet'">
+          <component v-bind:is="data.ordered ? 'ol' : 'ul'">
+            <li v-for="item in data.list" :key="item" style="margin-bottom: 10px;">
+              {{ item }}
+            </li>
+          </component>
+        </span>
       </q-card-main>
     </div>
     <div v-if="data.editing === $firebase.auth.currentUser.uid">
@@ -41,16 +50,27 @@
             />
           </div>
           <!-- Time Estimation -->
-          <div class="col-12" v-if="data.type === 'activity' || data.type === 'question'">
-            <q-input type="number" v-model="data.time" float-label="Estimated Time (in minutes)" />
+          <div class="col-12" v-if="data.type === 'activity' || data.type === 'question' || data.type === 'bullet'">
+            <q-input type="number" v-model="data.time" float-label="Estimated Time (in minutes)" @keydown="keydown" />
           </div>
           <!-- Notes Textarea -->
           <div class="col-12" v-if="data.type === 'question'">
-            <q-input v-model="data.notes" float-label="Notes" type="textarea" :max-height="100" :min-rows="1" />
+            <q-input v-model="data.notes" float-label="Notes" type="textarea" :max-height="100" :min-rows="1" @keydown="keydown" />
           </div>
           <!-- Long Form Text Editor -->
           <div class="col-12" v-if="data.type === 'text' || data.type === 'activity'">
             <text-editor ref="editor" :text.sync="data.text" :auto-save="textSave" :save-close="saveClose" />
+          </div>
+          <!-- List Editor -->
+          <div class="col-12" v-if="data.type === 'bullet' || data.type === 'activity'">
+            <span class="q-subheading on-left" v-if="data.type === 'activity'">Equipment</span>
+            <q-checkbox v-model="data.ordered" label="Ordered?" v-if="data.type === 'bullet'" />
+            <component v-bind:is="data.ordered ? 'ol' : 'ul'">
+              <li v-for="item in data.type === 'bullet' ? data.list : data.equipment" :key="item">
+                {{ item }}
+              </li>
+            </component>
+            <q-input v-model="temp" float-label="New Item" type="text" @keydown="keydown" />
           </div>
           <!-- Bible Translation Selection -->
           <div class="col-12" v-if="data.type === 'bible'">
@@ -65,7 +85,8 @@
           <!-- Save/Delete Buttons -->
           <div class="col-12">
             <q-btn color="primary" @click.native="preSave" :disabled="loading">Save</q-btn>
-            <q-btn outline color="negative" @click.native="modMethods.remove(id)" :disabled="loading">Delete</q-btn>
+            <q-btn outline color="negative" class="on-right" @click.native="modMethods.remove(id)" :disabled="loading">Delete</q-btn>
+            <q-spinner size="2rem" class="on-right" v-if="loading" />
           </div>
         </div>
       </q-card-main>
@@ -77,9 +98,6 @@
 import TextEditor from 'components/TextEditor.vue'
 
 export default {
-  mounted () {
-    console.log(this)
-  },
   components: {
     TextEditor
   },
@@ -88,12 +106,17 @@ export default {
   data () {
     return {
       loading: false,
-      types: [ 'text', 'bible', 'activity', 'question', 'mainidea' ],
+      types: [ 'text', 'bible', 'activity', 'question', 'mainidea', 'bullet' ],
       typeInfo: {
         text: {
           label: 'Title',
           ref: 'title',
           icon: 'fas fa-align-left'
+        },
+        bullet: {
+          label: 'Title',
+          ref: 'title',
+          icon: 'fas fa-list'
         },
         activity: {
           label: 'Title',
@@ -154,7 +177,8 @@ export default {
           label: 'World English Bible - WEB',
           value: 'web'
         }
-      ]
+      ],
+      temp: ''
     }
   },
   methods: {
@@ -170,6 +194,10 @@ export default {
           if (this.data.type === 'bible' || e.metaKey) {
             this.preSave()
             e.preventDefault()
+          }
+          if (this.data.type === 'bullet' || this.data.type === 'activity') {
+            this.data.type === 'bullet' ? this.data.list.push(this.temp) : this.data.equipment.push(this.temp)
+            this.temp = ''
           }
           break
         default:
