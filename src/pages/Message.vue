@@ -23,7 +23,7 @@
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
       <div class="col-12" v-if="message.sectionOrder">
-        <content-editor :key="id" :id="id" :type="message.type" />
+        <content-editor :key="id" :id="id" :type="message.type" @timeUpdate="(time) => this.totalTime = time" />
       </div>
     </div>
     <q-modal v-model="editTitle" ref="editTitleModal" content-classes="edit-title-modal">
@@ -146,6 +146,7 @@
         <q-toolbar-title>
           {{ message.title }}
         </q-toolbar-title>
+        <q-chip color="primary" class="on-left">{{ totalTime }} minutes</q-chip>
         <q-chip color="warning" class="on-left" v-if="message.archived">Archived</q-chip>
         <q-btn icon="fas fa-ellipsis-v" color="primary" class="float-right" v-if="message.prefs">
           <q-popover anchor="bottom right" self="top right">
@@ -220,7 +221,8 @@ export default {
       removeConfirmation: false,
       showCollab: false,
       collabEmail: '',
-      showMainIdea: false
+      showMainIdea: false,
+      totalTime: 0
     }
   },
   validations: {

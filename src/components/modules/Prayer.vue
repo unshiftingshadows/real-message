@@ -1,6 +1,6 @@
 <template>
   <q-card>
-    <div v-if="!data.editing || data.editing !== $firebase.auth.currentUser.uid">
+    <div v-if="!data.editing || data.editing !== $firebase.auth.currentUser.uid" @click="clicked">
       <q-card-title>
         <q-btn :disabled="data.editing" class="float-right cursor-sectioner" icon="fas fa-edit" color="primary" size="sm" @click.native="edit(id)" />
         <span class="float-right" style="font-size: .8rem; vertical-align: top; line-height: 1rem;">{{ data.time }} minutes&nbsp;&nbsp;&nbsp;</span>
@@ -22,7 +22,7 @@
             <q-input v-model="data.title" float-label="Subtitle" />
           </div>
           <div class="col-12">
-            <editor :text.sync="data.text" :save="autoSave" />
+            <editor :text.sync="data.text" :auto-save="autoSave" />
           </div>
           <div class="col-12">
             <q-btn color="primary" @click.native="save(id, undefined, data)">Save</q-btn>
@@ -50,6 +50,13 @@ export default {
       this.$firebase.ref(this.$parent.$parent.type, 'modules', this.$parent.$parent.id).child(this.id).update({
         text: this.data.text
       })
+    },
+    clicked (e) {
+      if (e.srcElement.nodeName !== 'I' && e.srcElement.nodeName !== 'BUTTON') {
+        if (!this.data.editing) {
+          this.edit(this.id)
+        }
+      }
     }
   }
 }

@@ -141,6 +141,16 @@ export default {
       if (!val && this.editingid !== '') {
         this.closeModule(this.editingid, this.editingSection)
       }
+    },
+    totalTime: function (time) {
+      this.$emit('timeUpdate', time)
+    },
+    editingid: function (id) {
+      if (id !== '') {
+        this.$root.$children[0].dim = true
+      } else {
+        this.$root.$children[0].dim = false
+      }
     }
   },
   computed: {
@@ -148,6 +158,13 @@ export default {
       var options = Object.keys(this.sections).map(e => { return { label: this.sections[e].title, value: e } })
       options.splice(0, 0, { label: 'Hook', value: 'hook' })
       return options
+    },
+    totalTime: function () {
+      var time = 0
+      for (var mod in this.modules) {
+        time += this.modules[mod].time
+      }
+      return time
     }
   },
   mounted () {
@@ -219,16 +236,16 @@ export default {
     saveModule (moduleid, sectionid, data) {
       console.log('save module', moduleid, sectionid, data)
       data.editing = false
-      if (data.type === 'text' || data.type === 'bible') {
+      if (data.type === 'text' || data.type === 'bible' || moduleid === 'prayer') {
         data.wordcount = this.getWordCount(data.text)
         data.time = this.getEstTime(data.wordcount)
       }
       console.log('save data', data)
-      if (moduleid === 'application' || moduleid === 'prayer') {
-        this.$fiery.update(data)
-      } else {
-        this.$fiery.update(data)
+      if (moduleid === 'application') {
+        data.wordcount = this.getWordCount(data.thisweek + ' ' + data.thought + ' ' + data.today)
+        data.time = this.getEstTime(data.wordcount)
       }
+      this.$fiery.update(data)
       this.editingid = ''
     },
     closeModule (moduleid, sectionid) {

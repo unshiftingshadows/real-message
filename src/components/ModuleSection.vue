@@ -4,6 +4,7 @@
       <q-icon name="fas fa-arrows-alt" size="1.5rem" />
     </div>
     <q-card-title style="position: relative;">
+      <q-chip color="primary" style="position: absolute; top: 13px; right: 60px;" v-if="id !== 'bible'">{{ totalTime }} minutes</q-chip>
       <q-btn color="dark" icon="fas fa-ellipsis-v" style="position: absolute; top: 10px; right: 10px;" v-if="id !== 'hook'">
         <q-popover anchor="bottom right" self="top right">
           <q-list>
@@ -156,6 +157,9 @@ export default {
       } else {
         return 0
       }
+    },
+    totalTime: function () {
+      return this.data && this.data.moduleOrder.length > 0 ? this.data.moduleOrder.map(e => this.modules[e].time).reduce((a, b) => { return a + b }) : 0
     }
   },
   watch: {
