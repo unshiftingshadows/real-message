@@ -102,6 +102,7 @@ module.exports = function (ctx) {
         'QCheckbox',
         'QToggle',
         'QSlider',
+        'QDatetime',
         'QOptionGroup',
         'QRadio',
         'QAutocomplete',

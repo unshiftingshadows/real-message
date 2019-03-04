@@ -140,6 +140,7 @@
         </div>
       </div>
     </q-modal>
+    <message-date ref="messageDateModal" :dates="message.dates" />
     <q-page-sticky position="top">
       <q-toolbar color="secondary" style="z-index: 10;">
         <q-toolbar-title>
@@ -151,6 +152,7 @@
             <q-list link>
               <q-item v-close-overlay @click.native="editTitle = true">Rename...</q-item>
               <q-item v-close-overlay @click.native="$root.$emit('preview-document', id)">Preview</q-item>
+              <q-item v-close-overlay @click.native="$refs.messageDateModal.show()">Add Date...</q-item>
               <q-item-separator />
               <q-item v-close-overlay><q-toggle label="Hook" v-model="message.prefs.hook" @input="update()" /></q-item>
               <q-item v-close-overlay><q-toggle label="Application" v-model="message.prefs.application" @input="update()" /></q-item>
@@ -180,12 +182,14 @@ import { Notify } from 'quasar'
 import ContentEditor from 'components/ContentEditor.vue'
 import ContentPreview from 'components/ContentPreview.vue'
 import CommentPopover from 'components/CommentPopover.vue'
+import MessageDate from 'components/MessageDate.vue'
 
 export default {
   components: {
     ContentEditor,
     ContentPreview,
-    CommentPopover
+    CommentPopover,
+    MessageDate
   },
   name: 'Message',
   fiery: true,
