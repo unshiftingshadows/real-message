@@ -68,17 +68,15 @@ export default {
       })
     },
     add (type, id) {
-      console.log('add research')
+      this.$log.info('add research', { researchType: type, researchid: id, messageType: this.type, messageid: this.id })
       this.$database.research('add', this.type, this.id, type, id, (res) => {
-        console.log(res)
         this.searchResults.splice(this.searchResults.map(function (e) { return e._id }).indexOf(id), 1)
         this.reinit()
       })
     },
     remove (type, id) {
-      console.log('remove research')
+      this.$log.info('remove research', { researchType: type, researchid: id, messageType: this.type, messageid: this.id })
       this.$database.research('remove', this.type, this.id, type, id, (res) => {
-        console.log(res)
         this.currentResearch.splice(this.currentResearch.map(function (e) { return e.media._id }).indexOf(id), 1)
       })
     }

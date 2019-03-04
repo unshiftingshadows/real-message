@@ -73,7 +73,6 @@ export default {
   },
   watch: {
     'data': function (val) {
-      console.log('val', val)
       if (val !== {}) {
         this.editing = false
         this.video = val
@@ -95,8 +94,8 @@ export default {
       this.readableRefs = newRef.map(e => { return this.$bible.readable(e) })
     },
     save () {
-      console.log(this.video)
       this.$fiery.update(this.video).then(() => {
+        this.$log.info('Media updated', { id: this.data.id, type: 'video' })
         Notify.create({
           type: 'positive',
           message: 'Video saved!',
@@ -121,7 +120,7 @@ export default {
         try {
           await Promise.all(proms)
         } catch (err) {
-          console.error(err)
+          this.$log.error('Video used error', err)
         }
       }
       this.$fiery.remove(this.video).then(() => {

@@ -125,12 +125,10 @@ export default {
   },
   methods: {
     init () {
-      console.log('media mod init')
       this.media = this.$fiery(this.$firebase.list(this.data.type).doc(this.data.mediaid), {
         key: 'id',
         exclude: ['id'],
         onSuccess: () => {
-          console.log('media loaded successfully')
           this.loading = false
         }
       })
@@ -156,7 +154,6 @@ export default {
       if (this.data.type === 'bible') {
         this.loading = true
         this.$database.bible(this.data.bibleRef, this.translation, (data) => {
-          console.log(data)
           // NOTE: This needs to be moved to the server side -- not all versions will
           //       follow this same format
           this.data.text = data.text

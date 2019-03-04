@@ -63,7 +63,6 @@ export default {
       this.$root.$emit('add-module', obj)
     },
     async search (input, done) {
-      console.log('auth?', this.$firebase.nqAuth.currentUser)
       // this.searching = true
       const acceptableTypes = [ 'quote', 'outline', 'idea', 'illustration', 'video', 'image', 'composition', 'article', 'document' ]
       if (input.split(':')[0] === 'bible') {
@@ -82,7 +81,6 @@ export default {
       // this.searching = false
     },
     selectedMedia (item) {
-      console.log('selected', item)
       this.addModule(item.id, item.type)
     }
   }

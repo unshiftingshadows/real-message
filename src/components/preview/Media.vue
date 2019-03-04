@@ -45,7 +45,6 @@ export default {
         key: 'id',
         exclude: ['id'],
         onSuccess: () => {
-          console.log('media loaded successfully')
           this.loading = false
         }
       })

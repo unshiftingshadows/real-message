@@ -67,7 +67,6 @@ export default {
             timingValue: timeElapsed,
             timingLabel: 'series-messages'
           })
-          console.log('loaded items')
           this.loading = false
         }
       })
@@ -76,7 +75,6 @@ export default {
       this.$router.push({ name: 'message', params: { id: id } })
     },
     order () {
-      // console.log('reordered...', this.updateOrder)
       this.update()
     }
   }

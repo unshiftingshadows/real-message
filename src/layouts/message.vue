@@ -249,7 +249,6 @@ export default {
     // }
   },
   mounted () {
-    // console.log('builder $root', this.$root.$children[0].user)
     window.fcWidget.setConfig({
       headerProperty: {
         hideChatButton: false
@@ -258,16 +257,13 @@ export default {
   },
   methods: {
     logout () {
-      console.log('signing out')
+      this.$log.info('signing out', this.$firebase.auth.currentUser.uid)
       window.fcWidget.user.clear()
       window.fcWidget.destroy()
       this.$firebase.nqAuth.signOut()
       this.$firebase.auth.signOut().then(() => {
         this.$router.replace({ path: '/login' })
       })
-    },
-    checkUser () {
-      console.log(this.$root.$children[0].user)
     },
     openChat () {
       if (window.fcWidget.isOpen()) {
@@ -278,7 +274,6 @@ export default {
       }
     },
     openLink (link) {
-      console.log('open external', link)
       openURL(link)
     },
     openDonate () {

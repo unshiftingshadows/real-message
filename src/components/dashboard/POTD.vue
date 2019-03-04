@@ -34,9 +34,7 @@ export default {
         'Content-Type': 'application/json; charset=utf-8'
       }
     }).then((res) => {
-      console.log('picture of the day', res)
       const imageFile = res.data.query.pages[Object.keys(res.data.query.pages)[0]].images[0].title
-      console.log('file name', imageFile)
       this.$axios({
         method: 'get',
         url: 'https://commons.wikimedia.org/w/api.php?action=query&origin=*&format=json&prop=imageinfo&titles=' + imageFile + '&iiprop=extmetadata%7Curl',
@@ -45,9 +43,7 @@ export default {
           'Content-Type': 'application/json; charset=utf-8'
         }
       }).then((finalRes) => {
-        console.log('final', finalRes)
         const info = finalRes.data.query.pages[Object.keys(finalRes.data.query.pages)[0]]
-        console.log('info', info)
         this.url = info.imageinfo[0].url
         this.title = info.title
         this.description = htmlToText.fromString(info.imageinfo[0].extmetadata.ImageDescription.value, {

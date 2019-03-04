@@ -100,7 +100,6 @@ export default {
       this.imageURL = ''
     },
     add: async function () {
-      console.log('add')
       if (this.$types.MEDIA.includes(this.type)) {
         var obj = {
           bibleRefs: [],
@@ -152,19 +151,16 @@ export default {
             }
             obj.pageURL = this.videoURL
             var videoinfo = getVideoId(this.videoURL)
-            console.log('videoinfo', videoinfo)
             obj.videoid = videoinfo.id
             obj.service = videoinfo.service
             if (videoinfo.service === 'youtube') {
               var youtubeinfo = await axios.get(`https://noembed.com/embed?url=http://www.youtube.com/watch?v=${videoinfo.id}`)
-              console.log('youtube info', youtubeinfo)
               obj.thumbURL = youtubeinfo.data.thumbnail_url
               obj.title = youtubeinfo.data.title
               obj.author = youtubeinfo.data.author_name
               obj.embedURL = 'https://www.youtube.com/embed/' + videoinfo.id
             } else if (videoinfo.service === 'vimeo') {
               var vimeoinfo = await axios.get(`https://vimeo.com/api/v2/video/${videoinfo.id}.json`)
-              console.log('vimeo info', vimeoinfo)
               obj.thumbURL = vimeoinfo.data[0].thumbnail_large
               obj.title = vimeoinfo.data[0].title
               obj.author = vimeoinfo.data[0].user_name
@@ -172,15 +168,14 @@ export default {
             }
             break
           default:
-            console.error('Invalid media type')
+            this.$log.error('Invalid media type')
             this.$q.notify('Invalid media type')
         }
-        console.log(obj)
         this.loading = true
         this.setLoading()
         this.$firebase.list(this.type).add(obj).then((res) => {
           this.refresh(this.type)
-          console.log('added', res)
+          this.$log.info(`${this.type} added`, res)
           // GA - Add media event
           this.$ga.event('media', 'add', this.type, res.id)
           this.showAddMedia = false

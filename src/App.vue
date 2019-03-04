@@ -148,7 +148,12 @@ export default {
           document.documentElement.style.setProperty('--drawer-icons', '#444444')
           break
         default:
-          console.error('invalid theme')
+          this.$slog.warn('invalid theme')
+          document.documentElement.style.setProperty('--background-color', '#ffffff')
+          document.documentElement.style.setProperty('--card-color', '#dddddd')
+          document.documentElement.style.setProperty('--color', '#333333')
+          document.documentElement.style.setProperty('--drawer-background', '#dddddd')
+          document.documentElement.style.setProperty('--drawer-icons', '#444444')
       }
     },
     'user.newUser': function (val) {
@@ -171,13 +176,10 @@ export default {
   methods: {
     init () {
       window.fcWidget.destroy()
-      console.log(window.fcWidget)
       this.newPassword = ''
       this.newPasswordCheck = ''
       this.$firebase.auth.onAuthStateChanged((user) => {
-        console.log('auth state changed')
         if (!user) {
-          console.log('no user')
           this.user.theme = 'light'
           window.fcWidget.init({
             token: '2f1c0fee-afb7-41e3-afd3-132b4330cd55',
@@ -192,7 +194,7 @@ export default {
             }
           })
         } else {
-          console.log('currentuser', user)
+          this.$log.info('newly logged user', user)
           this.$ga.set('userId', user.uid)
           this.$sentry.setUser(user.uid, user.email, user.displayName)
           this.$sentry.crumb({
@@ -203,7 +205,6 @@ export default {
           this.user = this.$fiery(this.$firebase.user(), {
             onSuccess: async (userSnap) => {
               if (this.loading) {
-                console.log('logged user', userSnap)
                 window.fcWidget.init({
                   token: '2f1c0fee-afb7-41e3-afd3-132b4330cd55',
                   host: 'https://wchat.freshchat.com',
@@ -224,9 +225,8 @@ export default {
                   }
                 })
                 document.getElementById('fc_frame').style.display = 'none'
-                console.log(window.fcWidget)
                 window.fcWidget.on('user:created', (resp) => {
-                  console.log('user created', resp)
+                  this.$log.info('freshchat - user created', resp)
                   if (resp.status === 200) {
                     this.$firebase.user().update({
                       'supportRestore.message': resp.data.restoreId
@@ -238,9 +238,9 @@ export default {
                 })
                 if (this.user.nqUser) {
                   if (await this.$firebase.nqLogin(this.user.nqUser.uid)) {
-                    console.log('nq user authenticated', this.$firebase.nqAuth.currentUser)
+                    this.$log.info('nq user authenticated', this.$firebase.nqAuth.currentUser)
                   } else {
-                    console.log('nq user error...')
+                    this.$log.warn('nq user error...')
                   }
                 }
                 this.loading = false
@@ -269,7 +269,7 @@ export default {
         this.newPassword = ''
         this.newPasswordCheck = ''
       }).catch((error) => {
-        console.error(error)
+        this.$log.error('set password error', error)
         this.$q.notify(error.message)
       })
     }

@@ -33,7 +33,6 @@ export default {
         'Content-Type': 'application/json; charset=utf-8'
       }
     }).then((res) => {
-      console.log('church calendar', res)
       this.data = res.data
     })
   },

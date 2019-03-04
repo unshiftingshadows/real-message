@@ -36,7 +36,6 @@ export default {
         // url: 'https://news.google.com/news/rss/headlines/section/topic/WORLD?ned=us&hl=en&gl=US'
         url: `https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss/search?q=christian&hl=en-US&gl=US&ceid=US:en`
       }).then((res) => {
-        console.log('news results', res)
         this.items = res.data.items
       })
     },

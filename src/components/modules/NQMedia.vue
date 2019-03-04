@@ -191,51 +191,7 @@ export default {
     getEstTime (wordcount) {
       return Math.ceil(wordcount / 120)
     },
-    // keydown (e) {
-    //   switch (e.keyCode) {
-    //     case 9:
-    //       if (this.data.type === 'text' || this.data.type === 'activity') {
-    //         this.focusEditor()
-    //         e.preventDefault()
-    //       }
-    //       break
-    //     case 13:
-    //       if (this.data.type === 'bible' || e.metaKey) {
-    //         this.preSave()
-    //         e.preventDefault()
-    //       }
-    //       break
-    //     default:
-    //   }
-    // },
-    // preSave () {
-    //   if (this.data.type === 'bible') {
-    //     this.loading = true
-    //     this.$database.bible(this.data.bibleRef, this.translation, (data) => {
-    //       console.log(data)
-    //       // NOTE: This needs to be moved to the server side -- not all versions will
-    //       //       follow this same format
-    //       this.data.text = data.text
-    //       this.data.translation = this.translation
-    //       this.data.bibleRef = this.$bible.readable(this.data.bibleRef)
-    //       this.loading = false
-    //       this.modMethods.save(this.id, this.data)
-    //     })
-    //   } else {
-    //     this.modMethods.save(this.id, this.data)
-    //   }
-    // },
-    // textSave (text) {
-    //   this.modMethods.autosave(this.id, text, this.data.title)
-    // },
-    // focusEditor () {
-    //   this.$refs.editor.focus()
-    // },
-    // saveClose () {
-    //   this.preSave(this.id, this.data)
-    // },
     clicked (e) {
-      console.log('clicked!', e)
       if (e.srcElement.nodeName !== 'I' && e.srcElement.nodeName !== 'BUTTON') {
         this.$refs.resourcePreview.show()
       }

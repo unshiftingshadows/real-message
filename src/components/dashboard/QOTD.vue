@@ -30,7 +30,6 @@ export default {
         'Content-Type': 'application/json; charset=utf-8'
       }
     }).then((res) => {
-      console.log('quote of the day', res)
       const text = htmlToText.fromString(res.data.parse.text['*'], {
         ignoreHref: true,
         ignoreImage: true

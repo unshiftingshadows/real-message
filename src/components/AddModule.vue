@@ -47,15 +47,6 @@ export default {
     },
     showAdd () {
       var actions = [
-        // {
-        //   label: 'Section',
-        //   color: 'primary',
-        //   icon: 'fa-list-ol',
-        //   handler: () => {
-        //     console.log('section!')
-        //     this.addModule('section')
-        //   }
-        // },
         {
           label: 'Text',
           color: 'primary',
@@ -112,7 +103,6 @@ export default {
         }
       ]
       if (!this.$root.$children[0].user.nqUser) {
-        console.log('running')
         actions.push({})
         if (this.$root.$children[0].user.app.message.prefs.mediaType.quote) {
           actions.push({
@@ -185,7 +175,6 @@ export default {
       })
     },
     addModule (type, id) {
-      console.log('add module')
       // GA - Add module event
       this.$ga.event('module', 'add', type)
       this.close()
@@ -228,7 +217,7 @@ export default {
         }
         this.$root.$emit('add-module', obj, this.sectionid)
       } else {
-        console.error('Invalid new module type')
+        this.$log.error('Invalid new module type')
       }
     },
     addNewMedia (mediaid) {

@@ -118,8 +118,6 @@ export default {
       var typesList = []
       if (this.$root.$children[0].user.app.message.prefs) {
         for (let key in this.$root.$children[0].user.app.message.prefs.mediaType) {
-          console.log('key', key)
-          console.log('value', this.$root.$children[0].user.app.message.prefs.mediaType[key])
           if (this.$root.$children[0].user.app.message.prefs.mediaType[key]) {
             typesList.push({
               label: capitalize(key),
@@ -133,14 +131,12 @@ export default {
   },
   methods: {
     openItem (item, type) {
-      console.log(item)
-      console.log(type)
       if (this.types.map(function (e) { return e.value }).includes(type)) {
         this.mediaOpen = true
         this.media = item
         this.mediaType = type
       } else {
-        console.error('Incorrect item type for routing...')
+        this.$log.warn('Incorrect item type for routing...', { item, type })
       }
     },
     closeMedia () {
@@ -151,7 +147,6 @@ export default {
       return this.selectedTypes.includes(item.type)
     },
     search () {
-      console.log('search')
       this.$refs.searchInput.blur()
       const startTime = new Date()
       this.loading = true
@@ -165,7 +160,6 @@ export default {
         })
         this.loading = false
         this.items = res.data.results
-        console.log('results', res.data)
       })
       // this.$database.search('media', this.searchTerms, {}, (res) => {
       //   this.items = res

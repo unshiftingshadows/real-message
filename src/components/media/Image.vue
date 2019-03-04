@@ -70,7 +70,6 @@ export default {
   },
   watch: {
     'data': function (val) {
-      console.log('val', val)
       if (val !== {}) {
         this.editing = false
         this.image = val
@@ -93,6 +92,7 @@ export default {
     },
     save () {
       this.$fiery.update(this.image).then(() => {
+        this.$log.info('Media updated', { id: this.data.id, type: 'image' })
         Notify.create({
           type: 'positive',
           message: 'Image saved!',
@@ -117,10 +117,11 @@ export default {
         try {
           await Promise.all(proms)
         } catch (err) {
-          console.error(err)
+          this.$log.error('Image used error', err)
         }
       }
       this.$fiery.remove(this.image).then(() => {
+        this.$log.info('Media removed', { id: this.data.id, type: 'image' })
         Notify.create({
           type: 'positive',
           message: 'Image removed!',

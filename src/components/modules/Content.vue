@@ -214,16 +214,6 @@ export default {
           this.loading = false
           this.modMethods.save(this.id, this.data)
         })
-        // this.$database.bible(this.data.bibleRef, this.translation, (data) => {
-        //   console.log(data)
-        //   // NOTE: This needs to be moved to the server side -- not all versions will
-        //   //       follow this same format
-        //   this.data.text = data.text
-        //   this.data.translation = this.translation
-        //   this.data.bibleRef = this.$bible.readable(this.data.bibleRef)
-        //   this.loading = false
-        //   this.modMethods.save(this.id, this.data)
-        // })
       } else {
         this.modMethods.save(this.id, this.data)
       }

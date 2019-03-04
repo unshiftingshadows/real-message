@@ -124,7 +124,6 @@ export default {
   },
   watch: {
     'selectedTypes': function (newVal, oldVal) {
-      console.log('selected...')
       if (newVal.includes('all')) {
         if (newVal.length > 1) {
           if (oldVal.includes('all')) {
@@ -153,15 +152,12 @@ export default {
       this.showItems = this.items
     },
     openItem (item, id, type) {
-      console.log(item)
-      console.log(id)
-      console.log(type)
       if (this.types.map(function (e) { return e.value }).includes(type)) {
         this.resource = {...item, id}
         this.resourceType = type
         this.$refs.resourcePreview.show()
       } else {
-        console.error('Incorrect item type for routing...')
+        this.$log.warn('Incorrect item type for routing...')
       }
     },
     checkType (item) {

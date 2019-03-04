@@ -33,7 +33,6 @@ export default {
         exclude: ['id'],
         onSuccess: (final) => {
           if (final.length === 0) {
-            console.log('finished', final)
             this.refresh()
           }
         }
@@ -49,7 +48,6 @@ export default {
         exclude: ['id'],
         onSuccess: (final) => {
           if (final.length === 0) {
-            console.log('finished', final)
             // this.refresh()
           }
         }

@@ -23,7 +23,6 @@ export default {
       method: 'get',
       url: `https://beta.ourmanna.com/api/v1/get/?format=json`
     }).then((res) => {
-      console.log('verse of the day', res)
       this.ref = res.data.verse.details.reference
       this.text = res.data.verse.details.text
       this.version = res.data.verse.details.version

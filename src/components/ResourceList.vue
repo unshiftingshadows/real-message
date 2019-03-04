@@ -25,7 +25,6 @@ export default {
   methods: {
     init () {
       this.$database.resources(this.type, this.id, 'list', {}, (res) => {
-        console.log('current resources', res)
         if (res.selection.resources) {
           this.resources = res.selection.resources
         }

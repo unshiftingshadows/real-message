@@ -64,11 +64,6 @@ export default {
       saveInterval: null
     }
   },
-  // beforeMount () {
-  //   window.Quill = Quill
-  //   window.BeyondGrammar.initBeyondGrammar()
-  //   console.log(window.BeyondGrammar)
-  // },
   mounted () {
     this.$refs.vueeditor.quill.on('selection-change', (range, oldRange, source) => {
       if (range === null && oldRange !== null) {

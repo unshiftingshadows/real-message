@@ -48,27 +48,12 @@ export default {
   },
   methods: {
     init () {
-      console.log(this.type)
       // Check if NQ user to determine what resources to get ---
       //    NQ user --> get from $database.resources
       //    Non-NQ user --> get from $database.list?
       this.resources = []
       if (!this.$root.$children[0].user.nqUser) {
-        // mediaTypes.forEach((type) => {
-        //   this.$firebase.list(type).get().then((query) => {
-        //     this.resources.concat(query.docs)
-        //   })
-        // })
       } else {
-        // this.$database.resources(this.type, this.id, 'list', {}, (res) => {
-        //   console.log('resources response', res)
-        //   this.research = res.research
-        //   res.research.forEach((research) => {
-        //     this.resources = this.resources.concat(research.media.resources)
-        //   })
-        //   // Once media is also implemented
-        //   // this.resources.push(res.media)
-        // })
       }
     },
     resType (type) {
@@ -95,7 +80,7 @@ export default {
         // newRef.set(obj)
         this.$root.$emit('add-module', obj)
       } else {
-        console.error('Incorrect media type for module add')
+        this.$log.warn('Incorrect media type for module add')
       }
     }
   }

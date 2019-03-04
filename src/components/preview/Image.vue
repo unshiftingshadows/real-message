@@ -32,7 +32,6 @@ export default {
             })
           }
         } else {
-          console.log('pull nq resource...')
         }
         this.media = res.resource
       })

@@ -27,7 +27,6 @@ export default {
         key: 'id',
         exclude: ['id'],
         onSuccess: (list) => {
-          console.log('messages loaded', list)
         }
       })
     }

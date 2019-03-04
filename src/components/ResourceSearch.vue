@@ -79,7 +79,7 @@ export default {
           })
           break
         default:
-          console.error('incorrect new module type')
+          this.$log.warn('incorrect new module type')
           return false
       }
     },

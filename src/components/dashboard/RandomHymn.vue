@@ -33,7 +33,6 @@ export default {
         method: 'get',
         url: `https://hymnary.org/api/scripture?reference=${randomBook}+${randomChapter}`
       }).then((res) => {
-        console.log('hymn', res)
         if (res.data.length === 0) {
           this.pullHymn()
         } else {
@@ -41,13 +40,11 @@ export default {
           this.hymn.title = hymn.title
           // this.hymn.refs = hymn['scripture references']
           this.hymn.refs = randomBook + ' ' + randomChapter
-          console.log('text link', hymn['text link'])
           const textLink = hymn['text link'].split('/').pop()
           this.$axios({
             method: 'get',
             url: `https://hymnary.org/api/fulltext/${textLink}`
           }).then((text) => {
-            console.log('hymn text', text)
             if (text.data.length === 0) {
               this.pullHymn()
             } else {

@@ -63,7 +63,6 @@ export default {
   },
   methods: {
     login () {
-      console.log('login')
       this.$v.form.$touch()
       if (this.$v.form.$error) {
         Notify.create('Please review fields again.')
@@ -71,7 +70,7 @@ export default {
       }
       this.$firebase.nqAuth.signInWithEmailAndPassword(this.form.email, this.form.pswd)
         .then((user) => {
-          console.log('logged in...', user)
+          this.$log.info('NQ logged in...', user)
           this.$firebase.user().update({
             nqUser: {
               uid: user.user.uid,

@@ -84,9 +84,9 @@ export default {
         if (this.seriesid) {
           obj.seriesid = this.seriesid
         }
-        console.log(obj)
         this.$firebase.list(this.type).add(obj).then((res) => {
           // GA - Add content event
+          this.$log.info(`${this.readableType} created`, res)
           this.$ga.event('content', 'add', this.type, res.id)
           this.showAddContent = false
           if (this.seriesid) {
@@ -102,33 +102,8 @@ export default {
             message: `Added ${this.type} content: ${res.id}`,
             level: 'info'
           })
-          // this.$firebase.log({
-          //   category: 'content',
-          //   action: 'create',
-          //   label: this.type,
-          //   id: res.id,
-          //   curValue: obj,
-          //   component: 'AddContent'
-          // })
-          console.log('add content', res, this.type)
           this.$router.push({ name: this.type, params: { id: res.id } })
         })
-        // this.$database.add(this.type, obj, (res) => {
-        //   // GA - Add content event
-        //   this.$ga.event('content', 'add', this.type)
-        //   this.showAddContent = false
-        //   Notify.create({
-        //     message: this.readableType + ' created!',
-        //     type: 'positive',
-        //     position: 'bottom-left'
-        //   })
-        //   console.log('add content', res, this.type)
-        //   if (this.type === 'rseries') {
-        //     this.$router.push({ name: this.type, params: { seriesid: res._id } })
-        //   } else {
-        //     this.$router.push({ name: this.type, params: { id: res._id } })
-        //   }
-        // })
       }
     },
     show () {

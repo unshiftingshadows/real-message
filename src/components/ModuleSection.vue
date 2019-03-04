@@ -184,12 +184,6 @@ export default {
     },
     changeMod (val) {
       this.onChange(val, this.id)
-    },
-    addMod (type) {
-      console.log('add mod', type)
-    },
-    reorder () {
-      console.log('module list', this.data.modules)
     }
   }
 }
