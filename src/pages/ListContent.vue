@@ -154,6 +154,9 @@ export default {
             timingValue: timeElapsed,
             timingLabel: type
           })
+          if (this.items.length > 2 && window.FMApi.triggerPoll) {
+            window.FMApi.triggerPoll()
+          }
           this.loading = false
         }
       })
