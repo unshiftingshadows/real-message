@@ -56,6 +56,7 @@ export default {
       this.newAudience = ''
     },
     remove (item) {
+      this.$log.info('date removed', { date: this.newDate, message: this.$route.params.id })
       this.$firebase.ref('message', '', this.$route.params.id).update({
         dates: this.$firebase.base.firestore.FieldValue.arrayRemove(item)
       })
