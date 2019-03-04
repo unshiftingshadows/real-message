@@ -1,6 +1,16 @@
 # Changelog
 All notable changes for this project will be documented in this file.
 
+## 0.0.43 - 2019-03-04
+Cleaning up for final push to 0.1.0
+### Added
+- bullet module
+- Bible ref structure section after Hook
+- users can add dates when Messages were given
+
+### Changed
+- cleaned up logs
+
 ## 0.0.42 - 2019-02-25
 ### Added
 - users can now use the "login2" system
