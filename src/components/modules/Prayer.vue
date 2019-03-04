@@ -22,7 +22,7 @@
             <q-input v-model="data.title" float-label="Subtitle" />
           </div>
           <div class="col-12">
-            <editor :text.sync="data.text" :auto-save="autoSave" />
+            <editor :text.sync="data.text" :auto-save="e => autoSave(this.id, e, this.data.title)" />
           </div>
           <div class="col-12">
             <q-btn color="primary" @click.native="save(id, undefined, data)">Save</q-btn>
@@ -41,16 +41,16 @@ export default {
     Editor
   },
   name: 'mod-prayer',
-  props: [ 'id', 'data', 'edit', 'save', 'close', 'remove' ],
+  props: [ 'id', 'data', 'edit', 'save', 'autosave', 'close', 'remove' ],
   data () {
     return {}
   },
   methods: {
-    autoSave () {
-      this.$firebase.ref(this.$parent.$parent.type, 'modules', this.$parent.$parent.id).child(this.id).update({
-        text: this.data.text
-      })
-    },
+    // autoSave (text) {
+    //   this.$firebase.ref(this.$parent.$parent.type, 'modules', this.$parent.$parent.id).child(this.id).update({
+    //     text: text
+    //   })
+    // },
     clicked (e) {
       if (e.srcElement.nodeName !== 'I' && e.srcElement.nodeName !== 'BUTTON') {
         if (!this.data.editing) {

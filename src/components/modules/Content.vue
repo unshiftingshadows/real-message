@@ -59,7 +59,7 @@
           </div>
           <!-- Long Form Text Editor -->
           <div class="col-12" v-if="data.type === 'text' || data.type === 'activity'">
-            <text-editor ref="editor" :text.sync="data.text" :auto-save="textSave" :save-close="saveClose" />
+            <text-editor ref="editor" :text.sync="data.text" :auto-save="e => autosave(this.id, e, this.data.title)" :save-close="saveClose" />
           </div>
           <!-- List Editor -->
           <div class="col-12" v-if="data.type === 'bullet' || data.type === 'activity'">
