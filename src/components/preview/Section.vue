@@ -1,12 +1,23 @@
 <template>
   <q-card flat>
     <q-card-title style="margin-bottom: 20px;">
-      <div class="q-display-1 text-weight-bold">{{ id === 'hook' ? 'Hook' : data.title }}</div>
+      <div class="q-display-1 text-weight-bold">{{ id === 'hook' ? 'Hook' : id === 'bible' ? 'Bible' : data.title }}</div>
       <hr/>
     </q-card-title>
     <q-card-main>
       <div class="row gutter-sm" style="padding-left: 10px; padding-right: 10px;">
-        <div class="col-12">
+        <div class="col-12" v-if="id === 'bible'">
+          <preview-bible
+            v-for="ref in document.bibleRefs"
+            :key="ref"
+            class="module-card"
+            :mod-options="{ disabled: true }"
+            :data="{
+              bibleRef: ref
+            }"
+          />
+        </div>
+        <div class="col-12" v-if="id !== 'bible'">
           <component
             v-for="modIndex in data.moduleOrder"
             :key="modIndex"
@@ -26,7 +37,7 @@ import PreviewContent from 'components/preview/Content.vue'
 import PreviewMedia from 'components/preview/Media.vue'
 // import PreviewQuote from 'components/preview/Quote.vue'
 // import PreviewText from 'components/preview/Text.vue'
-// import PreviewBible from 'components/preview/Bible.vue'
+import PreviewBible from 'components/preview/Bible.vue'
 // import PreviewActivity from 'components/preview/Activity.vue'
 // import PreviewQuestion from 'components/preview/Question.vue'
 // import PreviewVideo from 'components/preview/Video.vue'
@@ -38,10 +49,10 @@ import PreviewMedia from 'components/preview/Media.vue'
 export default {
   components: {
     PreviewContent,
-    PreviewMedia
+    PreviewMedia,
     // PreviewQuote,
     // PreviewText,
-    // PreviewBible,
+    PreviewBible
     // PreviewActivity,
     // PreviewQuestion,
     // PreviewVideo,
@@ -50,7 +61,7 @@ export default {
     // PreviewLyric,
     // PreviewIllustration
   },
-  props: ['id', 'data', 'modules', 'contentType', 'contentid'],
+  props: ['id', 'data', 'modules', 'contentType', 'contentid', 'document'],
   name: 'PreviewSection',
   data () {
     return {

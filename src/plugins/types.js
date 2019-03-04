@@ -1,4 +1,4 @@
-const CONTENT = [ 'text', 'bible', 'activity', 'question' ]
+const CONTENT = [ 'text', 'bible', 'activity', 'question', 'mainidea', 'bullet' ]
 const MEDIA = [ 'quote', 'video', 'image', 'illustration', 'lyric' ]
 const NQ_MEDIA = [ 'quote', 'outline', 'idea', 'illustration', 'book', 'movie', 'video', 'image', 'composition', 'article', 'document', 'note', 'discourse' ]
 const DASHBOARD = [ 'donate', 'recentMessages', 'randomMedia', 'hymn', 'votd', 'potd', 'qotd', 'news' ]

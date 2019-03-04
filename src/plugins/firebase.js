@@ -310,11 +310,11 @@ function getDisplayName (uid) {
   })
 }
 
-function logStackdriver (level, args) {
-  // const labels = { version: '0.0.42', session: '' }
-  // const stackdriverFunction = functions.httpsCallable('applogs-message')
-  // return stackdriverFunction({ level, args, labels }).then(e => console.log('log', e)).catch(err => console.error('stackdriver log', err))
-}
+// function logStackdriver (level, args) {
+//   const labels = { version: '0.0.42', session: '' }
+//   const stackdriverFunction = functions.httpsCallable('applogs-message')
+//   return stackdriverFunction({ level, args, labels }).then(e => console.log('log', e)).catch(err => console.error('stackdriver log', err))
+// }
 
 // async function nqSearch (searchTerms, searchTypes) {
 //   // const searchFunction = nqapp.functions().httpsCallable('search-all')
@@ -409,15 +409,15 @@ export default ({ app, router, Vue }) => {
   Vue.prototype.$log = {
     info () {
       console.log(...arguments)
-      logStackdriver('info', Array.prototype.slice.call(arguments).map(e => JSON.stringify(e)))
+      // logStackdriver('info', Array.prototype.slice.call(arguments).map(e => JSON.stringify(e)))
     },
     warn () {
       console.warn(...arguments)
-      logStackdriver('warn', Array.prototype.slice.call(arguments).map(e => JSON.stringify(e)))
+      // logStackdriver('warn', Array.prototype.slice.call(arguments).map(e => JSON.stringify(e)))
     },
     error () {
       console.error(...arguments)
-      logStackdriver('error', Array.prototype.slice.call(arguments).map(e => JSON.stringify(e)))
+      // logStackdriver('error', Array.prototype.slice.call(arguments).map(e => JSON.stringify(e)))
     }
   }
 }

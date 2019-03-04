@@ -155,6 +155,7 @@
               <q-item v-close-overlay @click.native="$refs.messageDateModal.show()">Add Date...</q-item>
               <q-item-separator />
               <q-item v-close-overlay><q-toggle label="Hook" v-model="message.prefs.hook" @input="update()" /></q-item>
+              <q-item v-close-overlay><q-toggle label="Bible" v-model="message.prefs.bible" @input="update()" /></q-item>
               <q-item v-close-overlay><q-toggle label="Application" v-model="message.prefs.application" @input="update()" /></q-item>
               <q-item v-close-overlay><q-toggle label="Prayer" v-model="message.prefs.prayer" @input="update()" /></q-item>
               <q-item-separator />

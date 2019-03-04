@@ -58,6 +58,7 @@
               <div class="col-xs-12">
                 <h6>Message Structure</h6>
                 <q-checkbox v-model="$root.$children[0].user.app.message.prefs.messageStructure.hook" label="Hook" @input="prefChange" /><br/>
+                <q-checkbox v-model="$root.$children[0].user.app.message.prefs.messageStructure.bible" label="Bible" @input="prefChange" /><br/>
                 <q-checkbox v-model="$root.$children[0].user.app.message.prefs.messageStructure.application" label="Application" @input="prefChange" /><br/>
                 <q-checkbox v-model="$root.$children[0].user.app.message.prefs.messageStructure.prayer" label="Prayer" @input="prefChange" />
               </div>

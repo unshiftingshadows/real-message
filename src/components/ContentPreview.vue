@@ -24,11 +24,14 @@
         </div>
         <!-- Before -->
         <div class="col-12 col-md-10" v-if="structure && document.prefs.hook">
-          <preview-section id="hook" :data="structure.hook" :modules="modules" :content-type="type" :contentid="id" class="section-preview" />
+          <preview-section id="hook" :data="structure.hook" :document="document" :modules="modules" :content-type="type" :contentid="id" class="section-preview" />
+        </div>
+        <div class="col-12 col-md-10" v-if="structure && document.prefs.bible">
+          <preview-section id="bible" :document="document" :content-type="type" :contentid="id" class="section-preview" />
         </div>
         <!-- Sections -->
         <div class="col-12 col-md-10" v-if="document.sectionOrder && document.sectionOrder.length > 0 && Object.keys(sections).length > 0">
-          <preview-section v-for="orderIndex in document.sectionOrder" :key="orderIndex" :id="orderIndex" :data="sections[orderIndex]" :modules="modules" :content-type="type" :contentid="id" class="section-preview" />
+          <preview-section v-for="orderIndex in document.sectionOrder" :key="orderIndex" :id="orderIndex" :document="document" :data="sections[orderIndex]" :modules="modules" :content-type="type" :contentid="id" class="section-preview" />
         </div>
         <!-- Modules -->
         <!-- <div class="col-12" v-if="modules.length > 0">
