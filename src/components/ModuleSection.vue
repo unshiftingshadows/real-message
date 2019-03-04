@@ -1,6 +1,6 @@
 <template>
   <q-card flat style="position: relative;">
-    <div class="round-borders bg-primary drag-section" v-if="(!$q.platform.is.mobile || $q.platform.is.ipad) && id !== 'hook'">
+    <div class="round-borders bg-primary drag-section" v-if="(!$q.platform.is.mobile || $q.platform.is.ipad) && id !== 'hook' && id !== 'bible'">
       <q-icon name="fas fa-arrows-alt" size="1.5rem" />
     </div>
     <q-card-title style="position: relative;">
