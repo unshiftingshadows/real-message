@@ -48,7 +48,7 @@ export default {
       this.$refs.modal.hide()
     },
     add () {
-      console.log('add date...', this.newDate)
+      this.$log.info('date added', { date: this.newDate, message: this.$route.params.id })
       this.$firebase.ref('message', '', this.$route.params.id).update({
         dates: this.$firebase.base.firestore.FieldValue.arrayUnion({ date: new Date(this.newDate), audience: this.newAudience })
       })
@@ -61,7 +61,6 @@ export default {
       })
     },
     readableDate (stamp) {
-      console.log('stamp', stamp)
       return date.formatDate(stamp.toDate(), 'YYYY-MM-DD')
     }
   }

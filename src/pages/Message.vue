@@ -178,7 +178,7 @@
 
 <script>
 import { required, email } from 'vuelidate/lib/validators'
-import { Notify } from 'quasar'
+import { date, Notify } from 'quasar'
 import ContentEditor from 'components/ContentEditor.vue'
 import ContentPreview from 'components/ContentPreview.vue'
 import CommentPopover from 'components/CommentPopover.vue'
@@ -201,6 +201,13 @@ export default {
         onSuccess: (message) => {
           this.readableRefs = message.bibleRefs.map(e => { return this.$bible.readable(e) })
           this.loading = false
+          if (this.message.dates) {
+            const stamp = new Date(Math.max(...this.message.dates.map(e => e.date.toDate() < new Date() ? e.date.toDate() : false)))
+            if (!date.isSameDate(new Date(this.message.lastDate), stamp)) {
+              this.message.lastDate = stamp
+              this.$fiery.update(this.message)
+            }
+          }
         }
       }),
       seriesName: '',
