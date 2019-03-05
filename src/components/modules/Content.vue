@@ -26,7 +26,7 @@
       <q-card-main>
         <!-- Mod Info -->
         <p><span v-html="data.text" /></p>
-        <blockquote v-if="data.notes || data.type === 'activity'" class="q-caption"><span v-html="data.type === 'activity' ? 'Equipment: ' + data.equipment.join(', ') : data.notes" /></blockquote>
+        <blockquote v-if="data.notes || data.type === 'activity'" class="q-caption"><span v-html="data.type === 'activity' && data.equipment ? 'Equipment: ' + data.equipment.join(', ') : data.notes" /></blockquote>
         <span class="q-title" v-if="data.type === 'bullet'">
           <component v-bind:is="data.ordered ? 'ol' : 'ul'">
             <li v-for="item in data.list" :key="item" style="margin-bottom: 10px;">

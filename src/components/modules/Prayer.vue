@@ -22,7 +22,7 @@
             <q-input v-model="data.title" float-label="Subtitle" />
           </div>
           <div class="col-12">
-            <editor :text.sync="data.text" :auto-save="e => autoSave(this.id, e, this.data.title)" />
+            <editor :text.sync="data.text" :auto-save="e => autosave(this.id, '', e, this.data.title)" />
           </div>
           <div class="col-12">
             <q-btn color="primary" @click.native="save(id, undefined, data)">Save</q-btn>

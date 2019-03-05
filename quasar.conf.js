@@ -110,6 +110,7 @@ module.exports = function (ctx) {
         'QModalLayout',
         'QPopover',
         'QTooltip',
+        'QChatMessage',
         'QAlert',
         'QVideo',
         'QResizeObservable'
