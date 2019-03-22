@@ -184,7 +184,7 @@ export default {
           type: type,
           editing: false,
           slide: false,
-          order: this.nextModOrder,
+          // order: this.nextModOrder,
           time: 0,
           wordcount: 0
         }
