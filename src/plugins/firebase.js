@@ -48,6 +48,8 @@ const firestore = fbapp.firestore()
 // }
 // firestore.settings(settings)
 
+const db = fbapp.database()
+
 const functions = fbapp.functions()
 
 const nqFirestore = nqapp.firestore()
@@ -352,6 +354,83 @@ function getDisplayName (uid) {
 //   return { searchTerms, searchTypes, results: fuse.search(searchTerms).slice(0, 10) }
 // }
 
+var index = {}
+var fullIndex = []
+
+function setIndex () {
+  console.log('setindex', `index/${fbapp.auth().currentUser.uid}`)
+  return db.ref(`index/${fbapp.auth().currentUser.uid}`).on('value', (snap) => {
+    var data = snap.val()
+    Object.keys(data).map((key) => { index[key] = Object.keys(data[key]).map(f => { return { id: f, type: key, ...data[key][f] } }) })
+    // console.log('index pulled', index)
+    fullIndex = [].concat.apply([], ...Object.values(index))
+  })
+}
+
+async function getIndex (type) {
+  if (index !== {}) {
+    if (type) {
+      await index[type]
+      return index[type]
+    } else {
+      await fullIndex
+      return fullIndex
+    }
+  } else {
+    await setIndex()
+    // index = new Promise((resolve, reject) => {
+    //   db.ref(`index/${fbapp.auth().currentUser.uid}`).on('value', (snap) => {
+    //     resolve(snap.val().map((e, key) => { return Object.keys(e).map(f => { return { id: f, type: key, ...e[f] } }) }))
+    //   })
+    // })
+    fullIndex = [].concat.apply([], ...index)
+    return getIndex(type)
+  }
+}
+
+async function search (terms, type, done) {
+  console.log('search function', terms, type)
+  var searchOptions = {
+    threshold: 0.2,
+    // tokenize: true,
+    // includeScore: true,
+    keys: [{
+      name: 'title',
+      weight: 0.3
+    }, {
+      name: 'tags',
+      weight: 0.3
+    }, {
+      name: 'bibleRefs',
+      weight: 0.4
+    }]
+  }
+  var tmpIndex = await getIndex(type)
+  console.log('tmpIndex', tmpIndex)
+  var fuse = new Fuse(tmpIndex, searchOptions)
+  var results = fuse.search(terms)
+  console.log('initresults firebase', results)
+  results.forEach(function (res) {
+    // res.id = res.item['.key']
+    res.label = res.title
+    res.sublabel = res.type
+    res.type = res.type
+  })
+
+  if (done) {
+    done(results)
+  } else {
+    // console.log('results', results, index, fullIndex)
+    return results
+  }
+}
+
+// var lists = {}
+
+// function getList(type) {
+
+// }
+
 export default ({ app, router, Vue }) => {
   Vue.use(FieryVue)
   Vue.prototype.$firebase = {
@@ -372,7 +451,10 @@ export default ({ app, router, Vue }) => {
     nqBibleSearch: nqBibleSearch,
     nqMedia: nqMedia,
     addDocUser: addDocUser,
-    getDisplayName
+    getDisplayName,
+    setIndex,
+    getIndex,
+    search
     // log: function (log, docid, type) {
     //   console.log('route', router.history.current)
     //   firestore.collection('log').add({
