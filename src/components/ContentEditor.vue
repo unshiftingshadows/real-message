@@ -189,6 +189,7 @@ export default {
   },
   methods: {
     editModule (moduleid, sectionid) {
+      console.log('editmodule', moduleid)
       if (moduleid === undefined || moduleid === '') {
         return
       }
@@ -311,8 +312,8 @@ export default {
             })
           }
           console.log('saved')
+          this.editingid = this.tempModule.data.type === 'mainidea' ? '' : newMod.id
           this.tempModule = false
-          this.editingid = newMod.id
           this.editingSection = sectionid
           if (sectionid === 'hook') {
             this.structure.hook.moduleOrder.push(newMod.id)

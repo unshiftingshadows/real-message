@@ -11,6 +11,12 @@
           <q-popover anchor="bottom right" self="top right">
             <q-list>
               <q-item link v-close-overlay @click.native="modMethods.edit(id)" v-if="data.type !== 'mainidea'">Edit</q-item>
+              <!-- <q-checkbox
+                v-if="document.seriesid !== ''"
+                label="Series"
+                color="secondary"
+                v-model="data.series"
+              /> -->
               <q-item link @click.native="modMethods.remove(id)">Delete</q-item>
             </q-list>
           </q-popover>
@@ -102,7 +108,7 @@ export default {
     TextEditor
   },
   name: 'mod-content',
-  props: [ 'id', 'data', 'modMethods', 'modOptions' ],
+  props: [ 'id', 'data', 'modMethods', 'modOptions', 'document' ],
   data () {
     return {
       loading: false,
@@ -229,7 +235,7 @@ export default {
     },
     clicked (e) {
       if (e.srcElement.nodeName !== 'I' && e.srcElement.nodeName !== 'BUTTON') {
-        if (!this.data.editing) {
+        if (this.data.type !== 'mainidea' && !this.data.editing) {
           this.modMethods.edit(this.id)
         }
       }

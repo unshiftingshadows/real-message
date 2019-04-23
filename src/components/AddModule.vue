@@ -212,6 +212,8 @@ export default {
         if (this.omediaTypes.includes(type) || this.nqmediaTypes.includes(type)) {
           obj.mediaid = id
           this.edit('')
+        } else if (type === 'mainidea') {
+          this.edit()
         } else {
           this.edit(id)
         }

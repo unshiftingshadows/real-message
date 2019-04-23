@@ -1,6 +1,6 @@
 <template>
   <q-card color="primary" v-if="!loading">
-    <div v-show="!data.editing || data.editing !== $firebase.auth.currentUser.uid">
+    <div @click="clicked">
       <!-- Drag Handle -->
       <div class="round-borders bg-primary drag-handle" v-if="!$q.platform.is.mobile || $q.platform.is.ipad">
         <q-icon name="fas fa-arrows-alt" size="1rem" />
@@ -10,7 +10,7 @@
         <q-btn v-show="!data.editing" class="float-right cursor-pointer" icon="fas fa-ellipsis-v" color="primary" size="sm">
           <q-popover anchor="bottom right" self="top right">
             <q-list>
-              <q-item link v-close-overlay @click.native="modMethods.edit(id)">Edit</q-item>
+              <q-item link v-close-overlay @click.native="modalOpen()">Edit</q-item>
               <q-item link @click.native="modMethods.remove(id)">Delete</q-item>
             </q-list>
           </q-popover>
@@ -32,31 +32,9 @@
         <p v-if="data.notes && data.notes !== ''">Notes:<br/>{{ data.notes }}</p>
       </q-card-main>
     </div>
-    <div v-if="data.editing === $firebase.auth.currentUser.uid">
-      <q-card-main>
-        <div class="row gutter-sm">
-          <!-- Title Field w/ Close Button -->
-          <div class="col-12">
-            <q-btn class="float-right cursor-pointer" icon="fas fa-times" size="sm" @click.native="modMethods.close" :disabled="loading" />
-            <!-- <q-btn color="primary" @click.native="mediaOpen = true">Edit Media</q-btn> -->
-            <p>Please edit all media from the appropriate media tab</p>
-          </div>
-          <!-- Time Estimation -->
-          <div class="col-12">
-            <q-input type="number" v-model="data.time" float-label="Estimated Time (in minutes)" />
-          </div>
-          <!-- Notes Textarea -->
-          <div class="col-12">
-            <q-input v-model="data.notes" float-label="Notes" type="textarea" :max-height="100" :min-rows="1" />
-          </div>
-          <!-- Save/Delete Buttons -->
-          <div class="col-12">
-            <q-btn color="primary" @click.native="preSave" :disabled="loading">Save</q-btn>
-            <q-btn outline color="negative" @click.native="modMethods.remove(id)" :disabled="loading">Delete</q-btn>
-          </div>
-        </div>
-      </q-card-main>
-    </div>
+    <q-modal ref="showMediaModal" content-classes="media-modal" @hide="modMethods.close()" v-if="$types.MEDIA.includes(data.type)">
+      <component v-bind:is="'media-' + data.type" :data="media" :open="data.editing" :close="modalClose" v-if="data.editing" editable />
+    </q-modal>
     <!-- <q-modal v-model="mediaOpen" content-classes="media-modal" v-if="types.map(e => { return e.value }).includes(media.type)">
       <component v-if="types.map(e => { return e.value }).includes(media.type)" v-bind:is="'media-' + data.type" :data="media" :open="mediaOpen" :close="mediaOpen = false" />
     </q-modal> -->
@@ -84,7 +62,7 @@ export default {
   data () {
     return {
       loading: true,
-      mediaOpen: true,
+      mediaOpen: false,
       media: {
         text: '',
         title: '',
@@ -183,6 +161,21 @@ export default {
           return 'https://player.vimeo.com/video/' + this.media.videoid
         }
       }
+    },
+    clicked (e) {
+      if (e.srcElement.nodeName !== 'I' && e.srcElement.nodeName !== 'BUTTON') {
+        if (!this.data.editing) {
+          this.modalOpen()
+        }
+      }
+    },
+    modalOpen () {
+      this.modMethods.edit(this.id)
+      this.$refs.showMediaModal.show()
+    },
+    modalClose () {
+      this.modMethods.close()
+      this.$refs.showMediaModal.hide()
     }
   }
 }

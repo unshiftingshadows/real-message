@@ -172,7 +172,9 @@ export default {
             this.$q.notify('Invalid media type')
         }
         this.loading = true
-        this.setLoading()
+        if (this.setLoading) {
+          this.setLoading()
+        }
         this.$firebase.list(this.type).add(obj).then((res) => {
           this.refresh(this.type)
           this.$log.info(`${this.type} added`, res)

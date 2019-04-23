@@ -64,6 +64,7 @@
             :remove="removeModule"
             :mod-methods="methods"
             :mod-options="options"
+            :document="document"
             class="module-card"
             v-bind:class="{ 'active-card': modules[modIndex].editing === $firebase.auth.currentUser.uid }"
           />
