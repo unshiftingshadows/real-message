@@ -202,6 +202,7 @@ export default {
             message: `Authenticated user: ${user.email} | ${user.uid}`,
             level: 'info'
           })
+          this.$firebase.setIndex()
           this.user = this.$fiery(this.$firebase.user(), {
             onSuccess: async (userSnap) => {
               if (this.loading) {

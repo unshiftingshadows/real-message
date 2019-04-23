@@ -1,12 +1,13 @@
 <template>
   <q-page padding>
+    <q-search v-model="searchTerms" icon="fas fa-search" class="float-right" @keyup.enter="filter()" />
     <h3>{{ capitalizeTitle(type) }}s <q-btn size="sm" icon="fas fa-plus" color="primary" @click.native="$refs.addMedia.show()" /></h3>
     <div v-if="loading">
       <q-spinner color="primary" class="absolute-center" size="3rem" />
     </div>
     <div v-if="!loading && $types.MEDIA.includes(type)">
       <div v-masonry transition-duration="0.3s" item-selectior=".media-item">
-        <q-card inline v-masonry-tile v-for="item in solidItems" :key="item.id" class="media-card media-item" @click.native="openItem(item.id, item)">
+        <q-card inline v-masonry-tile v-for="item in filteredItems" :key="item.id" class="media-card media-item" @click.native="openItem(item.id, item)">
           <q-card-media v-if="type === 'image' || type === 'video'">
             <img v-if="item.thumbURL" :src="item.thumbURL" />
             <img v-else :src="item.imageURL" />
@@ -51,10 +52,12 @@ export default {
     return {
       type: this.$route.params.type,
       items: [],
+      filteredItems: [],
       loading: false,
       showAddMedia: false,
       showMedia: false,
-      openMedia: {}
+      openMedia: {},
+      searchTerms: ''
     }
   },
   mounted () {
@@ -67,13 +70,19 @@ export default {
       this.init(newType)
     }
   },
-  computed: {
-    solidItems: function () {
-      return this.items.filter((u) => {
-        return u.id
-      })
-    }
-  },
+  // computed: {
+  //   solidItems: function () {
+  //     return this.items.filter((u) => {
+  //       if (this.searchTerms !== '') {
+  //         var searchResults = this.$firebase.search(this.searchTerms, this.type)
+  //         console.log('search results', searchResults)
+  //         // return u.id && searchResults.map(e => e.id).includes(u.id)
+  //       } else {
+  //         return u.id
+  //       }
+  //     })
+  //   }
+  // },
   methods: {
     init (type) {
       this.loading = true
@@ -94,6 +103,11 @@ export default {
             timingLabel: type
           })
           this.loading = false
+          if (this.searchTerms !== '') {
+            this.filter()
+          } else {
+            this.filteredItems = list
+          }
         }
       })
     },
@@ -116,6 +130,18 @@ export default {
     },
     capitalizeTitle (title) {
       return capitalize(title)
+    },
+    async filter () {
+      if (this.searchTerms !== '') {
+        var searchResults = await this.$firebase.search(this.searchTerms, this.type)
+        this.filteredItems = this.items.filter((u) => {
+          console.log('u', u)
+          console.log('search results', searchResults.map(e => e.id).includes(u.id))
+          return searchResults.map(e => e.id).includes(u.id)
+        })
+      } else {
+        this.filteredItems = this.items
+      }
     }
   }
 }
