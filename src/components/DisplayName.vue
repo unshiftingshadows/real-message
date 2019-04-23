@@ -1,5 +1,5 @@
 <template>
-  <span>{{ name }}</span>
+  <span><q-spinner-dots v-if="name === ''" /><span v-if="name !== ''">{{ name }}</span></span>
 </template>
 
 <script>

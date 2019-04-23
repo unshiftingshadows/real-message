@@ -120,6 +120,13 @@
           <h4>Share this Message with...</h4>
         </div>
         <div class="col-12">
+          <q-chip v-for="user in message.users" :key="user" color="primary" style="margin-right: 5px;">
+            <display-name :uid="user" />
+            <span v-if="user === message.ownedBy"> | <strong>Owner</strong></span>
+            <span v-if="user !== $firebase.auth.currentUser.uid && message.ownedBy === $firebase.auth.currentUser.uid"><q-icon name="fas fa-times" size="1rem" class="on-right cursor-pointer" @click.native="removeCollab" /></span>
+          </q-chip>
+        </div>
+        <div class="col-12">
           <q-field
             :error="$v.collabEmail.$error && collabEmail !== ''"
             error-label="Please enter a valid email address"
@@ -162,7 +169,7 @@
               <q-item-separator />
               <q-item v-close-overlay v-if="!message.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
               <q-item v-close-overlay v-if="message.archived" @click.native="removeConfirmation = true" class="text-negative">Remove...</q-item>
-              <q-item v-close-overlay v-if="!message.archived" @click.native="showCollab = true">Collaborate...</q-item>
+              <q-item v-close-overlay v-if="!message.archived && message.ownedBy === $firebase.auth.currentUser.uid" @click.native="showCollab = true">Collaborate...</q-item>
               <!-- <q-item v-close-overlay>Print...</q-item> -->
               <!-- <q-item v-close-overlay>Present...</q-item> -->
             </q-list>
@@ -185,13 +192,15 @@ import ContentEditor from 'components/ContentEditor.vue'
 import ContentPreview from 'components/ContentPreview.vue'
 import CommentPopover from 'components/CommentPopover.vue'
 import MessageDate from 'components/MessageDate.vue'
+import DisplayName from 'components/DisplayName.vue'
 
 export default {
   components: {
     ContentEditor,
     ContentPreview,
     CommentPopover,
-    MessageDate
+    MessageDate,
+    DisplayName
   },
   name: 'Message',
   fiery: true,
@@ -303,6 +312,9 @@ export default {
         }
       })
       console.log('share!')
+    },
+    removeCollab () {
+      console.log('clicked!')
     },
     userHasScrolled (scroll) {
       if (scroll.position < 30) {
