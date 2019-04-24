@@ -407,6 +407,7 @@ async function search (terms, type, done) {
   }
   var tmpIndex = await getIndex(type)
   console.log('tmpIndex', tmpIndex)
+  if (tmpIndex === undefined) return []
   var fuse = new Fuse(tmpIndex, searchOptions)
   var results = fuse.search(terms)
   console.log('initresults firebase', results)
