@@ -70,6 +70,10 @@ function listRef (type) {
   return firestore.collection(`message${type.charAt(0).toUpperCase()}${type.substr(1)}`)
 }
 
+async function getDocumentsFromArray (arr) {
+  return (await Promise.all(arr.map(e => firestore.collection(`message${e.type.charAt(0).toUpperCase()}${e.type.substr(1)}`).doc(e.id).get()))).map((f, i) => { return { id: f.id, ...f.data(), type: arr[i].type } })
+}
+
 function user (uid) {
   if (uid) {
     console.log('valid uid', uid)
@@ -373,7 +377,7 @@ async function getIndex (type) {
   if (index !== {}) {
     if (type) {
       await index[type]
-      return index[type]
+      return index[type] || []
     } else {
       await fullIndex
       return fullIndex
@@ -454,6 +458,7 @@ export default ({ app, router, Vue }) => {
     searchMedia: fbapp.functions().httpsCallable('message-searchMedia'),
     ref: dbref,
     list: listRef,
+    idArray: getDocumentsFromArray,
     user: user,
     imagesRef: fbapp.storage().ref('images'),
     nqAuth: nqapp.auth(),

@@ -3,7 +3,7 @@
     <q-btn round :color="color" icon="fas fa-plus" class="absolute-center" @click.native="showAdd" />
     <add-media :type="type" ref="addMedia" :add-new="addNewMedia" :refresh="init" />
     <!-- TODO: Add a new component here like add-media but that uses the NQ database -->
-    <media-search v-if="!$root.$children[0].user.nqUser" ref="mediasearch" />
+    <media-search v-if="!$root.$children[0].user.nqUser" ref="mediasearch" :sectionid="sectionid" />
   </div>
 </template>
 

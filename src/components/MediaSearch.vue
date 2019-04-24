@@ -66,7 +66,7 @@ export default {
     MediaVideo
   },
   name: 'MediaSearch',
-  // props: ['addModule'],
+  props: ['sectionid'],
   data () {
     return {
       showing: false,
@@ -147,7 +147,7 @@ export default {
           nqmedia: false
         }
         // newRef.set(obj)
-        this.$root.$emit('add-module', obj)
+        this.$root.$emit('add-module', obj, this.sectionid)
       } else {
         this.$log.warn('Incorrect media type for module add')
       }
@@ -173,7 +173,18 @@ export default {
       this.$refs.searchInput.blur()
       const startTime = new Date()
       this.loading = true
-      this.$firebase.searchMedia({ searchTerms: this.searchTerms, searchTypes: this.types.map((e) => { return e.value }) }).then((res) => {
+      // this.$firebase.searchMedia({ searchTerms: this.searchTerms, searchTypes: this.types.map((e) => { return e.value }) }).then((res) => {
+      //   const elapsedTime = new Date() - startTime
+      //   this.$ga.time({
+      //     timingCategory: 'query',
+      //     timingVar: 'media',
+      //     timingValue: elapsedTime,
+      //     timingLabel: 'search'
+      //   })
+      //   this.loading = false
+      //   this.items = res.data.results
+      // })
+      this.$firebase.search(this.searchTerms, this.types.map(e => e.value), async (results) => {
         const elapsedTime = new Date() - startTime
         this.$ga.time({
           timingCategory: 'query',
@@ -182,7 +193,8 @@ export default {
           timingLabel: 'search'
         })
         this.loading = false
-        this.items = res.data.results
+        console.log('results', results)
+        this.items = await this.$firebase.idArray(results)
       })
       // this.$database.search('media', this.searchTerms, {}, (res) => {
       //   this.items = res
