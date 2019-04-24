@@ -1,6 +1,25 @@
 # Changelog
 All notable changes for this project will be documented in this file.
 
+## 0.0.44 - 2019-04-23
+### Added
+- Bible refs preference for Message
+- cumulative time for full message and individual section
+- comments for Messages
+- index for searching media
+- media search
+
+### Changed
+- collaboration popup shows owner
+- users can be removed from collaborating by owner
+- media is now editable from inside a Message
+
+### Fixed
+- preview works properly now with the new module structures
+- application and prayer modules open on click
+- background dims when module is open again
+- prayer autosave
+
 ## 0.0.43 - 2019-03-04
 Cleaning up for final push to 0.1.0
 ### Added
@@ -99,7 +118,7 @@ Cleaning up for final push to 0.1.0
 - problematic modules stuck open are closed on refresh
 
 ## 0.0.38 - 2018-08-31
-SPLIT!!!
+**SPLIT!!!**
 Major split between Builder and Message
 ### Added
 - fiery vue package to manage firebase connections
