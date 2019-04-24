@@ -14,6 +14,13 @@
         <q-toolbar-title>
           <img src="https://real-45953.firebaseapp.com/logos/logo_message_app%402x.png" style="max-height: 40px;" />
         </q-toolbar-title>
+        <q-search v-model="searchTerms" placeholder="Search..." class="on-left" color="dark" inverted icon="fas fa-search">
+          <q-autocomplete
+            @search="search"
+            @selected="selected"
+            ref="searchModal"
+          />
+        </q-search>
         <q-btn
           flat
           round
@@ -235,7 +242,8 @@ export default {
       leftDrawer: !this.$q.platform.is.mobile || this.$q.platform.is.ipad,
       rightDrawer: false,
       showRightDrawer: this.$route.name === 'message',
-      pageType: this.$route.name
+      pageType: this.$route.name,
+      searchTerms: ''
     }
   },
   watch: {
@@ -288,6 +296,13 @@ export default {
       } else {
         window.open(`mailto:support@realchurch.app?subject=REAL Message Support | ${this.$route.name}&body=Route: ${this.$route.path}%0AParams: ${JSON.stringify(this.$route.params)}%0AQuery: ${JSON.stringify(this.$route.query)}%0A%0A`, '_self')
       }
+    },
+    search (searchInput, done) {
+      this.$firebase.search(searchInput, ['message', 'series'], done)
+    },
+    selected (item) {
+      console.log('selected', item)
+      this.$router.push({ name: item.type, params: { id: item.id } })
     }
   }
 }

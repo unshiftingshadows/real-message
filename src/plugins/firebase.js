@@ -362,12 +362,14 @@ function setIndex () {
   return db.ref(`index/${fbapp.auth().currentUser.uid}`).on('value', (snap) => {
     var data = snap.val()
     Object.keys(data).map((key) => { index[key] = Object.keys(data[key]).map(f => { return { id: f, type: key, ...data[key][f] } }) })
-    // console.log('index pulled', index)
-    fullIndex = [].concat.apply([], ...Object.values(index))
+    console.log('index pulled', index)
+    fullIndex = [].concat.apply([], Object.values(index))
+    console.log('fullindex', fullIndex)
   })
 }
 
 async function getIndex (type) {
+  console.log('getindex', type)
   if (index !== {}) {
     if (type) {
       await index[type]
@@ -383,7 +385,7 @@ async function getIndex (type) {
     //     resolve(snap.val().map((e, key) => { return Object.keys(e).map(f => { return { id: f, type: key, ...e[f] } }) }))
     //   })
     // })
-    fullIndex = [].concat.apply([], ...index)
+    // fullIndex = [].concat.apply([], ...index)
     return getIndex(type)
   }
 }
@@ -396,16 +398,24 @@ async function search (terms, type, done) {
     // includeScore: true,
     keys: [{
       name: 'title',
-      weight: 0.3
+      weight: 0.2
+    }, {
+      name: 'text',
+      weight: 0.2
     }, {
       name: 'tags',
       weight: 0.3
     }, {
       name: 'bibleRefs',
-      weight: 0.4
+      weight: 0.3
     }]
   }
-  var tmpIndex = await getIndex(type)
+  var tmpIndex = []
+  if (type instanceof Array) {
+    tmpIndex = [].concat.apply([], (await Promise.all(type.map(async e => getIndex(e)))))
+  } else {
+    tmpIndex = await getIndex(type)
+  }
   console.log('tmpIndex', tmpIndex)
   if (tmpIndex === undefined) return []
   var fuse = new Fuse(tmpIndex, searchOptions)
