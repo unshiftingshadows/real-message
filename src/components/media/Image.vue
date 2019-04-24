@@ -1,6 +1,6 @@
 <template>
   <div v-if="open">
-    <div class="row gutter-sm" v-if="!editing">
+    <div class="row gutter-sm" v-if="!editing && editonly !== ''">
       <div class="col-12">
         <q-btn icon="fas fa-times" size="xs" color="primary" @click.native="close" class="float-right" />
         <img :src="image.imageURL" width="100%" />
@@ -13,7 +13,7 @@
         <q-btn color="primary" v-if="addModule !== undefined" @click.native="add">Add</q-btn>
       </div>
     </div>
-    <div class="row gutter-sm" v-if="editing">
+    <div class="row gutter-sm" v-if="editing || editonly === ''">
       <div class="col-12">
         <img :src="image.imageURL" width="100%" />
       </div>
@@ -33,7 +33,7 @@
       </div>
       <div class="col-12">
         <q-btn color="primary" @click.native="save()" v-if="!showRemove">Save</q-btn>&nbsp;
-        <q-btn color="negative" @click.native="showRemove = true" v-if="!showRemove">Remove</q-btn>
+        <q-btn color="negative" @click.native="showRemove = true" v-if="!showRemove && editonly !== ''">Remove</q-btn>
         <q-alert
           v-if="showRemove"
           color="negative"
@@ -54,7 +54,7 @@
 import { Notify } from 'quasar'
 
 export default {
-  props: ['data', 'open', 'close', 'addModule', 'editable'],
+  props: ['data', 'open', 'close', 'addModule', 'editable', 'editonly'],
   name: 'media-image',
   fiery: true,
   data () {
@@ -99,6 +99,9 @@ export default {
           position: 'bottom-left'
         })
         this.editing = false
+        if (this.editonly === '') {
+          this.close()
+        }
       })
     },
     async remove () {

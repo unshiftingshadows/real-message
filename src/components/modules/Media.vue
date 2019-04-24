@@ -33,7 +33,7 @@
       </q-card-main>
     </div>
     <q-modal ref="showMediaModal" content-classes="media-modal" @hide="modMethods.close()" v-if="$types.MEDIA.includes(data.type)">
-      <component v-bind:is="'media-' + data.type" :data="media" :open="data.editing" :close="modalClose" v-if="data.editing" editable />
+      <component v-bind:is="'media-' + data.type" :data="media" :open="data.editing" :close="modalClose" v-if="data.editing" editable editonly />
     </q-modal>
     <!-- <q-modal v-model="mediaOpen" content-classes="media-modal" v-if="types.map(e => { return e.value }).includes(media.type)">
       <component v-if="types.map(e => { return e.value }).includes(media.type)" v-bind:is="'media-' + data.type" :data="media" :open="mediaOpen" :close="mediaOpen = false" />
