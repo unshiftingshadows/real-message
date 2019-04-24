@@ -312,7 +312,7 @@ export default {
             })
           }
           console.log('saved')
-          this.editingid = this.tempModule.data.type === 'mainidea' ? '' : newMod.id
+          this.editingid = this.contentTypes.includes(this.tempModule.data.type) ? newMod.id : ''
           this.tempModule = false
           this.editingSection = sectionid
           if (sectionid === 'hook') {

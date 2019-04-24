@@ -180,7 +180,7 @@
         {{ message.mainIdea }}
       </div>
     </q-page-sticky>
-    <comment-popover />
+    <!-- <comment-popover /> -->
     <q-scroll-observable @scroll="userHasScrolled" />
   </q-page>
 </template>

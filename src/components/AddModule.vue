@@ -3,15 +3,18 @@
     <q-btn round :color="color" icon="fas fa-plus" class="absolute-center" @click.native="showAdd" />
     <add-media :type="type" ref="addMedia" :add-new="addNewMedia" :refresh="init" />
     <!-- TODO: Add a new component here like add-media but that uses the NQ database -->
+    <media-search v-if="!$root.$children[0].user.nqUser" ref="mediasearch" />
   </div>
 </template>
 
 <script>
 import AddMedia from 'components/AddMedia.vue'
+import MediaSearch from 'components/MediaSearch.vue'
 
 export default {
   components: {
-    AddMedia
+    AddMedia,
+    MediaSearch
   },
   name: 'AddModule',
   props: [ 'nextModOrder', 'sectionid', 'close', 'edit', 'contentType', 'dark' ],
@@ -104,6 +107,19 @@ export default {
       ]
       if (!this.$root.$children[0].user.nqUser) {
         actions.push({})
+        if (!this.$root.$children[0].user.nqUser) {
+          actions.push({
+            label: 'Existing...',
+            color: 'primary',
+            icon: 'fas fa-file',
+            handler: () => {
+              console.log('exisiting!')
+              this.type = 'existing'
+              // Show media chooser
+              this.$refs.mediasearch.show()
+            }
+          })
+        }
         if (this.$root.$children[0].user.app.message.prefs.mediaType.quote) {
           actions.push({
             label: 'Quote',

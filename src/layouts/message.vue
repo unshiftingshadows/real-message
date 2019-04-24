@@ -129,7 +129,7 @@
           <q-item-main label="Log Out" class="on-right" />
           <q-tooltip anchor="center left" self="center right" :disable="$q.platform.is.mobile">Log Out</q-tooltip>
         </q-item>
-        <div class="fixed-bottom" v-if="!$q.platform.is.mobile">
+        <div class="fixed-bottom" v-if="!$q.platform.is.mobile || $q.platform.is.ipad">
           <q-item link class="menu-item" @click.native="openDonate()">
             <q-item-tile icon="fas fa-donate fab" />
             <q-item-main label="Donate" class="on-right" />
@@ -163,7 +163,7 @@
             </q-popover>
           </q-item>
         </div>
-        <div class="fixed-bottom" v-if="$q.platform.is.mobile" style="padding: 30px;">
+        <div class="fixed-bottom" v-if="$q.platform.is.mobile && !$q.platform.is.ipad" style="padding: 30px;">
           <q-btn label="Give" icon="fas fa-donate" class="float-left" color="primary" />
           <q-btn round class="float-right">
             <img src="https://real-45953.firebaseapp.com/icons/icon_church%402x.png" width="42px" />
@@ -201,10 +201,11 @@
       :breakpoint="1200"
       v-if="$route.name === 'message'"
     >
-      <q-scroll-area class="fit q-pa-sm">
-        <resources add />
+      <drawer-comments />
+      <!-- <q-scroll-area class="fit q-pa-sm"> -->
+        <!-- <resources add /> -->
         <!-- <drawer-message /> -->
-      </q-scroll-area>
+      <!-- </q-scroll-area> -->
     </q-layout-drawer>
 
     <q-page-container>
@@ -220,11 +221,13 @@
 import { openURL } from 'quasar'
 import Resources from 'components/Resources.vue'
 import Polls from 'components/Polls.vue'
+import DrawerComments from 'components/DrawerComments.vue'
 
 export default {
   components: {
     Resources,
-    Polls
+    Polls,
+    DrawerComments
   },
   name: 'LayoutMessage',
   data () {

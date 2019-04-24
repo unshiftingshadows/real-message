@@ -1,13 +1,12 @@
 <template>
-  <div>
-    <q-btn icon="fas fa-comments" color="primary" size="lg" class="comment-btn" round @click="init()" />
-    <div>
-      <q-popover v-model="showing" ref="popover" class="comment-popover" :fit="$q.platform.is.mobile" @show="$refs.textinput.focus()">
-        <div style="margin-bottom: 15px;">
-          <span class="q-title">Comments</span>
-          <q-spinner v-if="loading" size="1.5rem" class="on-right" color="primary" />
-        </div>
-        <div class="comment-div" v-if="!loading">
+  <div style="height: 100%">
+    <div class="comment-div">
+      <div style="margin-bottom: 15px;">
+        <!-- <span class="q-title">Comments</span> -->
+        <q-spinner v-if="loading" size="1.5rem" class="on-right" color="primary" />
+      </div>
+      <div class="comment-section">
+        <div v-if="!loading" class="comment-list">
           <span v-if="comments.length < 1">No comments...</span>
           <div v-for="comment in cleanComments" :key="comment.id">
             <display-name class="q-caption" v-if="comment.uid !== $firebase.auth.currentUser.uid" :uid="comment.uid" />
@@ -50,7 +49,7 @@
             }
           ]"
         />
-      </q-popover>
+      </div>
     </div>
   </div>
 </template>
@@ -63,11 +62,10 @@ export default {
   components: {
     DisplayName
   },
-  name: 'Comments',
+  name: 'DrawerComments',
   fiery: true,
   data () {
     return {
-      showing: false,
       loading: true,
       comments: [],
       newComment: ''
@@ -90,6 +88,9 @@ export default {
       return merged
     }
   },
+  mounted () {
+    this.init()
+  },
   methods: {
     init () {
       console.log('init')
@@ -101,15 +102,11 @@ export default {
           exclude: ['id', 'name'],
           onSuccess: () => {
             this.loading = false
-            this.$refs.popover.show()
           }
         })
-      } else {
-        this.showing = !this.showing
       }
     },
     addComment () {
-      this.$refs.popover.toggle()
       console.log('add', this.newComment)
       this.$fiery.create(this.comments, {
         message: this.newComment,
@@ -125,32 +122,14 @@ export default {
 
 <style>
 
-.comment-btn {
-  position: fixed;
-  right: 30px;
-  bottom: 30px;
-}
-
-.comment-popover {
+.comment-div {
   position: absolute;
-  top: auto !important;
-  left: auto !important;
-  right: 30px !important;
-  bottom: 100px !important;
-  min-width: 25vh !important;
-  padding: 30px !important;
+  bottom: 0;
+  padding: 10px;
+  width: 100%;
+  max-height: 100%;
+  /* overflow-y: auto;
+  overflow-x: visible; */
 }
-
-@media screen and (min-width: 1200px) {
-  .comment-popover {
-    width: 500px;
-  }
-}
-
-/* .comment-div {
-  max-height: 50vh;
-  overflow-y: auto;
-  overflow-x: visible;
-} */
 
 </style>

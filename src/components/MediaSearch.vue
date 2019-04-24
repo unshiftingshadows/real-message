@@ -1,47 +1,49 @@
 <template>
-  <div>
-    <div class="row gutter-sm">
-      <div class="col-12">
-        <q-input v-model="searchTerms" @keyup.enter="search" ref="searchInput" />
-      </div>
-      <div class="col-12">
-        <q-select
-          :value="selectedTypes"
-          @change="val => { selectedTypes = val }"
-          multiple
-          :options="types"
-        />
-      </div>
-      <div class="col-12" v-if="loading">
-        <q-spinner color="primary" class="absolute-center" size="3rem" />
-      </div>
-      <div class="col-12" v-if="!loading">
-        <div v-masonry transition-duration="0.3" item-selection=".media-cardl">
-          <q-card v-for="item in showItems" :key="item.id" color="primary" inline v-bind:class="[item.type] + 'l'" class="media-cardl" @click.native="openItem(item, item.type)">
-            <!-- <q-icon name="fas fa-plus" color="positive" class="float-right cursor-pointer" style="margin-top: 5px; margin-right: 5px;" /> -->
-            <q-card-media v-if="item.type == 'video'">
-              <img :src="item.thumbURL" />
-            </q-card-media>
-            <q-card-media v-if="item.type == 'image'">
-              <img :src="item.imageURL" />
-            </q-card-media>
-            <q-card-title v-if="item.type == 'video' || item.type === 'lyric'">
-              {{ item.title }}
-            </q-card-title>
-            <q-card-main v-if="item.type === 'quote' || item.type === 'illustration'">
-              <p v-if="item.type === 'illustration'"><b>{{ item.title }}</b></p>
-              <p>{{ item.text }}</p>
-              <p class="q-body-2 float-right" v-if="item.type === 'quote' && (item.author !== '' || item.title !== '')">{{ item.author }}<span v-if="item.author !== '' && item.title !== ''"> - </span>{{ item.title }}</p>
-              <p class="q-body-2 float-right" v-if="item.type === 'illustration'">{{ item.author }}</p>
-            </q-card-main>
-          </q-card>
+  <q-modal ref="modal" v-model="showing">
+    <div class="search-modal">
+      <div class="row gutter-sm">
+        <div class="col-12">
+          <q-input v-model="searchTerms" @keyup.enter="search" ref="searchInput" />
+        </div>
+        <div class="col-12">
+          <q-select
+            :value="selectedTypes"
+            @change="val => { selectedTypes = val }"
+            multiple
+            :options="types"
+          />
+        </div>
+        <div class="col-12" v-if="loading">
+          <q-spinner color="primary" class="absolute-center" size="3rem" />
+        </div>
+        <div class="col-12" v-if="!loading">
+          <div v-masonry transition-duration="0.3" item-selection=".media-cardl">
+            <q-card v-for="item in showItems" :key="item.id" color="primary" inline v-bind:class="[item.type] + 'l'" class="media-cardl" @click.native="openItem(item, item.type)">
+              <!-- <q-icon name="fas fa-plus" color="positive" class="float-right cursor-pointer" style="margin-top: 5px; margin-right: 5px;" /> -->
+              <q-card-media v-if="item.type == 'video'">
+                <img :src="item.thumbURL" />
+              </q-card-media>
+              <q-card-media v-if="item.type == 'image'">
+                <img :src="item.imageURL" />
+              </q-card-media>
+              <q-card-title v-if="item.type == 'video' || item.type === 'lyric'">
+                {{ item.title }}
+              </q-card-title>
+              <q-card-main v-if="item.type === 'quote' || item.type === 'illustration'">
+                <p v-if="item.type === 'illustration'"><b>{{ item.title }}</b></p>
+                <p>{{ item.text }}</p>
+                <p class="q-body-2 float-right" v-if="item.type === 'quote' && (item.author !== '' || item.title !== '')">{{ item.author }}<span v-if="item.author !== '' && item.title !== ''"> - </span>{{ item.title }}</p>
+                <p class="q-body-2 float-right" v-if="item.type === 'illustration'">{{ item.author }}</p>
+              </q-card-main>
+            </q-card>
+          </div>
         </div>
       </div>
     </div>
     <q-modal v-model="mediaOpen" content-classes="media-modal" v-if="types.map(e => { return e.value }).includes(media.type)">
       <component v-if="types.map(e => { return e.value }).includes(media.type)" v-bind:is="'media-' + media.type" :data="media" :addModule="addModule" :open="mediaOpen" :close="closeMedia" />
     </q-modal>
-  </div>
+  </q-modal>
 </template>
 
 <script>
@@ -53,6 +55,7 @@ import MediaLyric from 'components/media/Lyric.vue'
 import MediaVideo from 'components/media/Video.vue'
 
 const { capitalize } = format
+var mediaTypes = ['quote', 'image', 'illustration', 'lyric', 'video']
 
 export default {
   components: {
@@ -63,9 +66,10 @@ export default {
     MediaVideo
   },
   name: 'MediaSearch',
-  props: ['addModule'],
+  // props: ['addModule'],
   data () {
     return {
+      showing: false,
       loading: false,
       searchTerms: '',
       items: [],
@@ -130,6 +134,25 @@ export default {
     }
   },
   methods: {
+    addModule (id, type) {
+      if (mediaTypes.includes(type)) {
+        // var newRef = this.$firebase.ref(this.type, 'modules', this.id).push()
+        var obj = {
+          mediaid: id,
+          editing: false,
+          slide: false,
+          time: 0,
+          wordcount: 0,
+          type: type,
+          nqmedia: false
+        }
+        // newRef.set(obj)
+        this.$root.$emit('add-module', obj)
+      } else {
+        this.$log.warn('Incorrect media type for module add')
+      }
+      this.showing = false
+    },
     openItem (item, type) {
       if (this.types.map(function (e) { return e.value }).includes(type)) {
         this.mediaOpen = true
@@ -164,12 +187,25 @@ export default {
       // this.$database.search('media', this.searchTerms, {}, (res) => {
       //   this.items = res
       // })
+    },
+    show () {
+      console.log('mediasearch show')
+      this.$refs.modal.show()
+    },
+    hide () {
+      this.$refs.modal.hide()
     }
   }
 }
 </script>
 
 <style>
+.search-modal {
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
+}
+
 .media-cardl {
   margin: 5px;
   width: 100%;
@@ -190,6 +226,10 @@ export default {
 @media screen and (min-width: 800px) {
   .media-modal {
     width: 500px;
+  }
+  .search-modal {
+    width: 500px;
+    height: 50vh;
   }
 }
 </style>
