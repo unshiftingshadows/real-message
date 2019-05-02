@@ -4,7 +4,7 @@
       <q-card-title>
         <q-btn :disabled="data.editing" class="float-right cursor-sectioner" icon="fas fa-edit" color="primary" size="sm" @click.native="edit(id)" />
         <span class="float-right" style="font-size: .8rem; vertical-align: top; line-height: 1rem;">{{ data.time }} minutes&nbsp;&nbsp;&nbsp;</span>
-        Prayer
+        {{ $root.$children[0].user.app.message.prefs.structureNames.prayer }}
         <span slot="subtitle" v-if="data.title !== ''">{{ data.title }}</span>
       </q-card-title>
       <q-card-main>
@@ -14,7 +14,7 @@
     <div v-if="data.editing === $firebase.auth.currentUser.uid">
       <q-card-title>
         <q-btn link class="float-right cursor-sectioner" icon="fas fa-times" color="primary" size="sm" @click.native="close" />
-        Prayer
+        {{ $root.$children[0].user.app.message.prefs.structureNames.prayer }}
       </q-card-title>
       <q-card-main>
         <div class="row gutter-sm">

@@ -17,7 +17,7 @@
         <q-icon v-if="!open" name="fas fa-caret-right cursor-pointer" style="margin-top: -5px; padding-left: 4px; padding-right: 4px;" size="2rem" @click.native="open = true" />
         <q-icon v-if="open" name="fas fa-caret-down cursor-pointer" style="margin-top: -5px;" size="2rem" @click.native="open = false" />
         &nbsp;
-        {{ id === 'hook' ? 'Hook' : id === 'bible' ? 'Bible Refs' : data.title }}
+        {{ id === 'hook' ? 'Hook' : id === 'bible' ? $root.$children[0].user.app.message.prefs.structureNames.bible : data.title }}
       </h5>
     </q-card-title>
     <div class="row gutter-sm" style="padding-left: 10px; padding-right: 10px;" v-if="open && data.moduleOrder">

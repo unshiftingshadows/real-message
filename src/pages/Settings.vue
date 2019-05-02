@@ -52,6 +52,7 @@
             />
             <q-input type="number" float-label="Speaking Speed" placeholder="120" v-model="$root.$children[0].user.app.message.prefs.speakingSpeed" @blur="prefChange" />
             <q-input type="text" float-label="Hook Name" placeholder="Hook" v-model="$root.$children[0].user.app.message.prefs.structureNames.hook" @blur="prefChange" />
+            <q-input type="text" float-label="Bible Refs Name" placeholder="Bible" v-model="$root.$children[0].user.app.message.prefs.structureNames.bible" @blur="prefChange" />
             <q-input type="text" float-label="Application Name" placeholder="Application" v-model="$root.$children[0].user.app.message.prefs.structureNames.application" @blur="prefChange" />
             <q-input type="text" float-label="Prayer Name" placeholder="Prayer" v-model="$root.$children[0].user.app.message.prefs.structureNames.prayer" @blur="prefChange" />
             <div class="row" v-if="!$root.$children[0].user.nqUser">
