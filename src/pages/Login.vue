@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page padding :style="{ 'padding-bottom': focused && $q.platform.is.mobile ? '1000px' : 'inherit' }">
     <q-card class="absolute-center login-card">
       <q-card-title align="center">
         <div class="q-display-1">Login</div>
@@ -15,6 +15,7 @@
                 float-label="Email"
                 type="email"
                 v-model="form.email"
+                @focus="focus"
                 @blur="$v.form.email.$touch"
                 @keyup.enter="login"
               />
@@ -29,6 +30,7 @@
                 float-label="Password"
                 type="password"
                 v-model="form.pswd"
+                @focus="focus"
                 @blur="$v.form.pswd.$touch"
                 @keyup.enter="login"
               />
@@ -83,7 +85,8 @@ export default {
         email: '',
         pswd: ''
       },
-      forgotPassword: false
+      forgotPassword: false,
+      focused: false
     }
   },
   validations: {
@@ -155,6 +158,10 @@ export default {
         this.$ga.event('auth', 'reset-password', 'error', err.message || err)
         Notify.create(err.message)
       })
+    },
+    focus () {
+      console.log('focused')
+      this.focused = true
     }
   }
 }
