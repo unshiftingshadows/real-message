@@ -28,7 +28,7 @@ export default {
     return {
       order: false,
       document: this.$fiery(this.$firebase.list(this.type), {
-        query: doc => doc.where(this.$firebase.base.firestore.FieldPath.documentId(), '>=', this.$firebase.list(this.type).doc()),
+        query: doc => doc.where('user', '==', this.$firebase.auth.currentUser.uid).where(this.$firebase.base.firestore.FieldPath.documentId(), '>=', this.$firebase.list(this.type).doc()),
         key: 'id',
         exclude: ['id'],
         onSuccess: (final) => {
@@ -43,7 +43,7 @@ export default {
     refresh () {
       this.order = !this.order
       this.document = this.$fiery(this.$firebase.list(this.type), {
-        query: doc => doc.where(this.$firebase.base.firestore.FieldPath.documentId(), this.order ? '>=' : '<=', this.$firebase.list(this.type).doc()),
+        query: doc => doc.where('user', '==', this.$firebase.auth.currentUser.uid).where(this.$firebase.base.firestore.FieldPath.documentId(), this.order ? '>=' : '<=', this.$firebase.list(this.type).doc()),
         key: 'id',
         exclude: ['id'],
         onSuccess: (final) => {
