@@ -5,7 +5,7 @@
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
       <div class="col-12" v-if="!loading" style="margin-top: 20px;">
-        <q-input v-model="message.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update" />
+        <q-input v-model="message.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update()" />
       </div>
       <div class="col-xs-12 col-md-6" v-if="!loading">
         <q-chips-input
@@ -148,7 +148,7 @@
       </div>
     </q-modal>
     <message-date ref="messageDateModal" :dates="message.dates" />
-    <q-page-sticky position="top">
+    <q-page-sticky expand position="top">
       <q-toolbar color="secondary" style="z-index: 10;">
         <q-toolbar-title>
           {{ message.title }}

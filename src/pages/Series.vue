@@ -4,8 +4,8 @@
       <div class="col-xs-12" v-if="loading">
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
-      <div class="col-12" v-if="!loading">
-        <q-input :value="series.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @change="update()" :readonly="!fullAccess" />
+      <div class="col-12" v-if="!loading" style="margin-top: 20px;">
+        <q-input v-model="series.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update()" :readonly="!fullAccess" />
       </div>
       <div class="col-xs-12 col-md-6" v-if="!loading">
         <q-chips-input
@@ -123,7 +123,7 @@
         </div>
       </div>
     </q-modal>
-    <q-page-sticky position="top">
+    <q-page-sticky expand position="top">
       <q-toolbar color="secondary" style="z-index: 10;">
         <q-toolbar-title>
           {{ series.title }}
