@@ -68,6 +68,15 @@ export default {
       this.type = newType
       this.$fiery.free(this.items)
       this.init(newType)
+    },
+    items (items) {
+      this.loading = true
+      if (!this.items.includes(undefined)) {
+        console.log('no undefined')
+        this.loading = false
+      } else {
+        console.log('undefined...')
+      }
     }
   },
   // computed: {
@@ -94,6 +103,7 @@ export default {
         key: 'id',
         exclude: ['id'],
         onSuccess: (list) => {
+          console.log('updated list')
           this.loading = true
           const timeElapsed = new Date() - startTime
           this.$ga.time({
@@ -102,6 +112,7 @@ export default {
             timingValue: timeElapsed,
             timingLabel: type
           })
+          console.log('loading to false', list)
           this.loading = false
           if (this.searchTerms !== '') {
             this.filter()
