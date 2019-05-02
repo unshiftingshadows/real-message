@@ -14,13 +14,29 @@
         <q-toolbar-title>
           <img src="https://real-45953.firebaseapp.com/logos/logo_message_app%402x.png" style="max-height: 40px;" />
         </q-toolbar-title>
-        <q-search v-model="searchTerms" placeholder="Search..." class="on-left" color="dark" inverted icon="fas fa-search">
+        <q-search
+          v-model="searchTerms"
+          placeholder="Search..."
+          class="on-left"
+          inverted
+          color="secondary"
+          icon="fas fa-search"
+          v-if="!$q.platform.is.mobile || $q.platform.is.ipad"
+        >
           <q-autocomplete
             @search="search"
             @selected="selected"
             ref="searchModal"
           />
         </q-search>
+        <q-btn
+          flat
+          round
+          dense
+          icon="fas fa-search"
+          @click="mobileSearch = true"
+          v-if="$q.platform.is.mobile && !$q.platform.is.ipad"
+        />
         <q-btn
           flat
           round
@@ -221,6 +237,29 @@
       <!-- <polls /> -->
     </q-page-container>
 
+    <q-modal v-model="mobileSearch" minimized position="top" :content-css="{minWidth: '100vw', maxWidth: 'none', padding: '20px'}">
+      <!-- <q-btn
+        color="primary"
+        @click.native="mobileSearch = false"
+        icon="fas fa-times"
+        size="sm"
+      /> -->
+      <q-search
+        v-model="searchTerms"
+        placeholder="Search..."
+        class="on-left"
+        inverted
+        color="secondary"
+        icon="fas fa-search"
+      >
+        <q-autocomplete
+          @search="search"
+          @selected="selected"
+          ref="searchModal"
+        />
+      </q-search>
+    </q-modal>
+
   </q-layout>
 </template>
 
@@ -243,7 +282,8 @@ export default {
       rightDrawer: false,
       showRightDrawer: this.$route.name === 'message',
       pageType: this.$route.name,
-      searchTerms: ''
+      searchTerms: '',
+      mobileSearch: false
     }
   },
   watch: {
