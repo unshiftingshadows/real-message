@@ -6,6 +6,7 @@
       label="Print"
       style="position: fixed; top: 30px; left: 30px; z-index: 1000;"
       size="sm"
+      v-if="!$q.platform.is.mobile || $q.platform.is.ipad"
     />
     <q-btn
       color="primary"
@@ -14,36 +15,34 @@
       style="position: fixed; top: 30px; right: 30px; z-index: 1000;"
       size="sm"
     />
-    <q-scroll-area style="width: 100%; height: 100vh;" id="print-preview">
-      <div class="row gutter-sm justify-center" v-if="value">
-        <div class="col-12 col-md-10">
-          <h3>{{ document.title }}</h3>
-          <hr/>
-          <div class="q-title">{{ document.mainIdea }}</div>
-          <br/>
-        </div>
-        <!-- Before -->
-        <div class="col-12 col-md-10" v-if="structure && document.prefs.hook">
-          <preview-section id="hook" :data="structure.hook" :document="document" :modules="modules" :content-type="type" :contentid="id" class="section-preview" />
-        </div>
-        <div class="col-12 col-md-10" v-if="structure && document.prefs.bible">
-          <preview-section id="bible" :document="document" :content-type="type" :contentid="id" class="section-preview" />
-        </div>
-        <!-- Sections -->
-        <div class="col-12 col-md-10" v-if="document.sectionOrder && document.sectionOrder.length > 0 && Object.keys(sections).length > 0">
-          <preview-section v-for="orderIndex in document.sectionOrder" :key="orderIndex" :id="orderIndex" :document="document" :data="sections[orderIndex]" :modules="modules" :content-type="type" :contentid="id" class="section-preview" />
-        </div>
-        <!-- Modules -->
-        <!-- <div class="col-12" v-if="modules.length > 0">
-          <component v-for="mod in modules" :key="mod['.key']" v-bind:is="'preview-' + mod.type" :id="mod['.key']" :data="mod" class="module-preview" />
-        </q-modal> -->
-        <!-- After -->
-        <div class="col-12 col-md-10">
-          <preview-application v-if="structure.after && structure.after.application.show" id="application" :data="structure.after.application" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.after.application.editing === $firebase.auth.currentUser.uid }" />
-          <preview-prayer v-if="structure.after && structure.after.prayer.show" id="prayer" :data="structure.after.prayer" :edit="editModule" :save="saveModule" :autosave="autoSaveModule" :close="closeModule" :remove="removeModule" class="module-card" v-bind:class="{ 'active-card': structure.after.prayer.editing === $firebase.auth.currentUser.uid }" />
-        </div>
+    <div class="row gutter-sm justify-center" v-if="value">
+      <div class="col-12 col-md-10">
+        <h3>{{ document.title }}</h3>
+        <hr/>
+        <div class="q-title">{{ document.mainIdea }}</div>
+        <br/>
       </div>
-    </q-scroll-area>
+      <!-- Before -->
+      <div class="col-12 col-md-10" v-if="structure && document.prefs.hook">
+        <preview-section id="hook" :data="structure.hook" :document="document" :modules="modules" :content-type="type" :contentid="id" class="section-preview" />
+      </div>
+      <div class="col-12 col-md-10" v-if="structure && document.prefs.bible">
+        <preview-section id="bible" :document="document" :content-type="type" :contentid="id" class="section-preview" />
+      </div>
+      <!-- Sections -->
+      <div class="col-12 col-md-10" v-if="document.sectionOrder && document.sectionOrder.length > 0 && Object.keys(sections).length > 0">
+        <preview-section v-for="orderIndex in document.sectionOrder" :key="orderIndex" :id="orderIndex" :document="document" :data="sections[orderIndex]" :modules="modules" :content-type="type" :contentid="id" class="section-preview" />
+      </div>
+      <!-- Modules -->
+      <!-- <div class="col-12" v-if="modules.length > 0">
+        <component v-for="mod in modules" :key="mod['.key']" v-bind:is="'preview-' + mod.type" :id="mod['.key']" :data="mod" class="module-preview" />
+      </q-modal> -->
+      <!-- After -->
+      <div class="col-12 col-md-10">
+        <preview-application v-if="structure && document.prefs.application" id="application" :data="structure.application" class="section-preview"  />
+        <preview-prayer v-if="structure && document.prefs.prayer" id="prayer" :data="structure.prayer" class="section-preview"  />
+      </div>
+    </div>
   </q-modal>
 </template>
 
@@ -98,8 +97,9 @@ export default {
 <style>
 
 .preview-modal {
-  padding: 30px;
-  width: 100%
+  padding: 40px 10px;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .module-preview {

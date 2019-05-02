@@ -1,7 +1,7 @@
 <template>
   <q-card flat>
     <q-card-title style="margin-bottom: 20px;">
-      <div class="q-display-1 text-weight-bold">{{ id === 'hook' ? 'Hook' : id === 'bible' ? 'Bible' : data.title }}</div>
+      <div class="q-display-1 text-weight-bold">{{ id === 'hook' ? $root.$children[0].user.app.message.prefs.structureNames.hook : id === 'bible' ? $root.$children[0].user.app.message.prefs.structureNames.bible : data.title }}</div>
       <hr/>
     </q-card-title>
     <q-card-main>
