@@ -10,6 +10,7 @@ module.exports = function (ctx) {
       // 'database',
       'firebase',
       'masonry',
+      'pdf',
       'sentry',
       'types',
       // 'vuefire',

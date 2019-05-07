@@ -15,7 +15,7 @@
       style="position: fixed; top: 30px; right: 30px; z-index: 1000;"
       size="sm"
     />
-    <div class="row gutter-sm justify-center" v-if="value">
+    <div class="row gutter-sm justify-center" id="print-preview" v-if="value">
       <div class="col-12 col-md-10">
         <h3>{{ document.title }}</h3>
         <hr/>
@@ -83,12 +83,51 @@ export default {
   },
   methods: {
     print () {
-      const currentTheme = this.$root.$children[0].user.app.prefs.theme
-      this.$root.$children[0].user.app.prefs.theme = 'light'
-      this.$nextTick(() => {
-        window.print()
-        this.$root.$children[0].user.app.prefs.theme = currentTheme
-      })
+      this.$pdf.save({ document: this.document, modules: this.modules, sections: this.sections, structure: this.structure }, this.$firebase.auth.currentUser.displayName, this.$root.$children[0].user)
+      // const currentTheme = this.$root.$children[0].user.app.prefs.theme
+      // // this.$root.$children[0].user.app.prefs.theme = 'light'
+      // this.$nextTick(() => {
+      //   // window.print()
+      //   // this.$pdf.save(document.getElementById('previewContent'), this.document.title)
+      //   // this.$pdf.save(this.printDiv('previewContent', this.document.title), this.document.title)
+      //   // console.log('html', document.getElementById('previewContent').innerHTML)
+      //   this.$root.$children[0].user.app.prefs.theme = currentTheme
+      // })
+    },
+    printDiv (id, title) {
+      let mywindow = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150')
+
+      var css = []
+      for (var sheeti = 0; sheeti < document.styleSheets.length; sheeti++) {
+        var sheet = document.styleSheets[sheeti]
+        if (sheet.href === null) {
+          var rules = ('cssRules' in sheet) ? sheet.cssRules : ('rules' in sheet) ? sheet.rules : []
+          for (var rulei = 0; rulei < rules.length; rulei++) {
+            var rule = rules[rulei]
+            if ('cssText' in rule) {
+              css.push(rule.cssText)
+            } else {
+              css.push(rule.selectorText + ' {\n' + rule.style.cssText + '\n}\n')
+            }
+          }
+        }
+      }
+
+      mywindow.document.write(`<html><head><title>${title}</title>`)
+      mywindow.document.write(`<style type="text/css">${css.join('\n')}</style>`)
+      mywindow.document.write('<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">')
+      mywindow.document.write('</head><body>')
+      mywindow.document.write(document.getElementById(id).innerHTML)
+      mywindow.document.write('</body></html>')
+
+      var html = `<html><head><title>${title}</title><style type="text/css">${css.join('\n')}</style><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous"></head><body>${document.getElementById(id).innerHTML}</body></html>`
+      // mywindow.document.close()
+      // mywindow.focus()
+
+      // mywindow.print()
+      // mywindow.close()
+
+      return html
     }
   }
 }

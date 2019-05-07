@@ -9,7 +9,7 @@ import 'firebase/functions'
 // axios.defaults.baseURL = 'https://database.unshiftingshadows.com/message'
 // axios.defaults.headers.post['Content-Type'] = 'application/json'
 
-function readable (ref) {
+export function readable (ref) {
   const bcv = new BCVParser().parse(ref)
   // var text = bcv.osis().replace(/(\d+).(\d+)/g, '$1:$2')
   // console.log(text)
@@ -35,7 +35,7 @@ function osis (ref) {
   return new BCVParser().parse(ref).osis()
 }
 
-function text (ref, version) {
+export function text (ref, version) {
   return firebase.functions().httpsCallable('bible-bibleText')({ bibleRef: ref, version: version })
     .then((res) => {
       console.log(res)
