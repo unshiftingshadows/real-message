@@ -13,6 +13,8 @@ export default {
     return {}
   },
   mounted () {
+    this.$firebase.nqAuth.signOut()
+    this.$firebase.auth.signOut()
     console.log('Login 2 Mounted')
     var authToken = this.$cookie.get('realToken')
     console.log('token', authToken)
