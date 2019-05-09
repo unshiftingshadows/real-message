@@ -1,5 +1,6 @@
 <template>
   <q-modal v-model="value" ref="modal" content-classes="preview-modal" maximized>
+    <clock :time="time" />
     <q-btn
       color="primary"
       @click.native="$emit('input', false)"
@@ -51,6 +52,7 @@ import PreviewSection from 'components/preview/Section.vue'
 // import PreviewIllustration from 'components/preview/Illustration.vue'
 import PreviewApplication from 'components/preview/Application.vue'
 import PreviewPrayer from 'components/preview/Prayer.vue'
+import Clock from 'components/Clock.vue'
 
 export default {
   components: {
@@ -65,15 +67,14 @@ export default {
     // PreviewLyric,
     // PreviewIllustration,
     PreviewApplication,
-    PreviewPrayer
+    PreviewPrayer,
+    Clock
   },
   name: 'ContentPreview',
-  props: ['value', 'type', 'id', 'sections', 'modules', 'structure', 'document'],
+  props: ['value', 'type', 'id', 'sections', 'modules', 'structure', 'document', 'time'],
   data () {
     return {
     }
-  },
-  methods: {
   }
 }
 </script>

@@ -54,7 +54,7 @@
         </div>
       </div>
     </q-modal>
-    <content-preview v-model="preview" :type="type" :id="id" :sections="sections" :modules="modules" :structure="structure" :document="document" />
+    <content-preview v-model="preview" :type="type" :id="id" :sections="sections" :modules="modules" :structure="structure" :document="document" :time="totalTime" />
   </div>
 </template>
 
