@@ -160,6 +160,7 @@
             <q-list link>
               <q-item v-close-overlay @click.native="editTitle = true">Rename...</q-item>
               <q-item v-close-overlay @click.native="$root.$emit('preview-document', id)">Preview</q-item>
+              <q-item v-close-overlay @click.native="print()">Print/Export</q-item>
               <q-item v-close-overlay @click.native="$refs.messageDateModal.show()">Add Date...</q-item>
               <q-item-separator />
               <q-item v-close-overlay><q-toggle label="Hook" v-model="message.prefs.hook" @input="update()" /></q-item>
@@ -322,6 +323,9 @@ export default {
       } else {
         this.showMainIdea = true
       }
+    },
+    print () {
+      this.$root.$emit('print-document', this.id)
     }
   }
 }

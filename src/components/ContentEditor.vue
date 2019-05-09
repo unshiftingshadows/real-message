@@ -168,6 +168,13 @@ export default {
     }
   },
   mounted () {
+    // Shuts off any listeners already existing
+    this.$root.$off('add-module')
+    this.$root.$off('preview-document')
+    this.$root.$off('print-document')
+
+    // Add module listener
+    // Important for adding media
     this.$root.$on('add-module', (data, sectionid) => {
       this.$sentry.crumb({
         category: 'module',
@@ -180,10 +187,22 @@ export default {
         sectionid: sectionid
       }
     })
+
+    // Preview document listener
+    // Triggered from Message page
     this.$root.$on('preview-document', (data) => {
       console.log('preview!', data)
       if (data === this.id) {
         this.preview = true
+      }
+    })
+
+    // Print document listener
+    // Triggered from Message page
+    this.$root.$on('print-document', (data) => {
+      console.log('print!', data)
+      if (data === this.id) {
+        this.$pdf.save({ document: this.document, modules: this.modules, sections: this.sections, structure: this.structure }, this.$firebase.auth.currentUser.displayName, this.$root.$children[0].user)
       }
     })
   },
