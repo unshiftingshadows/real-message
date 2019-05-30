@@ -36,7 +36,7 @@
         <q-input
           v-model="newComment"
           ref="textinput"
-          type="text"
+          type="textarea"
           @keyup.enter="addComment()"
           placeholder="Comment..."
           :after="[
