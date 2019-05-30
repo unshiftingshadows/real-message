@@ -17,6 +17,9 @@
         </q-card>
       </draggable>
     </div>
+    <div v-if="loading">
+      <q-spinner color="primary" class="absolute-center" size="3rem" />
+    </div>
     <add-content type="message" :seriesid="seriesid" :series="series" ref="addContent" :update-series="update" />
   </div>
 </template>
