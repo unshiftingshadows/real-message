@@ -347,6 +347,9 @@ export default {
   opacity: 0;
   transition: margin-top 2s, opacity 2s;
   -webkit-transition: margin-top 2s, opacity 2s;
+  position: absolute;
+  top: 50px;
+  right: 0px;
 }
 
 .main-idea-show {
