@@ -23,7 +23,7 @@
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
       <div class="col-12" v-if="message.sectionOrder">
-        <content-editor :key="id" :id="id" :type="message.type" @timeUpdate="(time) => this.totalTime = time" />
+        <content-editor :key="id" :id="id" :type="message.type" @timeUpdate="(time) => this.totalTime = time" style="max-width: 1000px; margin-left: auto; margin-right: auto;" />
       </div>
     </div>
     <q-modal v-model="editTitle" ref="editTitleModal" content-classes="edit-title-modal">
