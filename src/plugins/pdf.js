@@ -103,7 +103,7 @@ function evalMedia (mod) {
                 },
                 // Author - Book
                 {
-                  text: `${media.author} - ${media.book}`,
+                  text: `${media.title} | ${media.author}`,
                   style: 'quoteMeta'
                 }
               ]
@@ -141,7 +141,8 @@ function evalMedia (mod) {
                 // Text
                 {
                   text: media.title,
-                  style: 'moduleTitle'
+                  style: 'moduleTitle',
+                  headlineLevel: 2
                 },
                 // Author - Book
                 {
@@ -169,7 +170,8 @@ function evalMedia (mod) {
                 // Title
                 {
                   text: media.title,
-                  style: 'moduleTitle'
+                  style: 'moduleTitle',
+                  headlineLevel: 2
                 },
                 // Author
                 {
@@ -202,7 +204,8 @@ function evalMedia (mod) {
                 // Title
                 {
                   text: media.title,
-                  style: 'moduleTitle'
+                  style: 'moduleTitle',
+                  headlineLevel: 2
                 },
                 // Text
                 {
@@ -228,7 +231,8 @@ async function evalMod (mod, doc) {
           // Title
           {
             text: mod.title,
-            style: 'moduleTitle'
+            style: 'moduleTitle',
+            headlineLevel: 2
           },
           // Text
           {
@@ -276,7 +280,8 @@ async function evalMod (mod, doc) {
           // Title
           {
             text: mod.title,
-            style: 'moduleTitle'
+            style: 'moduleTitle',
+            headlineLevel: 2
           },
           // Bullets
           {
@@ -301,7 +306,8 @@ async function evalMod (mod, doc) {
               // Title
               {
                 text: mod.title,
-                style: 'moduleTitle'
+                style: 'moduleTitle',
+                headlineLevel: 2
               },
               // Text
               {
@@ -362,7 +368,8 @@ async function evalMod (mod, doc) {
               // Title
               {
                 text: 'Main Idea',
-                style: 'moduleTitle'
+                style: 'moduleTitle',
+                headlineLevel: 2
               },
               // Author - Book
               {
@@ -496,7 +503,8 @@ function buildApp (section, title) {
     result.push({
       stack: [{
         text: 'Thought',
-        style: 'moduleTitle'
+        style: 'moduleTitle',
+        headlineLevel: 2
       },
       {
         text: section.thought,
@@ -509,7 +517,8 @@ function buildApp (section, title) {
     result.push({
       stack: [{
         text: 'Today',
-        style: 'moduleTitle'
+        style: 'moduleTitle',
+        headlineLevel: 2
       },
       {
         text: section.today,
@@ -522,7 +531,8 @@ function buildApp (section, title) {
     result.push({
       stack: [{
         text: 'This Week',
-        style: 'moduleTitle'
+        style: 'moduleTitle',
+        headlineLevel: 2
       },
       {
         text: section.thisweek,
@@ -571,7 +581,7 @@ function buildPrayer (section, title) {
 }
 
 async function savePDF ({ document, modules, sections, structure }, username, user) {
-  console.log(pdfMake.fonts)
+  console.log('document', document)
   var content = []
 
   // Message Title
@@ -583,7 +593,7 @@ async function savePDF ({ document, modules, sections, structure }, username, us
   // Message Author
   content.push({
     text: username,
-    style: 'author'
+    alignment: 'right'
   })
 
   // Message Main Idea
@@ -593,8 +603,24 @@ async function savePDF ({ document, modules, sections, structure }, username, us
     headlineLevel: 1
   })
   content.push({
-    text: document.mainidea,
-    style: 'normalText'
+    canvas: [
+      {
+        type: 'rect',
+        x: 0,
+        y: 0,
+        w: 500,
+        h: 0,
+        r: 5,
+        lineWidth: 1,
+        lineColor: '#246EB9'
+      }
+    ],
+    margin: [0, 0, 0, 20]
+  })
+  content.push({
+    text: document.mainIdea,
+    fontSize: 16,
+    margin: [0, 0, 0, 30]
   })
 
   if (document.prefs.hook) {
@@ -625,9 +651,24 @@ async function savePDF ({ document, modules, sections, structure }, username, us
       keywords: document.tags.join(',')
     },
     header: function (currentPage) {
-      return currentPage === 1 ? '' : document.title
+      return [
+        {
+          text: currentPage === 1 ? '' : `${document.title} | ${username}`,
+          margin: [40, 20, 0, 0],
+          color: '#5C5D5C'
+        }
+      ]
     },
-    footer: function (currentPage, pageCount) { return currentPage.toString() + ' of ' + pageCount },
+    footer: function (currentPage, pageCount) {
+      return [
+        {
+          text: currentPage.toString() + ' of ' + pageCount,
+          alignment: 'right',
+          margin: [40, 0, 40, 0],
+          color: '#5C5D5C'
+        }
+      ]
+    },
     content,
     defaultStyle: {
     },
@@ -639,7 +680,8 @@ async function savePDF ({ document, modules, sections, structure }, username, us
       },
       title: {
         fontSize: 22,
-        bold: true
+        bold: true,
+        margin: [0, 0, 0, 20]
       },
       author: {
         fontSize: 12,
@@ -653,20 +695,33 @@ async function savePDF ({ document, modules, sections, structure }, username, us
       moduleTitle: {
         fontSize: 14,
         italics: true,
-        margin: [0, 0, 0, 20]
+        margin: [0, 0, 0, 10],
+        headlineLevel: 2
       },
       module: {
         margin: [0, 0, 0, 20]
       },
       normalText: {
-        fontSize: 12
+        fontSize: 12,
+        margin: [0, 0, 0, 10]
       },
       questionText: {
         fontSize: 12,
         italics: true
       },
       notesText: {
-        fontsize: 8
+        fontsize: 8,
+        margin: [0, 0, 0, 10]
+      },
+      quoteText: {
+        fontSize: 12,
+        italics: true,
+        margin: [0, 0, 0, 10]
+      },
+      quoteMeta: {
+        fontSize: 8,
+        bold: true,
+        margin: [0, 0, 0, 10]
       },
       bibleText: {
         italics: true
@@ -679,7 +734,9 @@ async function savePDF ({ document, modules, sections, structure }, username, us
     pageSize: 'LETTER',
     pageMargins: [ 40, 60 ],
     pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
-      return currentNode.headlineLevel === 1 && !followingNodesOnPage.map(e => e.headlineLevel).includes(1) && nodesOnNextPage.length > 0
+      console.log('pgbrk', currentNode, currentNode.headlineLevel, followingNodesOnPage)
+      // return currentNode.headlineLevel === 1 && !followingNodesOnPage.map(e => e.headlineLevel).includes(1) && nodesOnNextPage.length > 0
+      return (currentNode.headlineLevel === 1 || currentNode.headlineLevel === 2) && followingNodesOnPage.length === 4 && nodesOnNextPage.length > 0
     }
   }
 
