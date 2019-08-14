@@ -322,6 +322,10 @@ export default {
   font-weight: 500 !important;
 }
 
+.q-card-subtitle {
+  color: var(--color);
+}
+
 .q-card-main {
   font-size: 16px !important;
   line-height: 22px !important;
