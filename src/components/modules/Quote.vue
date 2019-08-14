@@ -15,7 +15,7 @@
         </q-btn>
         <span class="float-right" style="font-size: .8rem; vertical-align: top; line-height: 1rem;">{{ data.time }} minutes&nbsp;&nbsp;&nbsp;</span>
         <q-icon name="fas fa-quote-left" color="primary" size="2rem" />&nbsp;&nbsp;&nbsp;
-        {{ media.text }}
+        <pre>{{ media.text }}</pre>
       </q-card-title>
       <q-card-main>
         <p>{{ media.mediaid.title }} | {{ media.mediaid.author }}</p>

@@ -7,11 +7,11 @@
       </q-card-main>
     </q-card> -->
     <blockquote v-if="data.type === 'quote'">
-      <p><em>{{ media.text }}</em></p>
+      <span style="white-space: pre-wrap"><em>{{ media.text }}</em></span>
       <small v-if="media.title !== '' || media.author !== ''">{{ media.author }}<span v-if="media.title !== '' && media.author !== ''"> | </span><cite :title="media.title">{{ media.title }}</cite></small>
     </blockquote>
     <div class="quote" v-if="data.type === 'illustration' || data.type ==='lyric'">
-      {{ media.text }}
+      <span style="white-space: pre-wrap"><em>{{ media.text }}</em></span>
       <br/>
       <br/>
       <small v-if="media.title !== '' || media.author !== ''">{{ media.author }}<span v-if="media.title !== '' && media.author !== ''"> | </span><cite :title="media.title">{{ media.title }}</cite></small>

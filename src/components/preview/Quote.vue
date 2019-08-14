@@ -2,7 +2,7 @@
   <q-card>
     <q-card-title>
       <q-icon name="fas fa-quote-left" color="primary" size="2rem" />&nbsp;&nbsp;&nbsp;
-      {{ media.text }}
+      <pre>{{ media.text }}</pre>
     </q-card-title>
     <q-card-main>
       <p>{{ media.mediaid.title }} | {{ media.mediaid.author }}</p>

@@ -21,12 +21,12 @@
         <q-icon :name="typeInfo[data.type].icon" color="white" size="2rem" />&nbsp;&nbsp;&nbsp;
         <!-- Mod Title -->
         <span v-if="data.type === 'illustration' || data.type === 'lyric'">{{ media.title }}<span v-if="media.title !== '' && media.author !==''"> | </span>{{ media.author }}</span>
-        <span v-if="data.type === 'quote'">{{ media.text }}</span>
+        <span style="white-space: pre-wrap" v-if="data.type === 'quote'">{{ media.text }}</span>
       </q-card-title>
       <q-card-main>
         <!-- Mod Info -->
         <div class="q-body-2" style="text-align: right;" v-if="data.type === 'quote'">{{ media.title }}<span v-if="media.title !== '' && media.author !== ''"> | </span>{{ media.author }}</div>
-        <p v-if="data.type === 'illustration' && data.type === 'lyric'">{{ media.text }}</p>
+        <span style="white-space: pre-wrap" v-if="data.type === 'illustration' || data.type === 'lyric'">{{ media.text }}</span>
         <q-video v-if="data.type === 'video'" :src="getEmbedURL()" />
         <img v-if="data.type === 'image'" :src="media.imageURL" style="width: 100%;" />
         <p v-if="data.notes && data.notes !== ''">Notes:<br/>{{ data.notes }}</p>
