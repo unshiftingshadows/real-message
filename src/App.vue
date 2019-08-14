@@ -317,6 +317,17 @@ export default {
   background-color: var(--card-color);
 }
 
+.q-card-title {
+  font-size: 20px !important;
+  font-weight: 500 !important;
+}
+
+.q-card-main {
+  font-size: 16px !important;
+  line-height: 22px !important;
+  font-weight: 400 !important;
+}
+
 /* Style drawer background color */
 .sm-drawer, .md-drawer, .lg-drawer {
   background-color: var(--drawer-background);
