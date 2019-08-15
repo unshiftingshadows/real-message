@@ -236,12 +236,13 @@ async function evalMod (mod, doc) {
           },
           // Text
           {
-            text: stripHtml(mod.text),
+            stack: stripHtml(mod.text),
             style: 'normalText'
           }
         ],
         style: 'module'
       })
+      console.log('textdoc', result)
       return result
     case 'bible':
       // Bible Text
@@ -478,70 +479,74 @@ async function buildBible (doc, version, title) {
 }
 
 function buildApp (section, title) {
-  var result = []
-  result.push({
-    text: title,
-    style: 'sectionHeader',
-    headlineLevel: 1
-  })
-  result.push({
-    canvas: [
-      {
-        type: 'rect',
-        x: 0,
-        y: 0,
-        w: 500,
-        h: 0,
-        r: 5,
-        lineWidth: 1,
-        lineColor: '#246EB9'
-      }
-    ],
-    margin: [0, 0, 0, 20]
-  })
-  if (section.thought !== '') {
+  if (section.thought !== '' || section.today !== '' || section.thisweek !== '') {
+    var result = []
     result.push({
-      stack: [{
-        text: 'Thought',
-        style: 'moduleTitle',
-        headlineLevel: 2
-      },
-      {
-        text: section.thought,
-        style: 'normalText'
-      }],
-      style: 'module'
+      text: title,
+      style: 'sectionHeader',
+      headlineLevel: 1
     })
-  }
-  if (section.today !== '') {
     result.push({
-      stack: [{
-        text: 'Today',
-        style: 'moduleTitle',
-        headlineLevel: 2
-      },
-      {
-        text: section.today,
-        style: 'normalText'
-      }],
-      style: 'module'
+      canvas: [
+        {
+          type: 'rect',
+          x: 0,
+          y: 0,
+          w: 500,
+          h: 0,
+          r: 5,
+          lineWidth: 1,
+          lineColor: '#246EB9'
+        }
+      ],
+      margin: [0, 0, 0, 20]
     })
+    if (section.thought !== '') {
+      result.push({
+        stack: [{
+          text: 'Thought',
+          style: 'moduleTitle',
+          headlineLevel: 2
+        },
+        {
+          text: section.thought,
+          style: 'normalText'
+        }],
+        style: 'module'
+      })
+    }
+    if (section.today !== '') {
+      result.push({
+        stack: [{
+          text: 'Today',
+          style: 'moduleTitle',
+          headlineLevel: 2
+        },
+        {
+          text: section.today,
+          style: 'normalText'
+        }],
+        style: 'module'
+      })
+    }
+    if (section.thisweek !== '') {
+      result.push({
+        stack: [{
+          text: 'This Week',
+          style: 'moduleTitle',
+          headlineLevel: 2
+        },
+        {
+          text: section.thisweek,
+          style: 'normalText'
+        }],
+        style: 'module'
+      })
+    }
+    return result
+  } else {
+    return []
   }
-  if (section.thisweek !== '') {
-    result.push({
-      stack: [{
-        text: 'This Week',
-        style: 'moduleTitle',
-        headlineLevel: 2
-      },
-      {
-        text: section.thisweek,
-        style: 'normalText'
-      }],
-      style: 'module'
-    })
-  }
-  return result
 }
 
 function buildPrayer (section, title) {
@@ -734,7 +739,7 @@ async function savePDF ({ document, modules, sections, structure }, username, us
     pageSize: 'LETTER',
     pageMargins: [ 40, 60 ],
     pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
-      console.log('pgbrk', currentNode, currentNode.headlineLevel, followingNodesOnPage)
+      // console.log('pgbrk', currentNode, currentNode.headlineLevel, followingNodesOnPage)
       // return currentNode.headlineLevel === 1 && !followingNodesOnPage.map(e => e.headlineLevel).includes(1) && nodesOnNextPage.length > 0
       return (currentNode.headlineLevel === 1 || currentNode.headlineLevel === 2) && followingNodesOnPage.length === 4 && nodesOnNextPage.length > 0
     }
@@ -746,7 +751,31 @@ async function savePDF ({ document, modules, sections, structure }, username, us
 function stripHtml (html) {
   var temporalDiv = document.createElement('div')
   temporalDiv.innerHTML = html
-  return temporalDiv.textContent || temporalDiv.innerText || ''
+  // Get array of paragraphs
+  var resArr = []
+  var tempArr = [...temporalDiv.getElementsByTagName('p')]
+  console.log('innerHTML', tempArr)
+  // Check for bold or italics in each paragraph
+  tempArr.forEach(e => {
+    if (e.getElementsByTagName('strong').length > 0 || e.getElementsByTagName('emphasis').length > 0) {
+      // set up way to build an array of text, bolding/italicizing specific tagged text
+      var formatArr = e.innerHTML.sp
+      var strongTags = [...e.getElementsByTagName('strong')].map(f => { return { text: f.textContent, bold: true } })
+      var emphasisTags = [...e.getElementsByTagName('emphasis')].map(f => { return { text: f.textContent, italics: true } })
+      // check for dups
+      strongTags.forEach(f => {
+        var emLoc = emphasisTags.map(g => g.text).indexOf(f.text)
+        if (emLoc >= 0) {
+          emphasisTags.splice(emLoc, 1)
+          f.italics = true
+        }
+      })
+      console.log(formatArr)
+    } else {
+      resArr.push({text: e.textContent, margin: [0, 0, 0, 5]})
+    }
+  })
+  return resArr
 }
 
 // leave the export, even if you don't use it
