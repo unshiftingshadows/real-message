@@ -81,7 +81,7 @@ function convertImgToBase64URL (url, callback, outputFormat) {
 }
 
 function evalMedia (mod) {
-  console.log('eval media', mod)
+  // console.log('eval media', mod)
   return new Promise(async (resolve) => {
     const media = (await firebase.firestore().collection(`message${mod.type.charAt(0).toUpperCase()}${mod.type.substr(1)}`).doc(mod.mediaid).get()).data()
     switch (mod.type) {
@@ -237,12 +237,13 @@ async function evalMod (mod, doc) {
           // Text
           {
             stack: stripHtml(mod.text),
-            style: 'normalText'
+            style: 'normalText',
+            margin: [10, 0, 0, 0]
           }
         ],
         style: 'module'
       })
-      console.log('textdoc', result)
+      // console.log('textdoc', result)
       return result
     case 'bible':
       // Bible Text
@@ -395,7 +396,7 @@ async function evalMod (mod, doc) {
 
 async function buildSection (section, modules, doc) {
   var result = []
-  console.log('section', section)
+  // console.log('section', section)
   result.push({
     text: section.title,
     style: 'sectionHeader',
@@ -420,7 +421,7 @@ async function buildSection (section, modules, doc) {
     return evalMod(modules[e], doc)
   })))
   result.push(evalMods)
-  console.log('sectionMods', result)
+  // console.log('sectionMods', result)
   return result
 }
 
@@ -473,7 +474,7 @@ async function buildBible (doc, version, title) {
         style: 'module'
       })
     })
-    console.log('bible result', result)
+    // console.log('bible result', result)
     return result
   })
 }
@@ -510,7 +511,8 @@ function buildApp (section, title) {
         },
         {
           text: section.thought,
-          style: 'normalText'
+          style: 'normalText',
+          margin: [10, 0, 0, 0]
         }],
         style: 'module'
       })
@@ -524,7 +526,8 @@ function buildApp (section, title) {
         },
         {
           text: section.today,
-          style: 'normalText'
+          style: 'normalText',
+          margin: [10, 0, 0, 0]
         }],
         style: 'module'
       })
@@ -538,7 +541,8 @@ function buildApp (section, title) {
         },
         {
           text: section.thisweek,
-          style: 'normalText'
+          style: 'normalText',
+          margin: [10, 0, 0, 0]
         }],
         style: 'module'
       })
@@ -575,7 +579,8 @@ function buildPrayer (section, title) {
     result.push({
       stack: [{
         text: stripHtml(section.text),
-        style: 'normalText'
+        style: 'normalText',
+        margin: [10, 0, 0, 0]
       }],
       style: 'module'
     })
@@ -586,7 +591,7 @@ function buildPrayer (section, title) {
 }
 
 async function savePDF ({ document, modules, sections, structure }, username, user) {
-  console.log('document', document)
+  // console.log('document', document)
   var content = []
 
   // Message Title
@@ -625,7 +630,7 @@ async function savePDF ({ document, modules, sections, structure }, username, us
   content.push({
     text: document.mainIdea,
     fontSize: 16,
-    margin: [0, 0, 0, 30]
+    margin: [10, 0, 0, 30]
   })
 
   if (document.prefs.hook) {
@@ -739,7 +744,9 @@ async function savePDF ({ document, modules, sections, structure }, username, us
     pageSize: 'LETTER',
     pageMargins: [ 40, 60 ],
     pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
-      // console.log('pgbrk', currentNode, currentNode.headlineLevel, followingNodesOnPage)
+      // if (currentNode.headlineLevel === 1 || currentNode.headlineLevel === 2) {
+      //   console.log('pgbrk', currentNode, followingNodesOnPage)
+      // }
       // return currentNode.headlineLevel === 1 && !followingNodesOnPage.map(e => e.headlineLevel).includes(1) && nodesOnNextPage.length > 0
       return (currentNode.headlineLevel === 1 || currentNode.headlineLevel === 2) && followingNodesOnPage.length === 4 && nodesOnNextPage.length > 0
     }
@@ -754,14 +761,14 @@ function stripHtml (html) {
   // Get array of paragraphs
   var resArr = []
   var tempArr = [...temporalDiv.getElementsByTagName('p')]
-  console.log('innerHTML', tempArr)
+  // console.log('innerHTML', tempArr)
   // Check for bold or italics in each paragraph
   tempArr.forEach(e => {
-    if (e.getElementsByTagName('strong').length > 0 || e.getElementsByTagName('emphasis').length > 0) {
+    if (e.getElementsByTagName('strong').length > 0 || e.getElementsByTagName('em').length > 0) {
       // set up way to build an array of text, bolding/italicizing specific tagged text
-      var formatArr = e.innerHTML.sp
+      var formatArr = e.innerHTML.split(/<[^>]*>/g)
       var strongTags = [...e.getElementsByTagName('strong')].map(f => { return { text: f.textContent, bold: true } })
-      var emphasisTags = [...e.getElementsByTagName('emphasis')].map(f => { return { text: f.textContent, italics: true } })
+      var emphasisTags = [...e.getElementsByTagName('em')].map(f => { return { text: f.textContent, italics: true } })
       // check for dups
       strongTags.forEach(f => {
         var emLoc = emphasisTags.map(g => g.text).indexOf(f.text)
@@ -770,7 +777,18 @@ function stripHtml (html) {
           f.italics = true
         }
       })
-      console.log(formatArr)
+
+      resArr.push({
+        text: formatArr.map(g => {
+          if (strongTags.map(h => h.text).indexOf(g) > -1) {
+            return strongTags[strongTags.map(h => h.text).indexOf(g)]
+          } else if (emphasisTags.map(h => h.text).indexOf(g) > -1) {
+            return emphasisTags[emphasisTags.map(h => h.text).indexOf(g)]
+          } else {
+            return g
+          }
+        }),
+        margin: [0, 0, 0, 5]})
     } else {
       resArr.push({text: e.textContent, margin: [0, 0, 0, 5]})
     }
