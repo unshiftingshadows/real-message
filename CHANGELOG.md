@@ -1,6 +1,26 @@
 # Changelog
 All notable changes for this project will be documented in this file.
 
+## 1.0.0 - 2019-08-22
+### Added
+- search bar for Series and Messages
+- users can edit structure titles (Bible, Hook, Application, Prayer)
+- PDF export for Messages
+- timer and clock when previewing
+
+### Changed
+- content comments moved to drawer
+- media search uses index
+- media more easily editable from inside Message
+- login for mobile redesigned
+- visual updates
+- print/export option moved to dropdown in Message
+
+### Fixed
+- preview works much better
+- fixed crash on new media
+- full-text Bible chapters are displayed more naturally
+
 ## 0.0.44 - 2019-04-23
 ### Added
 - Bible refs preference for Message

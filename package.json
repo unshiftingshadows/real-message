@@ -1,6 +1,6 @@
 {
   "name": "real-message",
-  "version": "0.0.44",
+  "version": "1.0.0",
   "description": "A message editor for church leaders and pastors",
   "productName": "REAL Message",
   "cordovaId": "org.cordova.quasar.app",
