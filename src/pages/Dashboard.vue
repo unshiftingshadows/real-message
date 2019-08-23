@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page padding v-if="$root.$children[0].user && !$root.$children[0].user.newUser">
     <q-alert
       color="primary"
       message="These are some sample Dashboard modules"

@@ -363,13 +363,21 @@ var fullIndex = []
 
 function setIndex () {
   console.log('setindex', `index/${fbapp.auth().currentUser.uid}`)
-  return db.ref(`index/${fbapp.auth().currentUser.uid}`).on('value', (snap) => {
-    var data = snap.val()
-    Object.keys(data).map((key) => { index[key] = Object.keys(data[key]).map(f => { return { id: f, type: key, ...data[key][f] } }) })
-    console.log('index pulled', index)
-    fullIndex = [].concat.apply([], Object.values(index))
-    console.log('fullindex', fullIndex)
-  })
+  try {
+    return db.ref(`index/${fbapp.auth().currentUser.uid}`).on('value', (snap) => {
+      var data = snap.val()
+      console.log('index data', data)
+      if (data === null) {
+        return
+      }
+      Object.keys(data).map((key) => { index[key] = Object.keys(data[key]).map(f => { return { id: f, type: key, ...data[key][f] } }) })
+      console.log('index pulled', index)
+      fullIndex = [].concat.apply([], Object.values(index))
+      console.log('fullindex', fullIndex)
+    })
+  } catch (err) {
+    return false
+  }
 }
 
 async function getIndex (type) {

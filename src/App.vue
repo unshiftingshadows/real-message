@@ -1,7 +1,7 @@
 <template>
   <div id="q-app">
     <div id="transparent-layer" v-if="dim"></div>
-    <router-view />
+    <router-view v-if="!showNewUser" />
     <q-modal v-model="showNewUser" ref="newUserModal" content-classes="new-user-modal" no-route-dismiss no-esc-dismiss no-backdrop-dismiss>
       <div class="row gutter-md">
         <div class="col-12">
@@ -202,9 +202,11 @@ export default {
             message: `Authenticated user: ${user.email} | ${user.uid}`,
             level: 'info'
           })
-          this.$firebase.setIndex()
           this.user = this.$fiery(this.$firebase.user(), {
             onSuccess: async (userSnap) => {
+              if (!this.user.newUser) {
+                this.$firebase.setIndex()
+              }
               if (this.loading) {
                 window.fcWidget.init({
                   token: '2f1c0fee-afb7-41e3-afd3-132b4330cd55',
