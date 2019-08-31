@@ -17,6 +17,8 @@
                 color="secondary"
                 v-model="data.series"
               /> -->
+              <q-item link v-close-overlay>Slide</q-item>
+              <q-item link v-close-overlay>Notes</q-item>
               <q-item link @click.native="modMethods.remove(id)">Delete</q-item>
             </q-list>
           </q-popover>
