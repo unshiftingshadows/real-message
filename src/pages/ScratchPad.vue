@@ -5,7 +5,7 @@
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
       <div class="col-12" style="margin-top: 30px;" v-if="!loading">
-        <editor :text.sync="scratch.text" :save="update" />
+        <editor :text.sync="scratch.text" :auto-save="update" :save-close="update" />
       </div>
       <div class="col-xs-12 col-md-6" v-if="!loading">
         <q-chips-input v-model="scratch.tags" float-label="Tags" @blur="update" />
