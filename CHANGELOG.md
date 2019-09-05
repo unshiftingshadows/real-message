@@ -1,6 +1,17 @@
 # Changelog
 All notable changes for this project will be documented in this file.
 
+## 1.0.1 - 2019-09-05
+### Added
+- general notes for Messages
+- preview options
+- internal: login timestamps (first and last)
+- option to add video length manually
+
+### Fixed
+- bug when adding invalid Bible references
+- bug when Scratch Pad text attempted to autosave
+
 ## 1.0.0 - 2019-08-22
 ### Added
 - search bar for Series and Messages
