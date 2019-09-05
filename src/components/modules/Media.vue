@@ -108,6 +108,9 @@ export default {
         exclude: ['id'],
         onSuccess: () => {
           this.loading = false
+          if (this.data.type === 'video') {
+            this.data.time = this.media.length
+          }
         }
       })
     },
