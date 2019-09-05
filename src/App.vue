@@ -165,6 +165,7 @@ export default {
     '$route': function (val) {
       if (this.$firebase.user()) {
         this.$firebase.user().update({
+          'app.message.stats.lastLogin': new Date(),
           'app.lastPage': {
             path: val.path,
             host: 'message'
@@ -261,6 +262,7 @@ export default {
       }
       this.$firebase.auth.currentUser.updatePassword(this.newPassword).then(() => {
         this.$firebase.user().update({
+          'app.message.stats.firstLogin': new Date(),
           newUser: false
         })
         this.$q.notify({
