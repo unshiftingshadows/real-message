@@ -14,6 +14,7 @@
         <hr/>
         <div class="q-title">{{ document.mainIdea }}</div>
         <br/>
+        <div v-if="document.genNotes !== ''"><div class="q-subheading">Notes:</div><span class="q-body-2" style="white-space: pre;">{{ document.genNotes }}</span></div>
       </div>
       <!-- Before -->
       <div class="col-12 col-md-10" v-if="structure && document.prefs.hook">
