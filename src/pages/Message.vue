@@ -181,8 +181,7 @@
               <q-item v-close-overlay v-if="!message.archived" @click.native="archiveConfirmation = true">Archive...</q-item>
               <q-item v-close-overlay v-if="message.archived" @click.native="removeConfirmation = true" class="text-negative">Remove...</q-item>
               <q-item v-close-overlay v-if="!message.archived && message.ownedBy === $firebase.auth.currentUser.uid" @click.native="showCollab = true">Collaborate...</q-item>
-              <!-- <q-item v-close-overlay>Print...</q-item> -->
-              <!-- <q-item v-close-overlay>Present...</q-item> -->
+              <!-- <q-item v-close-overlay @click.native="duplicate()">Duplicate...</q-item> -->
             </q-list>
           </q-popover>
         </q-btn>
@@ -336,6 +335,9 @@ export default {
     },
     print () {
       this.$root.$emit('print-document', this.id)
+    },
+    duplicate () {
+      // will need to implement a new cloud function to duplicate a Message...
     }
   }
 }
