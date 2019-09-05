@@ -1,7 +1,7 @@
 <template>
   <div id="q-app">
     <div id="transparent-layer" v-if="dim"></div>
-    <router-view v-if="!showNewUser" />
+    <router-view v-if="!showNewUser && !loading" />
     <q-modal v-model="showNewUser" ref="newUserModal" content-classes="new-user-modal" no-route-dismiss no-esc-dismiss no-backdrop-dismiss>
       <div class="row gutter-md">
         <div class="col-12">
@@ -76,6 +76,10 @@ var initUser = {
           hook: true,
           application: true,
           prayer: true
+        },
+        preview: {
+          clock: true,
+          timer: true
         },
         structureNames: {
           application: 'Application',
