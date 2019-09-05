@@ -1,17 +1,19 @@
 <template>
   <div class="clock">
-    <q-card>
+    <q-card v-if="!$root.$children[0].user.app.message.prefs.preview || $root.$children[0].user.app.message.prefs.preview.clock || $root.$children[0].user.app.message.prefs.preview.timer">
       <q-card-main>
-        <q-chip color="primary" class="on-left">{{ currentTime }}</q-chip>
-        {{ timerMinutes }}:{{ timerSeconds }} | {{ time }}:00
-        <q-btn
-          :color="timerStart ? 'negative' : 'primary'"
-          size="sm"
-          class="on-right"
-          @click.native="timerStart ? timerStart = false : timerStart = Date.now()"
-        >
-          {{ timerStart ? 'Stop' : 'Start' }}
-        </q-btn>
+        <q-chip color="primary" class="on-left" v-if="!$root.$children[0].user.app.message.prefs.preview || $root.$children[0].user.app.message.prefs.preview.clock">{{ currentTime }}</q-chip>
+        <span v-if="!$root.$children[0].user.app.message.prefs.preview || $root.$children[0].user.app.message.prefs.preview.timer">
+          {{ timerMinutes }}:{{ timerSeconds }} | {{ time }}:00
+          <q-btn
+            :color="timerStart ? 'negative' : 'primary'"
+            size="sm"
+            class="on-right"
+            @click.native="timerStart ? timerStart = false : timerStart = Date.now()"
+          >
+            {{ timerStart ? 'Stop' : 'Start' }}
+          </q-btn>
+        </span>
       </q-card-main>
     </q-card>
   </div>

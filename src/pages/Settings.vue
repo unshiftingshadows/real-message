@@ -25,18 +25,14 @@
           </q-card-main>
         </q-card>
       </div>
-      <div class="col-12" v-if="$root.$children[0].user">
+      <div class="col-12" v-if="$root.$children[0].user.app.message.prefs.preview">
         <q-card>
           <q-card-title>
-            <q-btn v-if="$root.$children[0].user.nqUser" color="negative" class="float-right on-right" @click.native="logoutNQ()">Logout</q-btn>
-            Notes and Quotes
+            Preview Settings
           </q-card-title>
           <q-card-main>
-            <q-btn color="primary" v-if="!$root.$children[0].user.nqUser" @click.native="openNQLogin()">Connect</q-btn>
-            <div v-if="$root.$children[0].user.nqUser">
-              <p>User: {{ $root.$children[0].user.nqUser.email }}</p>
-              <p>ID: {{ $root.$children[0].user.nqUser.uid }}</p>
-            </div>
+            <q-checkbox v-model="$root.$children[0].user.app.message.prefs.preview.clock" label="Show Clock" @input="prefChange" /><br/>
+            <q-checkbox v-model="$root.$children[0].user.app.message.prefs.preview.timer" label="Show Timer" @input="prefChange" /><br/>
           </q-card-main>
         </q-card>
       </div>
@@ -77,6 +73,21 @@
                 <q-checkbox v-model="$root.$children[0].user.app.message.prefs.mediaType.lyric" label="Lyrics" @input="prefChange" /><br/>
                 <q-checkbox v-model="$root.$children[0].user.app.message.prefs.mediaType.video" label="Videos" @input="prefChange" />
               </div>
+            </div>
+          </q-card-main>
+        </q-card>
+      </div>
+      <div class="col-12" v-if="$root.$children[0].user">
+        <q-card>
+          <q-card-title>
+            <q-btn v-if="$root.$children[0].user.nqUser" color="negative" class="float-right on-right" @click.native="logoutNQ()">Logout</q-btn>
+            Notes and Quotes
+          </q-card-title>
+          <q-card-main>
+            <q-btn color="primary" v-if="!$root.$children[0].user.nqUser" @click.native="openNQLogin()">Connect</q-btn>
+            <div v-if="$root.$children[0].user.nqUser">
+              <p>User: {{ $root.$children[0].user.nqUser.email }}</p>
+              <p>ID: {{ $root.$children[0].user.nqUser.uid }}</p>
             </div>
           </q-card-main>
         </q-card>
@@ -237,6 +248,15 @@ export default {
     },
     newPasswordCheck: {
       sameAsPassword: sameAs('newPassword')
+    }
+  },
+  beforeMount () {
+    if (!this.$root.$children[0].user.app.message.prefs.preview) {
+      this.$root.$children[0].user.app.message.prefs.preview = {
+        clock: true,
+        timer: true
+      }
+      this.prefChange()
     }
   },
   methods: {
