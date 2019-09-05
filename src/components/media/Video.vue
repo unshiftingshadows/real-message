@@ -24,6 +24,9 @@
         <p><b>Location:</b> {{ video.service }}</p>
       </div>
       <div class="col-12">
+        <q-input v-model="video.length" type="number" float-label="Length (in minutes)" />
+      </div>
+      <div class="col-12">
         <q-chips-input v-model="video.tags" float-label="Tags" />
       </div>
       <div class="col-12">
@@ -64,6 +67,7 @@ export default {
     return {
       editing: false,
       video: {
+        length: 0,
         tags: [],
         bibleRefs: []
       },
