@@ -170,13 +170,13 @@
                   </q-item-tile>
                   <q-item-main label="REAL Church" class="on-right" />
                 </q-item>
-                <q-item v-close-overlay @click.native="openLink('https://curriculum.realchurch.app')">
+                <q-item v-close-overlay>
                   <q-item-tile>
                     <img src="https://real-45953.firebaseapp.com/icons/icon_curriculum%402x.png" width="50px" />
                   </q-item-tile>
                   <q-item-main label="REAL Curriculum" class="on-right" />
                 </q-item>
-                <q-item v-close-overlay @click.native="openLink('https://database.realchurch.app')">
+                <q-item v-close-overlay>
                   <q-item-tile>
                     <img src="https://real-45953.firebaseapp.com/icons/icon_database%402x.png" width="50px" />
                   </q-item-tile>
@@ -198,13 +198,13 @@
                   </q-item-tile>
                   <q-item-main label="REAL Church" class="on-right" />
                 </q-item>
-                <q-item v-close-overlay @click.native="openLink('https://curriculum.realchurch.app')">
+                <q-item v-close-overlay>
                   <q-item-tile>
                     <img src="https://real-45953.firebaseapp.com/icons/icon_curriculum%402x.png" width="50px" />
                   </q-item-tile>
                   <q-item-main label="REAL Curriculum" class="on-right" />
                 </q-item>
-                <q-item v-close-overlay @click.native="openLink('https://database.realchurch.app')">
+                <q-item v-close-overlay>
                   <q-item-tile>
                     <img src="https://real-45953.firebaseapp.com/icons/icon_database%402x.png" width="50px" />
                   </q-item-tile>
