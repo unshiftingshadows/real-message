@@ -1,24 +1,34 @@
 <template>
   <q-page padding>
     <div class="row gutter-md items-center">
-      <div class="col-xs-12" v-if="loading">
-        <q-spinner color="primary" class="absolute-center" size="3rem" />
+      <div class="col-xs-12 col-md-8">
+        <div class="row gutter-sm">
+          <div class="col-xs-12" v-if="loading">
+            <q-spinner color="primary" class="absolute-center" size="3rem" />
+          </div>
+          <div class="col-12" v-if="!loading" style="margin-top: 20px;">
+            <q-input v-model="message.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update()" />
+          </div>
+          <div class="col-xs-12 col-md-6" v-if="!loading">
+            <q-chips-input
+              color="secondary"
+              v-model="readableRefs"
+              float-label="Bible References"
+              @blur="update"
+              @input="addRef"
+            />
+          </div>
+          <div class="col-xs-12 col-md-6" v-if="!loading">
+            <q-chips-input v-model="message.tags" float-label="Tags" @blur="update" />
+          </div>
+        </div>
       </div>
-      <div class="col-12" v-if="!loading" style="margin-top: 20px;">
-        <q-input v-model="message.mainIdea" float-label="Main Idea" type="textarea" :max-height="100" :min-rows="1" @blur="update()" />
+      <div class="col-xs-12 col-md-4" v-if="!loading" style="margin-top: 0px;">
+        <q-input v-model="message.genNotes" float-label="Notes" type="textarea" :max-height="200" :min-rows="1" @blur="update()" />
       </div>
-      <div class="col-xs-12 col-md-6" v-if="!loading">
-        <q-chips-input
-          color="secondary"
-          v-model="readableRefs"
-          float-label="Bible References"
-          @blur="update"
-          @input="addRef"
-        />
-      </div>
-      <div class="col-xs-12 col-md-6" v-if="!loading">
-        <q-chips-input v-model="message.tags" float-label="Tags" @blur="update" />
-      </div>
+    </div>
+    <br/>
+    <div class="row gutter-md items-center">
       <div v-if="!message.sectionOrder">
         <q-spinner color="primary" class="absolute-center" size="3rem" />
       </div>
