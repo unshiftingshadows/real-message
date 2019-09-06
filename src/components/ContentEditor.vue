@@ -482,4 +482,8 @@ export default {
   opacity: .7;
 }
 
+.slide-modal {
+  padding: 20px;
+}
+
 </style>
