@@ -21,22 +21,12 @@ export default {
   props: [ 'text', 'autoSave', 'saveClose' ],
   data () {
     return {
-      content: this.text,
-      // toolbar: [
-      //   [{ 'header': [] }],
-      //   ['bold', 'italic', 'underline', 'strike'],
-      //   ['blockquote'],
-      //   [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      //   ['clean']
-      // ],
       options: {
         modules: {
           toolbar: {
             container: [
               [{ 'header': [] }],
               ['bold', 'italic', 'underline', 'strike'],
-              // ['blockquote'],
-              // [{ 'list': 'ordered' }, { 'list': 'bullet' }],
               ['clean']
               // [{ beyondgrammar: [false] }]
             ]
@@ -77,7 +67,7 @@ export default {
         this.save()
       } else this.editCount++
     })
-    this.saveInterval = setInterval(this.autoSave, 300000)
+    this.saveInterval = setInterval(this.autoSave(this.text), 300000)
   },
   beforeDestroy () {
     clearInterval(this.saveInterval)
