@@ -92,6 +92,7 @@
           </div>
           <!-- Save/Delete Buttons -->
           <div class="col-12">
+            <q-btn color="secondary" @click.native="openSlide" class="float-right">Slide</q-btn>
             <q-btn color="primary" @click.native="preSave" :disabled="loading">Save</q-btn>
             <q-btn outline color="negative" class="on-right" @click.native="modMethods.remove(id)" :disabled="loading">Delete</q-btn>
             <q-spinner size="2rem" class="on-right" v-if="loading" />
@@ -99,15 +100,18 @@
         </div>
       </q-card-main>
     </div>
+    <slide-content ref="slidemodal" :data="data" :id="id" />
   </q-card>
 </template>
 
 <script>
 import TextEditor from 'components/TextEditor.vue'
+import SlideContent from 'components/slide/Content.vue'
 
 export default {
   components: {
-    TextEditor
+    TextEditor,
+    SlideContent
   },
   name: 'mod-content',
   props: [ 'id', 'data', 'modMethods', 'modOptions', 'document' ],
@@ -245,6 +249,10 @@ export default {
           this.modMethods.edit(this.id)
         }
       }
+    },
+    openSlide () {
+      // console.log(this.$refs.slidemodal)
+      this.$refs.slidemodal.open()
     }
   }
 }
