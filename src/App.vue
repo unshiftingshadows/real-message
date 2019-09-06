@@ -184,6 +184,7 @@ export default {
       this.newPassword = ''
       this.newPasswordCheck = ''
       this.$firebase.auth.onAuthStateChanged((user) => {
+        this.loading = true
         if (!user) {
           this.user.theme = 'light'
           window.fcWidget.init({
@@ -198,6 +199,7 @@ export default {
               }
             }
           })
+          this.loading = false
         } else {
           this.$log.info('newly logged user', user)
           this.$ga.set('userId', user.uid)
