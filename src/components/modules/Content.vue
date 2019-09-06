@@ -215,13 +215,17 @@ export default {
       if (this.data.type === 'bible') {
         this.loading = true
         var readable = this.$bible.readable(this.data.bibleRef)
-        this.$bible.text(this.data.bibleRef, this.translation).then(res => {
-          this.data.text = res
-          this.data.translation = this.translation
-          this.data.bibleRef = readable
+        if (readable) {
+          this.$bible.text(this.data.bibleRef, this.translation).then(res => {
+            this.data.text = res
+            this.data.translation = this.translation
+            this.data.bibleRef = readable
+            this.loading = false
+            this.modMethods.save(this.id, this.data)
+          })
+        } else {
           this.loading = false
-          this.modMethods.save(this.id, this.data)
-        })
+        }
       } else {
         this.modMethods.save(this.id, this.data)
       }

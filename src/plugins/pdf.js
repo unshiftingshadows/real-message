@@ -633,6 +633,19 @@ async function savePDF ({ document, modules, sections, structure }, username, us
     margin: [10, 0, 0, 30]
   })
 
+  if (document.genNotes !== '') {
+    content.push({
+      text: 'Notes',
+      style: 'moduleTitle',
+      headlineLevel: 2
+    })
+    content.push({
+      text: document.genNotes,
+      fontSize: 10,
+      margin: [10, 0, 0, 30]
+    })
+  }
+
   if (document.prefs.hook) {
     content.push(await buildSection({ ...structure.hook, title: user.app.message.prefs.structureNames.hook }, modules, document))
   }
