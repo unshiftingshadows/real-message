@@ -146,6 +146,7 @@ export default {
       this.$emit('timeUpdate', time)
     },
     editingid: function (id) {
+      console.log('editing id changed!')
       if (id !== '') {
         this.$root.$children[0].dim = true
       } else {
@@ -275,9 +276,13 @@ export default {
         if (moduleid === 'application' || moduleid === 'prayer') {
           this.structure[moduleid].editing = false
           this.$fiery.update(this.structure[moduleid], ['editing'])
+          this.editingid = ''
+          this.editingSection = undefined
         } else {
           this.modules[moduleid].editing = false
           this.$fiery.update(this.modules[moduleid], ['editing'])
+          this.editingid = ''
+          this.editingSection = undefined
         }
       } else if (this.editingid !== '') {
         if (this.editingid === 'application' || this.editingid === 'prayer') {
