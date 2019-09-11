@@ -29,7 +29,6 @@ export default {
   name: 'LayoutDefault',
   data () {
     return {
-      leftDrawerOpen: this.$q.platform.desktop
     }
   },
   methods: {
