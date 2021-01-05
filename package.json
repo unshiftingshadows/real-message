@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@sentry/browser": "^4.6.6",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "bible-passage-reference-parser": "^2.0.1",
     "fiery-vue": "^0.10.1",
     "filepond": "^1.2.10",
