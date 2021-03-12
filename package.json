@@ -21,7 +21,7 @@
     "fuse.js": "^3.4.5",
     "get-video-id": "^3.1.4",
     "html-to-text": "^4.0.0",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.1",
     "masonry-layout": "^4.2.1",
     "pdfmake": "^0.1.58",
     "pro_writing_aid_api": "github:prowriting/prowritingaid.javascript",
